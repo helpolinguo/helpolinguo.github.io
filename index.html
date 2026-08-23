@@ -188,6 +188,29 @@ body{background:var(--pap);color:var(--enk);
  padding:0 16px}
 @media (max-height:430px){.pedo{display:none}}
 
+/* --- LA LEKTO SENRETA. Une ligne de plus dans le pied, et rien d'autre :
+   la page ne défile pas, et la place y est comptée. Elle ne paraît que si
+   le navigateur sait tenir un servanto, et disparaît sur les vues basses,
+   où le pied entier est déjà caché. */
+.senrete{display:none;margin-top:6px;align-items:center;gap:9px;justify-content:center}
+.senrete.vidas{display:flex}
+@media (max-height:560px){.senrete.vidas{display:none}}
+.senrete button{border:0;background:none;padding:0;cursor:pointer;
+ color:var(--sub);font:inherit;font-size:12px;
+ border-bottom:1px solid var(--lin);transition:color .16s,border-color .16s}
+.senrete button:not(:disabled):hover{color:var(--azuro);border-color:var(--azuro)}
+/* Un bouton désactivé ne doit pas se donner l'air actif : « :hover »
+   continue de l'atteindre, il faut donc l'en écarter explicitement. */
+.senrete button:disabled{cursor:default;border-color:transparent;color:var(--sub)}
+.senrete button:focus-visible{outline:2px solid var(--azuro);outline-offset:3px}
+/* La barre ne prend sa place qu'une fois le téléchargement commencé :
+   vide, elle laisserait un trait mort sous le texte. */
+.senrete .baro{display:none;width:104px;height:3px;border-radius:2px;
+ background:var(--lin);overflow:hidden;flex:none}
+.senrete.kuras .baro{display:block}
+.senrete .baro i{display:block;height:100%;width:0;background:var(--azuro);
+ transition:width .3s ease-out}
+
 /* =====================================================================
    5. L'ENTREE — la roue arrive, et pose les lettres
    =====================================================================
@@ -336,6 +359,10 @@ body{background:var(--pap);color:var(--enk);
   <p class="pedo">
     Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
     transskribita, lektebla e deskargebla.
+    <span class="senrete" id="senrete" hidden>
+      <span class="baro"><i id="baro"></i></span>
+      <button type="button" id="deskargi">Deskargar por senreta lekto</button>
+    </span>
   </p>
 </div>
 
@@ -557,10 +584,65 @@ if ('serviceWorker' in navigator) {
       await navigator.serviceWorker.ready;
       const instalita = matchMedia('(display-mode: standalone)').matches
                         || navigator.standalone === true;
-      if (instalita) setTimeout(() => reg.active && reg.active.postMessage('korpuso'), 4000);
+      const diri = m => reg.active && reg.active.postMessage(m);
+
+      /* --- LA LEKTO SENRETA ------------------------------------------
+         Le site entier pèse une soixantaine de méga-octets : les trois
+         textes, les PDF, les 52 langues et les 38 planches gravées dans
+         leurs deux résolutions.
+
+         INSTALLÉE, l'application le prend d'elle-même — c'est ce qu'on
+         attend d'une application, et c'est le moment le plus proche de
+         l'ajout à l'écran d'accueil qu'un site puisse observer : iOS
+         n'annonce pas cet ajout.
+
+         DANS UN ONGLET, rien n'est pris sans qu'on le demande : un
+         visiteur de passage n'a pas à payer soixante méga-octets. Le
+         bouton le propose, et la barre dit où l'on en est.
+
+         La demande de stockage durable écarte, sur Chrome, l'effacement
+         automatique quand la place manque ; iOS l'accorde d'office aux
+         applications de l'écran d'accueil. */
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+      const zono = document.getElementById('senrete');
+      const butono = document.getElementById('deskargi');
+      const baro = document.getElementById('baro');
+      const mo = o => (o / 1048576).toFixed(o < 10485760 ? 1 : 0) + ' Mo';
+      zono.hidden = false; zono.classList.add('vidas');
+
+      navigator.serviceWorker.addEventListener('message', ev => {
+        const m = ev.data || {};
+        if (m.tipo === 'stato') {
+          if (m.totalaj && m.faritaj >= m.totalaj) {
+            butono.textContent = 'Senrete disponebla'; butono.disabled = true;
+          }
+        }
+        if (m.tipo === 'progreso') {
+          zono.classList.add('kuras'); butono.disabled = true;
+          const p = m.totalaj ? m.faritaj / m.totalaj : 0;
+          baro.style.width = (p * 100).toFixed(1) + '%';
+          butono.textContent = 'Deskargas… ' + m.faritaj + '/' + m.totalaj
+                             + (m.oktetoj ? ' · ' + mo(m.oktetoj) : '');
+        }
+        if (m.tipo === 'preta') {
+          zono.classList.remove('kuras');
+          butono.textContent = 'Senrete disponebla · ' + mo(m.oktetoj);
+          butono.disabled = true;
+        }
+        if (m.tipo === 'rompita') {
+          zono.classList.remove('kuras'); butono.disabled = false;
+          butono.textContent = 'Interruptita — probar itere';
+        }
+      });
+
+      butono.addEventListener('click', () => { butono.disabled = true; diri('tuto'); });
+      diri('stato');
+      if (instalita) setTimeout(() => diri('tuto'), 4000);
+
       addEventListener('online', () => {
         reg.update();
-        if (reg.active) reg.active.postMessage('refresho');
+        diri('refresho');
       });
     } catch (_) { /* sans servanto, la page reste entière */ }
   });

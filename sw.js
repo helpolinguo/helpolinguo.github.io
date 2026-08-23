@@ -96,7 +96,18 @@ async function reto(req) {
 /* Copie d'abord, revalidation derrière. */
 async function kopio(req) {
   const c = await caches.open(VERSIO);
-  const k = await c.match(req);
+  let k = await c.match(req);
+
+  /* LE REPLI DE LA LOUPE. Les planches gravées existent en deux
+     résolutions : « vido » pour l'écran, « detalo » pour la loupe, sept
+     fois plus lourde. Si la grande manque hors ligne, servir la petite
+     donne une loupe floue — mais une image, au lieu d'un cadre vide.
+     « ignoreSearch » retrouve la petite quelle que soit sa version. */
+  if (!k && req.url.includes('-detalo.webp')) {
+    k = await c.match(req.url.split('?')[0].replace('-detalo.webp', '-vido.webp'),
+                      { ignoreSearch: true });
+    if (k) return k;
+  }
   const reseau = fetch(req)
     .then(r => { if (r && r.ok) c.put(req, r.clone()); return r; })
     .catch(() => null);
@@ -106,7 +117,86 @@ async function kopio(req) {
 self.addEventListener('message', e => {
   if (e.data === 'korpuso')  e.waitUntil(prenKorpuson());
   if (e.data === 'refresho') e.waitUntil(refreshigi());
+  if (e.data === 'tuto')     e.waitUntil(deskargi());
+  if (e.data === 'stato')    e.waitUntil(diriStaton());
 });
+
+async function sciigi(msg) {
+  for (const kl of await self.clients.matchAll({ includeUncontrolled: true })) kl.postMessage(msg);
+}
+
+/* --- LE PLAN COMPLET -------------------------------------------------
+   Tout ce que le site sert : la coquille, les trois textes, les PDF, les
+   52 langues et les 38 planches — les deux résolutions comprises.
+
+   Les adresses versionnées sont LUES DANS LA PAGE des Tabeli, comme pour
+   les langues (voir akordigiTabelin) : rien n'est écrit en dur, donc rien
+   ne peut vieillir. Et comme le « ?v= » de chaque adresse EST la taille du
+   fichier en octets — vérifié sur les 90 —, le poids total se connaît
+   sans une seule requête. */
+async function planoTuta(c) {
+  const listo = [...SHELO, ...KORPUSO];
+  if (!(await c.match('/tabeli/'))) {
+    try {
+      const r = await fetch(freshe('/tabeli/'));
+      if (r && r.ok) await c.put('/tabeli/', r.clone());
+    } catch (_) { return listo; }
+  }
+  const enhavo = await c.match('/tabeli/');
+  if (enhavo) {
+    const teksto = await enhavo.text();
+    const bazo = new URL('/tabeli/', location).href;
+    const trovi = teksto.match(/(?:lingui|gravuri)\/[A-Za-z0-9._-]+\.(?:json|webp)\?v=\d+/g) || [];
+    for (const u of new Set(trovi)) listo.push(bazo + u);
+  }
+  return [...new Set(listo)];
+}
+
+/* Le poids annoncé par les adresses elles-mêmes, en octets. Les fichiers
+   non versionnés — coquille, textes, PDF — n'annoncent rien : ils sont
+   comptés à la pesée, quand ils arrivent. */
+const pezoAnoncita = u => {
+  const m = u.match(/\?v=(\d+)$/);
+  return m ? +m[1] : 0;
+};
+
+async function deskargi() {
+  const c = await caches.open(VERSIO);
+  const listo = await planoTuta(c);
+  let faritaj = 0, oktetoj = 0;
+  const anoncita = listo.reduce((s, u) => s + pezoAnoncita(u), 0);
+  await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj, anoncita });
+
+  for (const u of listo) {
+    if (!(await c.match(u))) {
+      try {
+        const r = await fetch(freshe(u));
+        if (r && r.ok) { const kopio = r.clone(); await c.put(u, r); oktetoj += (await kopio.blob()).size; }
+      } catch (_) {
+        await sciigi({ tipo: 'rompita', faritaj, totalaj: listo.length, oktetoj });
+        return;
+      }
+    } else {
+      oktetoj += pezoAnoncita(u);
+    }
+    faritaj++;
+    if (faritaj % 2 === 0 || faritaj === listo.length) {
+      await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj, anoncita });
+    }
+  }
+  await sciigi({ tipo: 'preta', totalaj: listo.length, oktetoj });
+}
+
+/* L'état vrai : combien du plan est réellement détenu. On ne pose pas de
+   marqueur — un marqueur mentirait si le navigateur vidait le cache. */
+async function diriStaton() {
+  const c = await caches.open(VERSIO);
+  if (!(await c.match('/tabeli/'))) return sciigi({ tipo: 'stato', faritaj: 0, totalaj: 0 });
+  const listo = await planoTuta(c);
+  let faritaj = 0;
+  for (const u of listo) if (await c.match(u)) faritaj++;
+  await sciigi({ tipo: 'stato', faritaj, totalaj: listo.length });
+}
 
 /* Le corps des livres, un fichier à la fois : douze méga-octets d'un coup
    sur un réseau lent bloqueraient tout le reste. Un échec n'arrête rien —

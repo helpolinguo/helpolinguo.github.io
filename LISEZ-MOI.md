@@ -408,6 +408,46 @@ GitHub Pages annonce.
 **Au retour de la connexion**, la page prévient le servanto, qui reprend au
 réseau *tout ce qu'il détient*. C'est ce qui répond au « dès que possible ».
 
+### Le téléchargement complet
+
+Le site entier — les trois textes, les PDF, les 52 langues et les 38 planches
+gravées dans leurs **deux** résolutions — pèse **66 Mo**, soit 106 fichiers.
+
+* **Installée**, l'application le prend d'elle-même, quatre secondes après
+  l'ouverture. C'est ce qu'on attend d'une application, et c'est le moment le
+  plus proche de l'ajout à l'écran d'accueil qu'un site puisse observer : iOS
+  n'annonce pas cet ajout, contrairement à Android.
+* **Dans un onglet**, rien n'est pris sans qu'on le demande : un visiteur de
+  passage n'a pas à payer 66 Mo. Le pied de page porte un bouton, et une barre
+  dit où l'on en est — `Deskargas… 34/106 · 23 Mo`.
+
+L'état affiché n'est pas un marqueur posé après coup : le servanto compte
+réellement ce qu'il détient du plan. Si le navigateur vidait le cache, le
+bouton se reproposerait de lui-même.
+
+**Le poids se connaît sans une seule requête**, parce que le `?v=` de chaque
+adresse **est** la taille du fichier en octets — vérifié sur les 90 adresses
+versionnées. Le plan lui-même est lu dans la page des *Tabeli*, jamais écrit
+en dur.
+
+**Un repli pour la loupe.** Les planches existent en « vido » (200 ko) et en
+« detalo » (1,8 Mo). Si la grande manque hors ligne — téléchargement
+interrompu, cache partiel —, le servanto sert la petite : une loupe floue,
+mais une image, au lieu d'un cadre vide.
+
+### Et sur Android ?
+
+Oui, et mieux qu'ailleurs. Service worker, cache et manifeste sont ceux du
+standard ; Chrome sur Android sait en outre proposer l'installation
+(`beforeinstallprompt`), annonce l'installation faite (`appinstalled`), et
+honore `navigator.storage.persist()`, qui écarte l'effacement automatique
+quand la place manque. Le test `(display-mode: standalone)` qui déclenche le
+téléchargement automatique vaut sur les deux systèmes.
+
+Sur iOS, la persistance est accordée d'office aux applications de l'écran
+d'accueil ; c'est dans un simple onglet Safari que le cache peut être effacé
+après sept jours sans visite.
+
 ### Ce qui est pris, et quand
 
 | | poids | quand |
@@ -415,16 +455,10 @@ réseau *tout ce qu'il détient*. C'est ce qui répond au « dès que possible �
 | la coquille — porte, feuille, polices, icônes | 0,07 Mo | à l'installation, pour tout visiteur |
 | les trois textes et les quatre PDF | ≈ 12 Mo | **seulement en application installée**, quatre secondes après l'ouverture |
 | les 52 langues des *Tabeli* | 24,5 Mo | à la suite, dans l'ordre où la page les cite |
-| les planches gravées des *Tabeli* | 3,9 ou 28 Mo | à la lecture, dans la résolution que l'appareil a choisie |
+| les 38 planches gravées, deux résolutions | 32 Mo | avec le reste |
 
-Soit **37 Mo** en tout pour l'application installée, planches non comprises —
+Soit **66 Mo** annoncés, **69 Mo** occupés une fois l'entête du cache comptée —
 mesuré par `navigator.storage.estimate()`.
-
-Un visiteur qui ne fait que passer par la porte ne paie que les 0,07 Mo.
-Les planches existent en deux résolutions — 3,9 Mo pour l'écran, 28 Mo pour
-la loupe — et les prendre d'avance toutes les deux coûterait 32 Mo dont la
-moitié pour rien : le cache à la lecture retient celle que le `srcset` aura
-effectivement choisie.
 
 **Pourquoi les langues.** La page des *Tabeli* est bilingue : l'ido à gauche,
 une autre langue à droite. Cette autre langue n'est pas dans la page — elle
@@ -468,7 +502,14 @@ Servi localement dans l'arborescence réelle, avec coupure du réseau :
   français, l'allemand et le japonais remplissent leurs 672 blocs sans que
   les *Tabeli* aient été ouvertes auparavant ;
 * une entrée versionnée devenue périmée est **purgée** au passage suivant ;
-* la place occupée est de **37 Mo**, planches non comprises ;
+* le téléchargement complet mène les **106 fichiers** à leur terme, et
+  **hors ligne les 106 répondent, 0 en échec**, pour 69 Mo restitués ;
+* les planches paraissent hors ligne sans que les *Tabeli* aient été ouvertes ;
+* la grande résolution supprimée, la demande hors ligne reçoit la petite —
+  218 ko au lieu de 1,8 Mo ;
+* l'état est reconnu au rechargement : le bouton dit « Senrete disponebla » ;
+* le pied de page gagne une ligne sans que rien défile, aux six formats
+  essayés, et le contrôle s'efface de lui-même sous 560 px de haut ;
 * l'entrée, le clic sur l'étoile et l'absence de défilement sont intacts.
 
 ---
