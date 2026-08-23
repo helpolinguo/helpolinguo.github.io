@@ -7,6 +7,16 @@
 <meta name="description" content="Tri libri dil helpolinguo internaciona Ido, lektebla e deskargebla: la Delmas-Tabeli (1926), la Dicionario de la 10.000 radiki (1934/1964), la Kompleta Gramatiko Detaloza (1925).">
 <link rel="icon" href="emblemo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- LE NOM. Le titre ci-dessus est celui de l'onglet ; le manifeste et la
+     balise d'Apple donnent celui de l'icône, plus court, parce qu'un nom
+     sous une icône dispose de deux mots au plus. -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Ido">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" media="(prefers-color-scheme:dark)" content="#16161a">
 <meta property="og:title" content="Ido — helpolinguo internaciona">
 <meta property="og:description" content="Tri libri dil helpolinguo internaciona Ido: la Delmas-Tabeli, la Dicionario de la 10.000 radiki, la Kompleta Gramatiko Detaloza.">
 <meta property="og:type" content="website">
@@ -523,6 +533,38 @@ addEventListener('keydown', finiEnkonduko, {once:true});
 /* Filet : une animation qui n'aurait jamais démarré — onglet ouvert en
    arrière-plan, par exemple — ne doit pas laisser la classe à demeure. */
 setTimeout(finiEnkonduko, 3200);
+
+/* =====================================================================
+   LE SERVANTO — hors-ligne
+   =====================================================================
+   Posé à la racine, il a pour portée tout le site : la porte ET les trois
+   livres, qui sont servis sous la même origine. Les trois dépôts n'ont
+   donc rien à porter. Le détail des règles est dans sw.js.
+
+   Le corps des livres — douze méga-octets — n'est pris d'avance QUE si la
+   page tourne comme application installée. Un visiteur qui ne fait que
+   passer par la porte n'a pas à payer ce prix ; chez lui, chaque page se
+   met en cache à la lecture.
+
+   Au retour de la connexion, on redemande le servanto lui-même et on lui
+   fait revalider ce qu'il détient : les textes sont corrigés souvent, et
+   une copie ne doit pas survivre à sa correction.
+   ===================================================================== */
+if ('serviceWorker' in navigator) {
+  addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js', {updateViaCache:'none'});
+      await navigator.serviceWorker.ready;
+      const instalita = matchMedia('(display-mode: standalone)').matches
+                        || navigator.standalone === true;
+      if (instalita) setTimeout(() => reg.active && reg.active.postMessage('korpuso'), 4000);
+      addEventListener('online', () => {
+        reg.update();
+        if (reg.active) reg.active.postMessage('refresho');
+      });
+    } catch (_) { /* sans servanto, la page reste entière */ }
+  });
+}
 
 /* --- L'etoile. Un tiers de tour : la figure revient sur elle-meme. */
 let anguli=0;
