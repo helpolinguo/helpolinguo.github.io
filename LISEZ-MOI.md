@@ -10,7 +10,8 @@ Une seule page, sans défilement, qui réunit les trois livres transcrits :
 
 ```
 index.html            la page entière — structure, style et script
-emblemo.svg           l'emblème seul (favicon)
+pordo.css             le bouton de retour des trois livres (§ 7)
+emblemo.svg           l'emblème seul (favicon) et le dessin du bouton
 apple-touch-icon.png  le même, 180 × 180
 og-imajo.png          1200 × 630, l'image de partage
 polices/              Jost* Bold et Medium, réduites à cette page
@@ -212,7 +213,48 @@ pas le contraste sur `#16161a`.
 
 ---
 
-## 7. Refabriquer les images
+## 7. Le bouton de retour, sur les trois livres
+
+Les trois livres portent, dans le coin inférieur gauche, l'emblème azur en
+petit : un lien vers cette page. **Toute son apparence tient dans un seul
+fichier**, `pordo.css`, servi depuis cette racine.
+
+C'est possible parce que les quatre sites sont servis depuis la **même
+origine** — c'est tout l'objet du § 1. Un fichier posé ici est lisible par
+`ido.help/tabeli/`, `…/dicionario/` et `…/gramatiko/`. Chacun des trois
+dépôts n'en porte donc que deux lignes, qui ne changeront plus :
+
+```html
+<link rel="stylesheet" href="/pordo.css">
+<a class="ido-pordo" href="/">Ido</a>
+```
+
+Le mot « Ido » est dans le lien et non dans la feuille : si celle-ci ne se
+charge pas — page ouverte hors du site, fichier déplacé — il reste un lien
+lisible en fin de document au lieu d'un carré vide. Le dessin, lui, est
+`emblemo.svg`, déjà servi comme icône de cette page : un seul fichier pour
+les quatre.
+
+Retoucher le bouton — taille, couleur, position, étiquette — se fait donc
+**ici seulement**, et les trois livres suivent au prochain rafraîchissement.
+GitHub Pages sert ses fichiers avec un cache de dix minutes ; c'est le
+délai qu'il faut compter.
+
+Deux choses à savoir :
+
+* **Sur les deux livres à volet latéral** — la *Gramatiko* et les *Tabeli* —
+  le disque flotte au-dessus de la table des matières et en recouvre le
+  début d'une ligne. La ligne reste cliquable : le disque fait 42 px sur
+  une colonne de 250, et le lien s'atteint partout ailleurs. Réserver le
+  coin demanderait de retoucher la mise en page de chaque livre, ce qui
+  ferait perdre le bénéfice du fichier unique.
+* **Le bouton passe sous les volets** (`z-index: 12`). Sur écran étroit, la
+  table des matières se déploie par-dessus la page avec un voile ; le
+  bouton n'a rien à dire tant qu'elle est ouverte.
+
+---
+
+## 8. Refabriquer les images
 
 ```sh
 python3 outils/emblemo.py   # le logotype, à recopier dans index.html
