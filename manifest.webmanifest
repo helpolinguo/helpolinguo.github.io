@@ -1,0 +1,25 @@
+{
+  "name": "Ido — helpolinguo internaciona",
+  "short_name": "Ido",
+  "description": "Tri libri dil helpolinguo internaciona Ido: la Delmas-Tabeli, la Dicionario de la 10.000 radiki, la Kompleta Gramatiko Detaloza.",
+  "lang": "io",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbfaf7",
+  "theme_color": "#fbfaf7",
+  "icons": [
+    { "src": "/emblemo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/ikono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/ikono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/ikono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Tabeli", "url": "/tabeli/" },
+    { "name": "Dicionario", "url": "/dicionario/" },
+    { "name": "Gramatiko", "url": "/gramatiko/" }
+  ]
+}

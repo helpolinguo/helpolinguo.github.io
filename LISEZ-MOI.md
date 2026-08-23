@@ -10,9 +10,11 @@ Une seule page, sans défilement, qui réunit les trois livres transcrits :
 
 ```
 index.html            la page entière — structure, style et script
+sw.js                 le servanto : hors-ligne pour les quatre pages (§ 9)
+manifest.webmanifest  le nom et les icônes de l'application (§ 9)
 pordo.css             le bouton de retour des trois livres (§ 8)
 emblemo.svg           l'emblème seul (favicon) et le dessin du bouton
-apple-touch-icon.png  le même, 180 × 180
+apple-touch-icon.png  le même, 180 × 180 ; ikono-192/512.png pour le manifeste
 og-imajo.png          1200 × 630, l'image de partage
 polices/              Jost* Bold et Medium, réduites à cette page
 outils/emblemo.py     reconstruit le logotype
@@ -263,7 +265,8 @@ Vérifié dans Chromium à 1440 × 900, 820 × 1180, 390 × 844, 844 × 390 et
 
 ## 7. Ce que la page demande au réseau
 
-Rien, hors d'elle-même. Le style et le script sont dans `index.html` ; les
+Rien, hors d'elle-même — `sw.js` et `manifest.webmanifest` (§ 9) sont servis
+par le site comme le reste. Le style et le script sont dans `index.html` ; les
 deux polices sont servies par le site (5,7 ko chacune, réduites aux seuls
 signes employés) ; le logotype est du SVG. Aucune requête vers un tiers, donc
 aucun traceur. Sans JavaScript, la page reste entière — marque, devise et
@@ -359,7 +362,92 @@ Deux choses à savoir :
 
 ---
 
-## 9. Refabriquer les images
+## 9. Hors-ligne, et le nom de l'application
+
+### Le nom
+
+Le titre de l'onglet reste **« Ido — helpolinguo internaciona »**. Sous une
+icône, un nom dispose de deux mots au plus : le manifeste et la balise
+d'Apple donnent donc **« Ido »** seul.
+
+```html
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Ido">
+```
+
+`manifest.webmanifest` porte aussi `short_name`, les icônes (`ikono-192.png`,
+`ikono-512.png`, refaites par `outils/ikoni.py`) et trois raccourcis vers les
+livres.
+
+> **Un choix qui mérite d'être su.** Le manifeste déclare
+> `"display": "standalone"`, et la balise `apple-mobile-web-app-capable`
+> l'accompagne pour les iOS antérieurs à 16.4 : l'application enregistrée
+> s'ouvre donc **sans l'habillage de Safari**. C'est ce que « web-app »
+> suppose, mais c'est un changement visible. Un seul mot à changer pour
+> revenir en arrière.
+
+### Le hors-ligne
+
+`sw.js`, posé à la racine, a pour **portée tout le site** : la porte et les
+trois livres, qui sont servis sous la même origine. Les trois dépôts n'ont
+donc rien à porter — ils sont pris en charge dès que la page d'accueil a été
+ouverte une fois. C'est le même bénéfice que pour `pordo.css` (§ 8).
+
+**La fraîcheur passe avant la vitesse**, puisque les textes sont corrigés
+souvent :
+
+| ce qui est demandé | comment | pourquoi |
+|---|---|---|
+| une **page** | réseau d'abord, copie en secours | en ligne, on lit toujours la dernière version |
+| **le reste** — feuille, polices, images, PDF | copie d'abord, revalidation derrière | ces fichiers changent rarement, l'attente ne se justifierait pas |
+
+Les requêtes au réseau portent `cache: 'reload'` : sans cela, le cache HTTP
+du navigateur rendrait une copie vieille de dix minutes — c'est la durée que
+GitHub Pages annonce.
+
+**Au retour de la connexion**, la page prévient le servanto, qui reprend au
+réseau *tout ce qu'il détient*. C'est ce qui répond au « dès que possible ».
+
+### Ce qui est pris, et quand
+
+| | poids | quand |
+|---|---|---|
+| la coquille — porte, feuille, polices, icônes | 0,07 Mo | à l'installation, pour tout visiteur |
+| les trois textes et les quatre PDF | ≈ 12 Mo | **seulement en application installée**, quatre secondes après l'ouverture |
+| les planches gravées des *Tabeli* | 3,9 ou 28 Mo | à la lecture, dans la résolution que l'appareil a choisie |
+
+Un visiteur qui ne fait que passer par la porte ne paie que les 0,07 Mo.
+Les planches existent en deux résolutions — 3,9 Mo pour l'écran, 28 Mo pour
+la loupe — et les prendre d'avance toutes les deux coûterait 32 Mo dont la
+moitié pour rien : le cache à la lecture retient celle que le `srcset` aura
+effectivement choisie.
+
+### Deux points de sûreté
+
+* **`addAll` n'est pas employé.** Il est atomique : un seul fichier manquant,
+  ou une seule requête qui échoue, et rien n'est mis en cache — la coquille
+  entière perdue pour un détail. Chaque fichier est pris séparément.
+* **Un déploiement fautif ne peut pas rester coincé**, puisque les pages sont
+  prises au réseau d'abord. Et pour tout purger : changer `VERSIO` en tête de
+  `sw.js` ; l'ancien cache est effacé à l'activation.
+
+### Vérifié dans Chromium
+
+Servi localement dans l'arborescence réelle, avec coupure du réseau :
+
+* la coquille est prise à l'installation — 9 entrées ; le corps sur demande —
+  7 entrées, soit 16 en tout ;
+* **hors ligne**, la porte, les trois livres et les PDF répondent tous, sans
+  qu'aucun livre ait été ouvert au préalable ;
+* une correction publiée est visible **au rechargement suivant** tant qu'on
+  est en ligne, et se retrouve ensuite hors ligne ;
+* une correction publiée *pendant* une coupure est reprise **une demi-seconde
+  après** le retour du réseau ;
+* l'entrée, le clic sur l'étoile et l'absence de défilement sont intacts.
+
+---
+
+## 10. Refabriquer les images
 
 ```sh
 python3 outils/emblemo.py   # le logotype, à recopier dans index.html

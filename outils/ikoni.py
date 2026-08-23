@@ -68,6 +68,16 @@ ati = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">'
 pymupdf.open(stream=ati.encode(), filetype='svg')[0]\
     .get_pixmap(dpi=72).save('apple-touch-icon.png')
 
+# Les icônes du manifeste : 192 et 512, sur fond azur comme celle d'iOS.
+for taille in (192, 512):
+    r = taille * 62 / 180
+    ikon = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {taille} {taille}">'
+            f'<rect width="{taille}" height="{taille}" fill="{AZUR}"/>'
+            f'<circle cx="{taille/2}" cy="{taille/2}" r="{r}" fill="#ffffff"/>'
+            f'{stelo(taille/2, taille/2, r, AZUR)}</svg>')
+    pymupdf.open(stream=ikon.encode(), filetype='svg')[0]\
+        .get_pixmap(dpi=72).save(f'ikono-{taille}.png')
+
 # --- L'image de partage ----------------------------------------------
 letroj, largo_ID = kurbi(bold, 'ID')
 cx, cy, R = largo_ID + KERN + DIAM/2, CAP/2, DIAM/2
