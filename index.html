@@ -215,18 +215,33 @@ body{background:var(--pap);color:var(--enk);
   to  {transform:translateX(0) rotate(0deg)}
 }
 
-/* Les lettres se tracent de gauche à droite. Le retard de chacune est
-   réglé sur le passage du disque : le I est dépassé au cinquième du
-   trajet, le D à la moitié — mais c'est le TEMPS qui compte, non le
-   chemin, et l'amorti de la courbe d'accélération les décale. Les deux
-   valeurs ci-dessous ont été relevées image par image. */
-.enkonduko .litero{animation:trasar .34s ease-out both}
-.enkonduko .litero-I{animation-delay:.34s}
-.enkonduko .litero-D{animation-delay:.60s; animation-duration:.44s}
-@keyframes trasar{
-  from{clip-path:inset(0 100% 0 0); opacity:.2}
-  to  {clip-path:inset(0 0 0 0); opacity:1}
+/* LES LETTRES NE SONT PAS ANIMEES : C'EST UN RIDEAU QUI LES DECOUVRE.
+   Elles étaient d'abord découpées chacune par sa propre animation, avec
+   son propre retard — et la coupure verticale se détachait du disque, qui
+   avait déjà roulé plus loin. On voyait la limite de l'animation au lieu
+   de voir la roue poser les lettres.
+
+   Le rideau est un rectangle de la couleur du papier, posé PAR-DESSUS les
+   lettres et SOUS le disque, dont le bord gauche suit exactement le centre
+   du disque : même durée, même retard, même courbe d'accélération, et une
+   translation qui est la MEME fonction du temps. Les deux ne peuvent donc
+   plus se désaccorder — ce n'est pas un réglage, c'est une identité.
+
+   ET LA COUPURE EST INVISIBLE, parce que le disque est plus haut que les
+   lettres : son diamètre vaut 745,6 contre 700 de hauteur de capitale. Au
+   sommet des capitales, là où le disque est le plus étroit, il s'étend
+   encore de 128,3 millièmes de part et d'autre de son centre. Le bord du
+   rideau, qui passe par ce centre, est donc couvert sur toute la hauteur
+   où il est peint.
+
+   Le rideau est confiné à la boîte de l'encre des lettres : il s'efface de
+   lui-même dès qu'il en sort, à la fin du roulement comme au repos. */
+.enkonduko .kurteno{animation:movar 1.55s cubic-bezier(.42,.02,.22,1) both}
+@keyframes movar{
+  from{transform:translateX(-1561.52px)}
+  to  {transform:translateX(0)}
 }
+.kurteno{fill:var(--pap)}
 
 /* Le reste de la page monte d'un cran, une fois la marque posée. */
 .enkonduko .devizo{animation:levar .55s ease-out 1.02s both}
@@ -243,7 +258,7 @@ body{background:var(--pap);color:var(--enk);
 @media (prefers-reduced-motion:reduce){
   .vorto{animation:none}
   /* L'entrée entière tombe : la page se peint dans son état final. */
-  .enkonduko .grupo-O,.enkonduko .litero,.enkonduko .devizo,
+  .enkonduko .grupo-O,.enkonduko .kurteno,.enkonduko .devizo,
   .enkonduko .pordi,.enkonduko .pedo,.enkonduko .cielo{animation:none}
   .cielo{transition:none}
   .marko .stelo{transition:none}
@@ -260,9 +275,29 @@ body{background:var(--pap);color:var(--enk);
     <h1 class="marko">
       <button type="button" id="turno" aria-label="Ido">
         <svg viewBox="74 -22.79 1736.76 745.57" role="img" aria-hidden="true" focusable="false">
+          <defs>
+          <!-- La boîte de l'encre des deux lettres — x de 74 à 1019, y de 0
+               à 700 — ELARGIE DE TROIS MILLIEMES sur les quatre côtés. Sans
+               cette marge, le bord du rideau tombait exactement sur celui des
+               lettres, et les deux anticrénelages ne se recouvraient pas tout
+               à fait : il restait une ligne d'un pixel, azurée, sur la ligne
+               de base. Le rideau étant de la couleur du papier, ses propres
+               bords ne se voient pas.
+               La marge ne compromet rien : à y = -3 comme à y = 703, le
+               disque s'étend encore de 119,9 millièmes de part et d'autre de
+               son centre, et couvre donc toujours le bord du rideau.
+               Le rideau y est confiné, et disparaît de lui-même quand il en
+               sort — à la fin du roulement, et au repos. -->
+          <clipPath id="literkesto" clipPathUnits="userSpaceOnUse">
+            <rect x="71" y="-3" width="951" height="706"/>
+          </clipPath>
+          </defs>
           <g transform="translate(0,700) scale(1,-1)" fill="currentColor">
           <path class="litero litero-I" transform="translate(0,0)" d="M74.0 700.0V0.0H246.0V700.0Z"/>
           <path class="litero litero-D" transform="translate(320,0)" d="M74.0 700.0V0.0H248.0V700.0ZM324.0 0.0Q439.0 0.0 523.0 43.0Q607.0 86.0 653.0 164.5Q699.0 243.0 699.0 350.0Q699.0 458.0 653.0 536.0Q607.0 614.0 523.0 657.0Q439.0 700.0 324.0 700.0H186.0V550.0H318.0Q358.0 550.0 395.5 540.0Q433.0 530.0 461.5 507.0Q490.0 484.0 507.0 445.5Q524.0 407.0 524.0 350.0Q524.0 293.0 507.0 254.5Q490.0 216.0 461.5 193.0Q433.0 170.0 395.5 160.0Q358.0 150.0 318.0 150.0H186.0V0.0Z"/>
+          </g>
+          <g clip-path="url(#literkesto)">
+            <rect class="kurteno" x="1438" y="-3" width="1500" height="706"/>
           </g>
           <g class="grupo-O">
           <circle cx="1438.0" cy="350.0" r="372.8" fill="currentColor"/>
