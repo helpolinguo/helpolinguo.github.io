@@ -21,44 +21,62 @@ CNAME                 le domaine, pour GitHub Pages
 
 ---
 
-## 1. La mise en ligne : pourquoi le dépôt doit s'appeler `gphmorin.github.io`
+## 1. Pourquoi ce dépôt s'appelle `gphmorin.github.io`
 
-C'est le point à régler avant tout le reste, car il ne dépend pas du code.
+Le nom n'est pas un choix : c'est lui qui fait tenir les adresses.
 
-GitHub Pages sert deux sortes de sites, et une seule des deux donne les
-adresses voulues :
+GitHub Pages sert deux sortes de sites, et une seule des deux donne
+`ido.help/tabeli` :
 
 * le **site d'utilisateur**, servi depuis le dépôt qui porte exactement le
-  nom `gphmorin.github.io`, à la racine `https://gphmorin.github.io/` ;
-* les **sites de projet**, un par dépôt, servis sous le nom du dépôt :
-  `https://gphmorin.github.io/tabeli/`, `…/dicionario/`, `…/gramatiko/`.
+  nom `gphmorin.github.io`, à la racine ;
+* les **sites de projet**, un par dépôt, servis sous le nom du dépôt.
 
 Quand un domaine personnalisé est posé **sur le site d'utilisateur**, GitHub
-lui rattache tout l'arbre : la racine *et* tous les sites de projet du même
-compte. C'est exactement le comportement attendu :
+lui rattache tout l'arbre — la racine *et* tous les sites de projet du même
+compte :
 
 ```
-ido.help/              <- le dépôt gphmorin.github.io
+ido.help/              <- ce dépôt
 ido.help/tabeli/       <- le dépôt tabeli,      automatiquement
 ido.help/dicionario/   <- le dépôt dicionario,  automatiquement
 ido.help/gramatiko/    <- le dépôt gramatiko,   automatiquement
 ```
 
-Poser le domaine sur un dépôt de projet — celui-ci, `ido.help` — ne donnerait
-PAS cela : `https://ido.help/` servirait cette page, et `https://ido.help/tabeli`
-répondrait 404, puisque ce dépôt ne contient pas de dossier `tabeli`.
+Posé sur un dépôt de projet, le domaine servirait bien cette page à la
+racine, mais `ido.help/tabeli` répondrait 404. D'où le nom, et d'où le fait
+que le nom du dépôt ne rappelle plus le domaine : celui-ci vit dans le
+fichier `CNAME`.
 
-**Donc :** le contenu de ce dépôt doit finir dans `GPhMorin/gphmorin.github.io`
-— soit en y recopiant les fichiers, soit en renommant ce dépôt (le dépôt
-`gphmorin.github.io` actuel, laissé en 2021, est alors à renommer ou à
-archiver d'abord).
+### Comment on en est arrivé là
 
-Ensuite, dans **Settings → Pages** de ce dépôt-là :
+Le nom était pris par le site *Rare diseases* de juin 2021. Trois contraintes
+ont dicté l'ordre des opérations, et méritent d'être notées si l'arrangement
+doit un jour être refait :
 
-1. *Custom domain* : `ido.help` — le fichier `CNAME` de ce dépôt le porte déjà ;
-2. cocher *Enforce HTTPS* une fois le certificat émis (quelques minutes).
+* **archiver ne libère pas un nom** — un compte ne peut pas avoir deux dépôts
+  homonymes ;
+* **un dépôt archivé est en lecture seule**, donc impossible à renommer sans
+  le désarchiver, et impossible à recevoir un `push` ;
+* la redirection que GitHub pose à chaque renommage tombe dès qu'un autre
+  dépôt reprend l'ancien nom.
 
-Et chez le registraire de `ido.help` :
+Le site de 2021 a donc d'abord été renommé `rare-diseases`, puis archivé — il
+continue d'être servi, un dépôt archivé gardant ses pages, mais sous
+`ido.help/rare-diseases/`. Ses anciennes adresses n'ont pas survécu au
+déplacement : il n'y avait pas moyen de les garder tout en mettant autre
+chose à la racine. Le dépôt `ido.help`, où cette page a été écrite, a ensuite
+pris le nom libéré, avec son historique et ses PR.
+
+### Les réglages qui doivent rester en place
+
+**Settings → Pages** de ce dépôt :
+
+* *Source* : `main`, dossier `/` ;
+* *Custom domain* : `ido.help` — le fichier `CNAME`, à la racine, le porte ;
+* *Enforce HTTPS*.
+
+Chez le registraire de `ido.help` :
 
 | type | nom | valeur |
 |---|---|---|
@@ -66,16 +84,20 @@ Et chez le registraire de `ido.help` :
 | AAAA | `@` | `2606:50c0:8000::153`, `…8001::153`, `…8002::153`, `…8003::153` |
 | CNAME | `www` | `gphmorin.github.io.` |
 
-Deux conditions à ne pas rompre :
+### Ce qui ne doit pas être rompu
 
-* **aucun des trois dépôts de livres ne doit avoir son propre domaine
-  personnalisé** — ils n'en ont pas aujourd'hui (pas de fichier `CNAME`), et
-  c'est ce qui leur permet d'être servis sous `ido.help/…` ;
-* les sous-domaines `*.ido.li`, qui sont aujourd'hui de simples redirections
-  HTTP chez IONOS (`217.160.0.251`) vers `gphmorin.github.io/<dépôt>`,
-  continueront de fonctionner : GitHub redirigera à son tour vers
-  `ido.help/<dépôt>`. On peut aussi les repointer directement, ou les garder
-  comme adresses courtes.
+* **Aucun des trois dépôts de livres ne doit avoir son propre domaine
+  personnalisé.** Ils n'en ont pas — pas de fichier `CNAME` — et c'est
+  précisément ce qui leur permet d'être servis sous `ido.help/…`.
+* **Le fichier `CNAME` ne doit pas disparaître.** Le supprimer détacherait le
+  domaine, et les trois adresses avec lui.
+* Les liens des trois boutons sont **absolus depuis la racine** (`/tabeli/`).
+  Ils valent donc aussi bien sous `gphmorin.github.io/` que sous `ido.help/` :
+  il n'y a rien à changer si le domaine devait tomber ou revenir.
+* Les sous-domaines `*.ido.li` sont de simples redirections HTTP chez IONOS
+  (`217.160.0.251`) vers `gphmorin.github.io/<dépôt>`. Ils continuent de
+  fonctionner : GitHub redirige à son tour vers `ido.help/<dépôt>`. On peut
+  aussi les repointer directement, ou les garder comme adresses courtes.
 
 ---
 

@@ -122,8 +122,18 @@ body{background:var(--pap);color:var(--enk);
 .marko svg{display:block;width:100%;height:auto}
 /* L'etoile est invariante par rotation d'un tiers de tour : la faire
    tourner de 120 degres la ramene exactement sur elle-meme. Un clic sur
-   la marque le fait voir. */
-.marko .stelo{transform-box:fill-box;transform-origin:center;
+   la marque le fait voir.
+
+   ELLE TOURNE AUTOUR DU CENTRE DU DISQUE, QUI N'EST PAS LE CENTRE DE SA
+   PROPRE BOITE. « center » l'y placait, et la rotation partait de 93
+   millièmes trop haut. La boite de l'etoile n'est pas centree sur le
+   disque parce que la figure ne l'est pas : la longue pointe du haut
+   touche le cercle, a un rayon du centre, tandis que les deux longues
+   pointes du bas ne descendent qu'a un demi-rayon. La boite fait donc
+   1,5 rayon de haut, et le centre du disque tombe a un rayon du sommet,
+   c'est-a-dire aux DEUX TIERS — exactement, non par approximation.
+   En largeur elle est symetrique, et le centre reste a la moitie. */
+.marko .stelo{transform-box:fill-box;transform-origin:50% 66.6667%;
  transition:rotate 1s cubic-bezier(.34,1.2,.4,1)}
 .marko button{display:block;width:100%;padding:0;border:0;background:none;
  cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
@@ -213,7 +223,7 @@ body{background:var(--pap);color:var(--enk);
 
   <p class="pedo">
     Tri libri en la publika domeno &mdash; 1925, 1926, 1964 &mdash;
-    transkriptita, lektebla e deskargebla.
+    transskribita, lektebla e deskargebla.
   </p>
 </div>
 
