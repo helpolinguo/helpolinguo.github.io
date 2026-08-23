@@ -10,7 +10,7 @@ Une seule page, sans défilement, qui réunit les trois livres transcrits :
 
 ```
 index.html            la page entière — structure, style et script
-pordo.css             le bouton de retour des trois livres (§ 7)
+pordo.css             le bouton de retour des trois livres (§ 8)
 emblemo.svg           l'emblème seul (favicon) et le dessin du bouton
 apple-touch-icon.png  le même, 180 × 180
 og-imajo.png          1200 × 630, l'image de partage
@@ -170,7 +170,51 @@ essais se multiplient — sans quoi il ne resterait que six ou sept mots.
 
 ---
 
-## 5. La page ne défile pas
+## 5. L'entrée
+
+Au chargement, on ne voit d'abord que le disque : il entre par la gauche en
+**roulant**, et les deux lettres se tracent à mesure qu'il les dépasse. Puis
+la devise, les trois portes et le pied montent d'un cran. L'ensemble dure une
+seconde et demie.
+
+**La distance n'est pas choisie à l'œil.** Une roue qui roule tourne d'un
+angle proportionnel au chemin parcouru : un tiers de tour vaut exactement un
+rayon fois 2π/3, soit 780,76 millièmes de cadratin. Le trajet en vaut deux —
+1561,52 —, et ce nombre a deux conséquences heureuses :
+
+1. l'étoile étant invariante par rotation d'un tiers de tour, elle **arrive
+   dans sa position canonique sans le moindre recalage** ;
+2. au départ, le bord droit du disque tombe à 249,3, et l'encre du I finit à
+   246 : le disque **couvre exactement le I**, ni plus ni moins.
+
+Le roulement est donc vrai, non mimé. C'est la même figure que le clic fait
+tourner ensuite, d'un tiers de tour à son tour (§ 2).
+
+Les retards des deux lettres sont réglés sur le passage du disque — son
+centre atteint le milieu du I vers 400 ms et celui du D vers 600 ms, relevé
+image par image, l'amorti de la courbe d'accélération décalant le temps par
+rapport au chemin. Chaque lettre commence à se tracer pendant que le disque
+la couvre encore : elle se découvre quand la roue la quitte, comme si la roue
+l'avait posée.
+
+Trois précautions :
+
+* la classe `enkonduko` est posée **dans le HTML** et non par le script —
+  sinon la page serait peinte une fois dans son état final avant que le
+  script n'agisse, et l'entrée commencerait par un sursaut ;
+* elle est retirée quand la roue s'arrête, mais aussi **au premier geste** :
+  qui touche la page a autre chose à faire que regarder une animation. Le
+  retrait fige tout dans l'état final, l'entrée est donc abrégeable à tout
+  instant. Un filet de sécurité la retire de toute façon au bout de 3,2 s ;
+* `prefers-reduced-motion` la supprime entièrement : la page se peint dans
+  son état final.
+
+Sans JavaScript, l'entrée se déroule quand même — elle est en CSS — et se
+termine d'elle-même sur l'état final.
+
+---
+
+## 6. La page ne défile pas
 
 Ni sur écran, ni sur téléphone. La scène est fixée à la vue (`100dvh`, qui
 suit la barre d'adresse quand elle se rétracte), et tout ce qu'elle contient
@@ -197,7 +241,7 @@ Vérifié dans Chromium à 1440 × 900, 820 × 1180, 390 × 844, 844 × 390 et
 
 ---
 
-## 6. Ce que la page demande au réseau
+## 7. Ce que la page demande au réseau
 
 Rien, hors d'elle-même. Le style et le script sont dans `index.html` ; les
 deux polices sont servies par le site (5,7 ko chacune, réduites aux seuls
@@ -213,7 +257,7 @@ pas le contraste sur `#16161a`.
 
 ---
 
-## 7. Le bouton de retour, sur les trois livres
+## 8. Le bouton de retour, sur les trois livres
 
 Les trois livres portent, dans le coin inférieur gauche, l'emblème azur en
 petit : un lien vers cette page. **Toute son apparence tient dans un seul
@@ -254,7 +298,7 @@ Deux choses à savoir :
 
 ---
 
-## 8. Refabriquer les images
+## 9. Refabriquer les images
 
 ```sh
 python3 outils/emblemo.py   # le logotype, à recopier dans index.html
