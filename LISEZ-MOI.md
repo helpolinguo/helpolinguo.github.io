@@ -5,7 +5,7 @@ Une seule page, sans défilement, qui réunit les trois livres transcrits :
 | bouton | dépôt | livre |
 |---|---|---|
 | **Tabeli** | `GPhMorin/tabeli` | *Expliko-Libreto di la Delmas-Tabeli helpanta*, 1926 |
-| **Dicionario** | `GPhMorin/dicionario` | *Dicionario de la 10.000 radiki*, 1964 |
+| **Dicionario** | `GPhMorin/dicionario` | *Dicionario de la 10.000 radiki*, 1934/1964 |
 | **Gramatiko** | `GPhMorin/gramatiko` | *Kompleta Gramatiko Detaloza*, 1925 |
 
 ```
