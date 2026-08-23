@@ -21,7 +21,7 @@ CNAME                 le domaine, pour GitHub Pages
 
 ---
 
-## 1. La mise en ligne : pourquoi le dépôt doit s'appeler `gphmorin.github.io`
+## 1. La mise en ligne : ce dépôt doit s'appeler `gphmorin.github.io`
 
 C'est le point à régler avant tout le reste, car il ne dépend pas du code.
 
@@ -44,21 +44,42 @@ ido.help/dicionario/   <- le dépôt dicionario,  automatiquement
 ido.help/gramatiko/    <- le dépôt gramatiko,   automatiquement
 ```
 
-Poser le domaine sur un dépôt de projet — celui-ci, `ido.help` — ne donnerait
-PAS cela : `https://ido.help/` servirait cette page, et `https://ido.help/tabeli`
-répondrait 404, puisque ce dépôt ne contient pas de dossier `tabeli`.
+Poser le domaine sur un dépôt de projet ne donnerait PAS cela :
+`https://ido.help/` servirait bien cette page, mais `https://ido.help/tabeli`
+répondrait 404, puisque le dépôt ne contient pas de dossier `tabeli`.
 
-**Donc :** le contenu de ce dépôt doit finir dans `GPhMorin/gphmorin.github.io`
-— soit en y recopiant les fichiers, soit en renommant ce dépôt (le dépôt
-`gphmorin.github.io` actuel, laissé en 2021, est alors à renommer ou à
-archiver d'abord).
+### La marche à suivre
 
-Ensuite, dans **Settings → Pages** de ce dépôt-là :
+Le nom `gphmorin.github.io` est déjà pris par le site *Rare diseases* de juin
+2021. Trois choses à savoir avant de commencer :
 
-1. *Custom domain* : `ido.help` — le fichier `CNAME` de ce dépôt le porte déjà ;
-2. cocher *Enforce HTTPS* une fois le certificat émis (quelques minutes).
+* **archiver ne libère pas le nom** — un compte ne peut pas avoir deux dépôts
+  homonymes ;
+* **un dépôt archivé est en lecture seule**, donc impossible à renommer sans
+  le désarchiver, et impossible à recevoir un `push` ;
+* GitHub pose une redirection à chaque renommage, mais elle tombe dès qu'un
+  nouveau dépôt reprend l'ancien nom.
 
-Et chez le registraire de `ido.help` :
+D'où cet ordre, qui n'a pas d'autre solution :
+
+1. **Renommer** `GPhMorin/gphmorin.github.io` en `rare-diseases`
+   (*Settings → General → Repository name*). Son site Pages, s'il est encore
+   servi, passe de `gphmorin.github.io/` à `gphmorin.github.io/rare-diseases/`
+   — puis à `ido.help/rare-diseases/` une fois le domaine posé. Les anciennes
+   adresses de ce site-là ne survivent pas au déplacement ; il n'y a pas moyen
+   de les garder tout en mettant autre chose à la racine.
+2. **Archiver** `rare-diseases` (*Settings → General → Danger Zone → Archive
+   this repository*). Un dépôt archivé continue de servir ses pages ; il
+   n'accepte plus d'écriture, ce qui est le but.
+3. **Fusionner** la présente branche dans `main`.
+4. **Renommer** `GPhMorin/ido.help` en `gphmorin.github.io`. Le dépôt garde son
+   historique, ses PR et ses réglages ; seule l'adresse change, et les clones
+   locaux suivent la redirection.
+5. Dans **Settings → Pages** de ce dépôt :
+   * *Source* : `main`, dossier `/` ;
+   * *Custom domain* : `ido.help` — le fichier `CNAME` le porte déjà ;
+   * *Enforce HTTPS*, une fois le certificat émis (quelques minutes).
+6. Chez le registraire de `ido.help` :
 
 | type | nom | valeur |
 |---|---|---|
@@ -66,13 +87,20 @@ Et chez le registraire de `ido.help` :
 | AAAA | `@` | `2606:50c0:8000::153`, `…8001::153`, `…8002::153`, `…8003::153` |
 | CNAME | `www` | `gphmorin.github.io.` |
 
-Deux conditions à ne pas rompre :
+Le nom du dépôt ne rappellera plus le domaine : c'est GitHub qui l'impose, et
+le domaine vit désormais dans le fichier `CNAME`.
 
-* **aucun des trois dépôts de livres ne doit avoir son propre domaine
-  personnalisé** — ils n'en ont pas aujourd'hui (pas de fichier `CNAME`), et
-  c'est ce qui leur permet d'être servis sous `ido.help/…` ;
-* les sous-domaines `*.ido.li`, qui sont aujourd'hui de simples redirections
-  HTTP chez IONOS (`217.160.0.251`) vers `gphmorin.github.io/<dépôt>`,
+### Ce qui ne doit pas être rompu
+
+* **Aucun des trois dépôts de livres ne doit avoir son propre domaine
+  personnalisé.** Ils n'en ont pas aujourd'hui — pas de fichier `CNAME` — et
+  c'est précisément ce qui leur permet d'être servis sous `ido.help/…`.
+* Les liens des trois boutons sont **absolus depuis la racine** (`/tabeli/`).
+  Ils fonctionnent donc aussi bien avant qu'après la pose du domaine :
+  `gphmorin.github.io/tabeli/` d'abord, `ido.help/tabeli/` ensuite. Rien à
+  changer entre les deux étapes.
+* Les sous-domaines `*.ido.li` sont aujourd'hui de simples redirections HTTP
+  chez IONOS (`217.160.0.251`) vers `gphmorin.github.io/<dépôt>`. Ils
   continueront de fonctionner : GitHub redirigera à son tour vers
   `ido.help/<dépôt>`. On peut aussi les repointer directement, ou les garder
   comme adresses courtes.
