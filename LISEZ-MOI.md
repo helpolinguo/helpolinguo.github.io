@@ -414,13 +414,34 @@ réseau *tout ce qu'il détient*. C'est ce qui répond au « dès que possible �
 |---|---|---|
 | la coquille — porte, feuille, polices, icônes | 0,07 Mo | à l'installation, pour tout visiteur |
 | les trois textes et les quatre PDF | ≈ 12 Mo | **seulement en application installée**, quatre secondes après l'ouverture |
+| les 52 langues des *Tabeli* | 24,5 Mo | à la suite, dans l'ordre où la page les cite |
 | les planches gravées des *Tabeli* | 3,9 ou 28 Mo | à la lecture, dans la résolution que l'appareil a choisie |
+
+Soit **37 Mo** en tout pour l'application installée, planches non comprises —
+mesuré par `navigator.storage.estimate()`.
 
 Un visiteur qui ne fait que passer par la porte ne paie que les 0,07 Mo.
 Les planches existent en deux résolutions — 3,9 Mo pour l'écran, 28 Mo pour
 la loupe — et les prendre d'avance toutes les deux coûterait 32 Mo dont la
 moitié pour rien : le cache à la lecture retient celle que le `srcset` aura
 effectivement choisie.
+
+**Pourquoi les langues.** La page des *Tabeli* est bilingue : l'ido à gauche,
+une autre langue à droite. Cette autre langue n'est pas dans la page — elle
+est prise au moment où on la choisit, un fichier par langue. Hors ligne, une
+langue jamais ouverte manquait donc, et le sélecteur restait sans effet.
+
+**La liste n'est pas écrite dans `sw.js`.** Elle est lue dans la page
+elle-même, déjà en cache : une liste recopiée vieillirait au premier
+changement d'adresse. Les langues sont prises dans l'ordre où la page les
+cite, de sorte qu'une prise interrompue couvre d'abord les plus courantes.
+
+**Les adresses versionnées sont immuables.** Langues et planches portent
+toutes un `?v=` : une correction en change l'adresse, et la page — toujours
+prise au réseau — cite la nouvelle. Deux conséquences : on ne les revalide
+jamais au retour de la connexion, ce qui éviterait de reprendre 24 Mo pour
+rien ; et on purge celles que la page ne cite plus, sans quoi les anciennes
+resteraient indéfiniment.
 
 ### Deux points de sûreté
 
@@ -443,6 +464,11 @@ Servi localement dans l'arborescence réelle, avec coupure du réseau :
   est en ligne, et se retrouve ensuite hors ligne ;
 * une correction publiée *pendant* une coupure est reprise **une demi-seconde
   après** le retour du réseau ;
+* les 52 langues sont prises, et **hors ligne le sélecteur fonctionne** — le
+  français, l'allemand et le japonais remplissent leurs 672 blocs sans que
+  les *Tabeli* aient été ouvertes auparavant ;
+* une entrée versionnée devenue périmée est **purgée** au passage suivant ;
+* la place occupée est de **37 Mo**, planches non comprises ;
 * l'entrée, le clic sur l'étoile et l'absence de défilement sont intacts.
 
 ---
