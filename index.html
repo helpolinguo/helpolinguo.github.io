@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="io">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ido — helpolinguo internaciona</title>
+<meta name="description" content="Tri libri dil helpolinguo internaciona Ido, lektebla e deskargebla: la Delmas-Tabeli (1926), la Dicionario di la 10.000 radiki (1964), la Kompleta Gramatiko Detaloza (1925).">
+<link rel="icon" href="emblemo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="Ido — helpolinguo internaciona">
+<meta property="og:description" content="Tri libri dil helpolinguo internaciona Ido: la Delmas-Tabeli, la Dicionario di la 10.000 radiki, la Kompleta Gramatiko Detaloza.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://ido.help/og-imajo.png">
+<meta property="og:url" content="https://ido.help/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preload" href="polices/Jost-Medium.woff2" as="font" type="font/woff2" crossorigin>
+
+<style>
+/* =====================================================================
+   PORDO-PAGINO — ido.help
+   =====================================================================
+
+   La page ne porte qu'une chose : la marque du livre, sa devise, et
+   trois portes. Elle NE DEFILE PAS — ni sur ecran, ni sur telephone :
+   tout est mesure en unites de vue (svh, vw) et borne par « min() »,
+   de sorte que le bloc central tienne dans la plus PETITE hauteur que
+   le navigateur puisse offrir — celle ou la barre d'adresse est
+   deployee. C'est « svh » et non « vh » qui le garantit sur iOS.
+   ===================================================================== */
+
+/* --- Les polices ------------------------------------------------------
+   Jost* Bold et Medium, reduites aux seuls signes de cette page (5,7 ko
+   chacune au lieu de 59). Ce sont celles de la couverture du Dicionario :
+   la reprise libre de la Futura, sous licence SIL OFL — voir
+   polices/OFL.txt. Elles sont servies par le site meme : aucune requete
+   vers un tiers, donc aucun temps mort et aucun traceur. */
+@font-face{font-family:Jost;font-style:normal;font-weight:500;font-display:swap;
+ src:url(polices/Jost-Medium.woff2) format("woff2")}
+@font-face{font-family:Jost;font-style:normal;font-weight:700;font-display:swap;
+ src:url(polices/Jost-Bold.woff2) format("woff2")}
+
+/* --- Les couleurs -----------------------------------------------------
+   Les cinq jetons des trois pages de lecture (papier, encre, gris,
+   filet) plus l'AZUR du livre, #007FFF — la couleur nommee a mi-chemin
+   du bleu et du cyan, celle des deux plats et du disque du Dicionario.
+   En mode sombre l'azur s'eclaircit : pose sur #16161a, #007FFF ne tient
+   pas le contraste d'un texte de petit corps. */
+:root{
+  --azuro:#007FFF;
+  --pap:#fbfaf7; --enk:#1a1a1a; --sub:#6b6560; --lin:#e2ddd5;
+  --vualo:rgba(0,127,255,.055);
+}
+@media (prefers-color-scheme:dark){:root{
+  --azuro:#4da3ff;
+  --pap:#16161a; --enk:#e8e4de; --sub:#9a938c; --lin:#2c2c33;
+  --vualo:rgba(77,163,255,.07);
+}}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+body{background:var(--pap);color:var(--enk);
+ font:16px/1.55 "Iowan Old Style",Palatino,"Palatino Linotype",Georgia,serif;
+ -webkit-text-size-adjust:100%}
+
+/* La scene occupe la vue entiere. « dvh » la fait suivre la barre
+   d'adresse quand elle se retracte, pour que le bloc reste optiquement
+   centre ; le contenu, lui, est dimensionne en « svh » et tient donc
+   dans le cas le plus etroit. */
+.sceno{position:fixed;inset:0;height:100vh;height:100dvh;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ padding:16px;isolation:isolate}
+
+/* =====================================================================
+   1. LE CIEL — « langue auxiliaire internationale » en soixante langues
+   =====================================================================
+   Les mots sont poses par le script, jamais deux qui se recouvrent, et
+   aucun sous le bloc central : la mesure se fait sur les rectangles
+   reels, ce qui vaut pour toute taille de fenetre. Ils derivent
+   lentement, chacun a son pas. Le calque entier se decale de quelques
+   pixels sous le pointeur — une parallaxe, pas un mouvement. */
+.cielo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ transform:translate3d(var(--px,0px),var(--py,0px),0);
+ transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.vorto{position:absolute;white-space:nowrap;color:var(--sub);
+ opacity:var(--op,.3);font-size:var(--sz,14px);letter-spacing:.01em;
+ will-change:transform;
+ animation:flosar var(--dur,32s) ease-in-out var(--del,0s) infinite}
+@keyframes flosar{
+  0%,100%{transform:translate(0,0)}
+  25%{transform:translate(var(--dx),calc(var(--dy) * -1))}
+  50%{transform:translate(calc(var(--dx) * -.6),var(--dy))}
+  75%{transform:translate(var(--dx),calc(var(--dy) * .4))}
+}
+/* Sur une machine a pointeur, chaque mot se laisse survoler et dit sa
+   langue. Le calque reprend donc les evenements — mais lui seul : le
+   bloc central est au-dessus (z-index), les boutons restent atteignables. */
+@media (hover:hover) and (pointer:fine){
+  .cielo{pointer-events:auto}
+  .vorto{cursor:help;transition:color .18s,opacity .18s}
+  .vorto:hover{color:var(--azuro);opacity:.95}
+  .vorto::after{content:attr(data-lg);position:absolute;left:0;top:100%;
+   font:600 10.5px/1.4 system-ui,sans-serif;letter-spacing:.08em;
+   text-transform:uppercase;color:var(--azuro);opacity:0;white-space:nowrap;
+   transition:opacity .18s;pointer-events:none}
+  .vorto:hover::after{opacity:.85}
+}
+
+/* =====================================================================
+   2. LA MARQUE ET LA DEVISE
+   =====================================================================
+   Une seule mesure commande la page : --largo, la largeur du logotype.
+   La devise et les trois boutons s'y alignent exactement. Elle est
+   bornee par trois valeurs — la largeur de la vue, sa hauteur, et un
+   maximum absolu — et c'est la plus petite qui l'emporte : la page tient
+   ainsi aussi bien sur un telephone couche que sur un grand ecran. */
+.bloko{position:relative;z-index:2;
+ --largo:min(74vw,54svh,560px);
+ width:var(--largo);display:flex;flex-direction:column;align-items:center}
+.marko{display:block;width:100%;margin:0;color:var(--azuro);
+ --stelo:var(--pap)}
+.marko svg{display:block;width:100%;height:auto}
+/* L'etoile est invariante par rotation d'un tiers de tour : la faire
+   tourner de 120 degres la ramene exactement sur elle-meme. Un clic sur
+   la marque le fait voir. */
+.marko .stelo{transform-box:fill-box;transform-origin:center;
+ transition:rotate 1s cubic-bezier(.34,1.2,.4,1)}
+.marko button{display:block;width:100%;padding:0;border:0;background:none;
+ cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.marko button:focus-visible{outline:2px solid var(--azuro);outline-offset:6px;
+ border-radius:4px}
+
+/* La devise fait exactement la largeur du logotype : le texte est pose
+   dans un SVG de meme boite, avec « textLength », et c'est l'approche
+   qui s'etire — non le dessin des lettres. L'accord est donc exact a
+   toute taille, et ne depend pas de la police qui aura ete chargee. */
+.devizo{display:block;width:100%;margin:clamp(10px,1.8svh,20px) 0 0}
+.devizo svg{display:block;width:100%;height:auto}
+
+/* =====================================================================
+   3. LES TROIS PORTES
+   ===================================================================== */
+.pordi{display:flex;gap:9px;width:100%;margin-top:clamp(16px,3.4svh,34px)}
+.pordo{flex:1 1 0;min-width:0;
+ display:flex;align-items:center;justify-content:center;
+ padding:clamp(9px,1.5svh,13px) 6px;
+ border:1px solid var(--lin);border-radius:9px;background:var(--pap);
+ color:var(--azuro);text-decoration:none;
+ font:500 clamp(13px,1.65vh + .8vw,17px)/1 Jost,system-ui,sans-serif;
+ letter-spacing:.02em;white-space:nowrap;
+ transition:background .16s,border-color .16s,color .16s,transform .16s}
+.pordo:hover{background:var(--azuro);border-color:var(--azuro);color:var(--pap);
+ transform:translateY(-2px)}
+.pordo:active{transform:translateY(0)}
+.pordo:focus-visible{outline:2px solid var(--azuro);outline-offset:3px}
+/* Sur un telephone tenu debout, trois mots cote a cote deviennent
+   illisibles bien avant d'etre a l'etroit : ils passent alors l'un sous
+   l'autre, toujours a la largeur du logotype. */
+@media (max-width:430px) and (orientation:portrait){
+  .pordi{flex-direction:column;gap:8px}
+}
+
+/* =====================================================================
+   4. LE PIED
+   ===================================================================== */
+.pedo{position:absolute;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));
+ z-index:2;text-align:center;color:var(--sub);font-size:12px;line-height:1.5;
+ padding:0 16px}
+@media (max-height:430px){.pedo{display:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .vorto{animation:none}
+  .cielo{transition:none}
+  .marko .stelo{transition:none}
+  .pordo{transition:background .16s,color .16s}
+}
+</style>
+</head>
+<body>
+
+<div class="sceno">
+  <div class="cielo" id="cielo" aria-hidden="true"></div>
+
+  <div class="bloko">
+    <h1 class="marko">
+      <button type="button" id="turno" aria-label="Ido">
+        <svg viewBox="74 -22.79 1736.76 745.57" role="img" aria-hidden="true" focusable="false">
+          <g transform="translate(0,700) scale(1,-1)" fill="currentColor">
+          <path transform="translate(0,0)" d="M74.0 700.0V0.0H246.0V700.0Z"/>
+          <path transform="translate(320,0)" d="M74.0 700.0V0.0H248.0V700.0ZM324.0 0.0Q439.0 0.0 523.0 43.0Q607.0 86.0 653.0 164.5Q699.0 243.0 699.0 350.0Q699.0 458.0 653.0 536.0Q607.0 614.0 523.0 657.0Q439.0 700.0 324.0 700.0H186.0V550.0H318.0Q358.0 550.0 395.5 540.0Q433.0 530.0 461.5 507.0Q490.0 484.0 507.0 445.5Q524.0 407.0 524.0 350.0Q524.0 293.0 507.0 254.5Q490.0 216.0 461.5 193.0Q433.0 170.0 395.5 160.0Q358.0 150.0 318.0 150.0H186.0V0.0Z"/>
+          </g>
+          <circle cx="1438.0" cy="350.0" r="372.8" fill="currentColor"/>
+          <polygon class="stelo" points="1438.0,-22.8 1384.2,256.8 1276.6,256.8 1330.4,350.0 1115.1,536.4 1384.2,443.2 1438.0,536.4 1491.8,443.2 1760.8,536.4 1545.6,350.0 1599.4,256.8 1491.8,256.8" fill="var(--stelo,#fbfaf7)"/>
+        </svg>
+      </button>
+    </h1>
+
+    <p class="devizo">
+      <svg viewBox="0 32 1736.76 132" role="img" aria-label="helpolinguo internaciona">
+        <text x="-9.11" y="135" textLength="1753.39" lengthAdjust="spacing"
+              font-family="Jost, system-ui, sans-serif" font-weight="500"
+              font-size="132" fill="var(--enk)" opacity=".82"
+              aria-hidden="true">helpolinguo internaciona</text>
+      </svg>
+    </p>
+
+    <nav class="pordi" aria-label="La tri libri">
+      <a class="pordo" href="/tabeli/">Tabeli</a>
+      <a class="pordo" href="/dicionario/">Dicionario</a>
+      <a class="pordo" href="/gramatiko/">Gramatiko</a>
+    </nav>
+  </div>
+
+  <p class="pedo">
+    Tri libri en la publika domeno &mdash; 1925, 1926, 1964 &mdash;
+    transkriptita, lektebla e deskargebla.
+  </p>
+</div>
+
+<script>
+/* =====================================================================
+   LE CIEL
+   =====================================================================
+   « Langue auxiliaire internationale », dans les langues nationales.
+   L'ordre alterne volontairement les familles et les ecritures : quand
+   la fenetre est petite, seuls les premiers mots trouvent une place, et
+   il faut que ce debut soit deja varie.
+   ===================================================================== */
+const VORTI = [
+ ["Français","fr","langue auxiliaire internationale"],
+ ["Русский","ru","международный вспомогательный язык"],
+ ["日本語","ja","国際補助語"],
+ ["English","en","international auxiliary language"],
+ ["العربية","ar","لغة مساعدة دولية"],
+ ["Suomi","fi","kansainvälinen apukieli"],
+ ["中文","zh","国际辅助语"],
+ ["Español","es","lengua auxiliar internacional"],
+ ["Türkçe","tr","uluslararası yardımcı dil"],
+ ["Ελληνικά","el","διεθνής βοηθητική γλώσσα"],
+ ["Deutsch","de","internationale Hilfssprache"],
+ ["हिन्दी","hi","अंतर्राष्ट्रीय सहायक भाषा"],
+ ["Polski","pl","międzynarodowy język pomocniczy"],
+ ["한국어","ko","국제 보조어"],
+ ["Italiano","it","lingua ausiliaria internazionale"],
+ ["עברית","he","שפת עזר בינלאומית"],
+ ["Magyar","hu","nemzetközi segédnyelv"],
+ ["Kiswahili","sw","lugha saidizi ya kimataifa"],
+ ["Português","pt","língua auxiliar internacional"],
+ ["ไทย","th","ภาษาช่วยระหว่างประเทศ"],
+ ["Nederlands","nl","internationale hulptaal"],
+ ["Українська","uk","міжнародна допоміжна мова"],
+ ["Latina","la","lingua auxiliaris internationalis"],
+ ["Tiếng Việt","vi","ngôn ngữ phụ trợ quốc tế"],
+ ["Svenska","sv","internationellt hjälpspråk"],
+ ["فارسی","fa","زبان کمکی بین‌المللی"],
+ ["Čeština","cs","mezinárodní pomocný jazyk"],
+ ["ქართული","ka","საერთაშორისო დამხმარე ენა"],
+ ["Català","ca","llengua auxiliar internacional"],
+ ["Bahasa Indonesia","id","bahasa bantu internasional"],
+ ["Dansk","da","internationalt hjælpesprog"],
+ ["বাংলা","bn","আন্তর্জাতিক সহায়ক ভাষা"],
+ ["Română","ro","limbă auxiliară internațională"],
+ ["Հայերեն","hy","միջազգային օժանդակ լեզու"],
+ ["Norsk","no","internasjonalt hjelpespråk"],
+ ["Български","bg","международен спомагателен език"],
+ ["Esperanto","eo","internacia helplingvo"],
+ ["தமிழ்","ta","சர்வதேச துணை மொழி"],
+ ["Slovenčina","sk","medzinárodný pomocný jazyk"],
+ ["Қазақ","kk","халықаралық көмекші тіл"],
+ ["Íslenska","is","alþjóðlegt hjálpartungumál"],
+ ["Hrvatski","hr","međunarodni pomoćni jezik"],
+ ["Монгол","mn","олон улсын туслах хэл"],
+ ["Eesti","et","rahvusvaheline abikeel"],
+ ["Српски","sr","међународни помоћни језик"],
+ ["Interlingua","ia","lingua auxiliar international"],
+ ["Lietuvių","lt","tarptautinė pagalbinė kalba"],
+ ["Afrikaans","af","internasionale hulptaal"],
+ ["Slovenščina","sl","mednarodni pomožni jezik"],
+ ["Oʻzbek","uz","xalqaro yordamchi til"],
+ ["Latviešu","lv","starptautiskā palīgvaloda"],
+ ["Shqip","sq","gjuhë ndihmëse ndërkombëtare"],
+ ["Gaeilge","ga","teanga chúnta idirnáisiúnta"],
+ ["Bahasa Melayu","ms","bahasa bantuan antarabangsa"],
+ ["Malti","mt","lingwa awżiljarja internazzjonali"],
+ ["Cymraeg","cy","iaith gynorthwyol ryngwladol"],
+ ["Galego","gl","lingua auxiliar internacional"],
+ ["Euskara","eu","nazioarteko laguntza-hizkuntza"],
+ ["Filipino","fil","pandaigdigang wikang pantulong"]
+];
+
+/* Un tirage PSEUDO-aleatoire, mais a graine fixe : la disposition est la
+   meme a chaque visite pour une meme fenetre. Elle a ete reglee a l'oeil ;
+   un vrai hasard la referait a chaque chargement, et parfois moins bien. */
+function hazardo(a){return function(){a|=0;a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;
+  return((t^t>>>14)>>>0)/4294967296}}
+
+const cielo=document.getElementById('cielo');
+const bloko=document.querySelector('.bloko');
+let pozita=[];
+
+function semar(){
+  cielo.textContent='';
+  const L=cielo.clientWidth, A=cielo.clientHeight;
+  if(!L||!A) return;
+
+  const b=bloko.getBoundingClientRect();
+  const c=document.querySelector('.pedo').getBoundingClientRect();
+  const interdikto=[];
+
+  /* Le corps suit la fenetre : sur un telephone, les memes corps qu'un
+     grand ecran donneraient trois mots et rien d'autre. */
+  const eskalo=Math.min(1,L/1040)*(A<560?.86:1);
+  const KORPI=[21,15,13,17,12,14,19,12.5,16,13.5];
+  const r=hazardo(0x1D0);
+  pozita=[];
+
+  /* Sur une petite fenetre, le bloc central mange les deux tiers de la
+     place : sans desserrer les ecarts et sans multiplier les essais, il
+     ne resterait que six ou sept mots, et le ciel serait vide. */
+  const strita=L<560;
+  const MARJ=strita?12:26, INTERV=strita?8:13,
+        ESAI=strita?260:110, MINKORP=strita?9.5:10.5;
+
+  /* Le bloc central, elargi : rien ne s'en approche. */
+  interdikto.push({x:b.left-MARJ,y:b.top-MARJ,w:b.width+2*MARJ,h:b.height+2*MARJ});
+  if(c.height) interdikto.push({x:c.left,y:c.top-12,w:c.width,h:c.height+16});
+
+  for(let i=0;i<VORTI.length;i++){
+    const [lg,kodo,tx]=VORTI[i];
+    const s=document.createElement('span');
+    s.className='vorto'; s.lang=kodo; s.dir='auto';
+    s.dataset.lg=lg; s.textContent=tx;
+    const sz=Math.max(MINKORP,KORPI[i%KORPI.length]*eskalo);
+    s.style.setProperty('--sz',sz.toFixed(1)+'px');
+    s.style.visibility='hidden'; s.style.left='0'; s.style.top='0';
+    cielo.appendChild(s);
+    const l=s.offsetWidth, h=s.offsetHeight;
+    if(l>L-24){s.remove();continue}
+
+    let pozo=null;
+    for(let p=0;p<ESAI;p++){
+      const x=12+r()*(L-l-24), y=10+r()*(A-h-20);
+      const kand={x,y,w:l,h};
+      if(interdikto.some(k=>kolizo(kand,k,0))) continue;
+      if(pozita.some(k=>kolizo(kand,k,INTERV))) continue;
+      pozo=kand; break;
+    }
+    if(!pozo){s.remove();continue}
+    pozita.push(pozo);
+
+    /* Plus un mot est loin du centre, plus il s'affirme : le regard va
+       ainsi au bloc, et le ciel reste un fond. */
+    const dx=(pozo.x+l/2)/L-.5, dy=(pozo.y+h/2)/A-.5;
+    const fora=Math.min(1,Math.hypot(dx*1.15,dy)*2.1);
+    s.style.setProperty('--op',(.17+fora*.26).toFixed(3));
+    s.style.left=Math.round(pozo.x)+'px';
+    s.style.top=Math.round(pozo.y)+'px';
+    s.style.setProperty('--dx',(4+r()*9).toFixed(1)+'px');
+    s.style.setProperty('--dy',(4+r()*8).toFixed(1)+'px');
+    s.style.setProperty('--dur',(26+r()*26).toFixed(1)+'s');
+    s.style.setProperty('--del',(-r()*40).toFixed(1)+'s');
+    s.style.visibility='';
+  }
+}
+function kolizo(a,b,m){
+  return a.x < b.x+b.w+m && a.x+a.w+m > b.x &&
+         a.y < b.y+b.h+m && a.y+a.h+m > b.y;
+}
+
+/* Les polices changent la largeur des mots : on seme une premiere fois
+   tout de suite, puis a nouveau quand elles sont la. */
+semar();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(semar);
+
+let horlojo;
+addEventListener('resize',()=>{clearTimeout(horlojo);horlojo=setTimeout(semar,160)});
+addEventListener('orientationchange',()=>setTimeout(semar,260));
+
+/* --- La parallaxe. Quelques pixels, et seulement sous un vrai pointeur. */
+if(matchMedia('(hover:hover) and (pointer:fine)').matches &&
+   !matchMedia('(prefers-reduced-motion:reduce)').matches){
+  addEventListener('pointermove',e=>{
+    const x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5);
+    cielo.style.setProperty('--px',(-x*16).toFixed(1)+'px');
+    cielo.style.setProperty('--py',(-y*12).toFixed(1)+'px');
+  },{passive:true});
+}
+
+/* --- L'etoile. Un tiers de tour : la figure revient sur elle-meme. */
+let anguli=0;
+document.getElementById('turno').addEventListener('click',()=>{
+  anguli+=120;
+  document.querySelector('.marko .stelo').style.rotate=anguli+'deg';
+});
+</script>
+</body>
+</html>
