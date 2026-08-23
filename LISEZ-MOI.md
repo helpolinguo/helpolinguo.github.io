@@ -286,6 +286,23 @@ délai qu'il faut compter.
 
 Deux choses à savoir :
 
+* **L'écart au coin est de 24 px, et ce n'est pas un réglage d'apparence.**
+  Un écran de téléphone a des coins arrondis, et l'arrondi mange la vue en
+  diagonale : un coin de rayon *r* coupe tout ce qui se trouve, sur la
+  diagonale, à moins de *r*(√2−1) ≈ 0,414 *r* du coin. Le point du disque le
+  plus proche du coin est à √2(*m* + *R*) − (*R* + *h*), où *m* est l'écart,
+  *R* le rayon du disque et *h* le halo. Avec l'écart de 12 px qu'avait
+  d'abord ce bouton, cela donnait 20,8 px : il fallait un écran de rayon
+  inférieur à 50 px pour que rien ne soit rogné — or un iPhone récent tourne
+  autour de 55 à 62, et le bouton y était mangé. À 24 px, le jeu passe à
+  37,8 px et tient jusqu'à un rayon de 91. Le nombre est isolé dans la
+  variable `--marjo`, en tête de `pordo.css`.
+
+  Les encoches restent prises en compte par-dessus, `max` retenant la plus
+  grande des deux contraintes — mais `env(safe-area-inset-*)` ne vaut que sur
+  une page déclarant `viewport-fit=cover`, ce que les trois livres ne font
+  pas. C'est donc bien l'écart littéral qui les protège.
+
 * **Sur les deux livres à volet latéral** — la *Gramatiko* et les *Tabeli* —
   le disque flotte au-dessus de la table des matières et en recouvre le
   début d'une ligne. La ligne reste cliquable : le disque fait 42 px sur
