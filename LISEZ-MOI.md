@@ -190,12 +190,32 @@ rayon fois 2π/3, soit 780,76 millièmes de cadratin. Le trajet en vaut deux —
 Le roulement est donc vrai, non mimé. C'est la même figure que le clic fait
 tourner ensuite, d'un tiers de tour à son tour (§ 2).
 
-Les retards des deux lettres sont réglés sur le passage du disque — son
-centre atteint le milieu du I vers 400 ms et celui du D vers 600 ms, relevé
-image par image, l'amorti de la courbe d'accélération décalant le temps par
-rapport au chemin. Chaque lettre commence à se tracer pendant que le disque
-la couvre encore : elle se découvre quand la roue la quitte, comme si la roue
-l'avait posée.
+**Les lettres ne sont pas animées : c'est un rideau qui les découvre.** Elles
+étaient d'abord découpées chacune par sa propre animation, avec son propre
+retard — et la coupure verticale se détachait du disque, qui avait déjà roulé
+plus loin. On voyait la limite de l'animation au lieu de voir la roue poser
+les lettres.
+
+Le rideau est un rectangle de la couleur du papier, posé par-dessus les
+lettres et sous le disque, dont le bord gauche suit exactement le centre du
+disque : même durée, même retard, même courbe d'accélération, et une
+translation qui est la *même fonction du temps*. Les deux ne peuvent donc plus
+se désaccorder — ce n'est pas un réglage, c'est une identité.
+
+**Et la coupure est invisible**, pour la raison même que vous relèverez en
+regardant la marque : le disque est plus haut que les lettres, 745,6 contre
+700 de hauteur de capitale. Au sommet des capitales, là où il est le plus
+étroit, il s'étend encore de 128,3 millièmes de part et d'autre de son centre.
+Le bord du rideau, qui passe par ce centre, est donc couvert sur toute la
+hauteur où il est peint.
+
+Le rideau est confiné à la boîte de l'encre des lettres, élargie de trois
+millièmes sur les quatre côtés : sans cette marge, son bord tombait exactement
+sur celui des lettres et les deux anticrénelages ne se recouvraient pas tout à
+fait — il restait une ligne d'un pixel, azurée, sur la ligne de base. La marge
+ne compromet rien : à y = −3 comme à y = 703, le disque s'étend encore de
+119,8 millièmes de part et d'autre de son centre. Hors de cette boîte, le
+rideau s'efface de lui-même — à la fin du roulement comme au repos.
 
 Trois précautions :
 
