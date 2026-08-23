@@ -118,6 +118,48 @@ async function prenKorpuson() {
     try { const r = await fetch(freshe(u)); if (r && r.ok) await c.put(u, r.clone()); }
     catch (_) { /* on continue */ }
   }
+  await akordigiTabelin(c);
+}
+
+/* --- LES LANGUES DES TABELI ------------------------------------------
+   La page de lecture est bilingue : l'ido à gauche, une autre langue à
+   droite. Cette autre langue n'est PAS dans la page — elle est prise au
+   moment où on la choisit, un fichier par langue, cinquante-deux en tout
+   pour 24,5 Mo. Hors ligne, une langue jamais ouverte manquait donc, et
+   le sélecteur restait sans effet.
+
+   LA LISTE N'EST PAS ECRITE ICI. Elle est LUE DANS LA PAGE elle-même,
+   déjà en cache : une liste recopiée dans ce fichier vieillirait au
+   premier changement d'adresse. Les langues sont prises dans l'ordre où
+   la page les cite, de sorte qu'une prise interrompue couvre d'abord les
+   plus courantes.
+
+   AU PASSAGE, ON PURGE. Toutes ces adresses portent un « ?v= » : elles
+   sont donc immuables, et une correction en change l'adresse. L'ancienne
+   resterait en cache indéfiniment si on ne retirait pas ce que la page
+   ne cite plus. */
+async function akordigiTabelin(c) {
+  const enhavo = await c.match('/tabeli/');
+  if (!enhavo) return;
+  const teksto = await enhavo.text();
+  const bazo = new URL('/tabeli/', location).href;
+  const citita = new Set(
+    (teksto.match(/(?:lingui|gravuri)\/[A-Za-z0-9._-]+\.(?:json|webp)\?v=\d+/g) || [])
+      .map(u => bazo + u)
+  );
+  if (!citita.size) return;
+
+  for (const req of await c.keys()) {
+    if (req.url.startsWith(bazo) && req.url.includes('?v=') && !citita.has(req.url)) {
+      await c.delete(req);
+    }
+  }
+  for (const u of citita) {
+    if (!u.includes('/lingui/')) continue;   /* les planches se prennent à la lecture */
+    if (await c.match(u)) continue;
+    try { const r = await fetch(freshe(u)); if (r && r.ok) await c.put(u, r.clone()); }
+    catch (_) { break; }                     /* la connexion est repartie */
+  }
 }
 
 /* Au retour de la connexion : tout ce qui est détenu est repris au réseau.
@@ -125,7 +167,14 @@ async function prenKorpuson() {
 async function refreshigi() {
   const c = await caches.open(VERSIO);
   for (const req of await c.keys()) {
+    /* Les adresses versionnées sont immuables : une correction en change
+       l'adresse, et la page — toujours prise au réseau — cite la nouvelle.
+       Les revalider serait reprendre 24 Mo pour rien à chaque retour de
+       connexion. Elles sont purgées ailleurs, quand la page ne les cite
+       plus (voir akordigiTabelin). */
+    if (req.url.includes('?v=')) continue;
     try { const r = await fetch(freshe(req.url)); if (r && r.ok) await c.put(req, r.clone()); }
     catch (_) { break; /* la connexion est repartie : inutile d'insister */ }
   }
+  await akordigiTabelin(c);
 }
