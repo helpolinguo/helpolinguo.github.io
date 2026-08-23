@@ -1,0 +1,107 @@
+/* =====================================================================
+   LA PORDO — le bouton de retour, commun aux trois livres
+   =====================================================================
+
+   POURQUOI UN FICHIER, ET NON TROIS. Les quatre sites sont servis depuis
+   la MEME origine : la page d'accueil est le site d'utilisateur, et les
+   trois livres en sont des sites de projet, servis sous ido.help/<depot>.
+   Un fichier posé à la racine est donc lisible par les trois. Toute
+   l'apparence du bouton tient ici ; chaque livre n'en porte que deux
+   lignes, qui ne changeront plus :
+
+     <link rel="stylesheet" href="/pordo.css">
+     <a class="ido-pordo" href="/">Ido</a>
+
+   Le mot « Ido » est dans le lien, et non dans la feuille : si celle-ci
+   ne se charge pas — page ouverte hors du site, fichier déplacé — il
+   reste un lien lisible en fin de document, au lieu d'un carré vide.
+
+   Le bouton est l'emblème lui-même, servi par /emblemo.svg : le disque
+   azur et l'étoile de la page de titre du Dicionario. Un seul dessin
+   pour les quatre pages.
+   ===================================================================== */
+
+.ido-pordo{
+  /* Les deux marges suivent les encoches : sur un téléphone couché, le
+     coin inférieur gauche peut être sous l'arrondi de l'écran. */
+  position:fixed;
+  left:max(16px, env(safe-area-inset-left));
+  bottom:max(16px, env(safe-area-inset-bottom));
+  width:42px; height:42px;
+  border-radius:50%;
+  background:url(/emblemo.svg) center/contain no-repeat;
+
+  /* SOUS LES VOLETS, PAS AU-DESSUS. Deux des trois livres ont un volet
+     latéral qui, sur écran étroit, se déploie par-dessus la page avec un
+     voile (z-index 25 à 30). Le bouton doit passer dessous : il n'a rien
+     à dire tant qu'un volet est ouvert. */
+  z-index:12;
+
+  /* Le halo de la couleur du papier détache le disque du texte qu'il
+     recouvre ; sans lui, l'emblème se confond avec la ligne. */
+  box-shadow:0 0 0 4px #fbfaf7, 0 2px 11px rgba(0,0,0,.14);
+  opacity:.85;
+
+  /* Le lien porte le mot « Ido » ; on le cache sans le retirer du
+     document, pour qu'il reste lisible par les lecteurs d'écran. */
+  overflow:hidden; text-indent:110%; white-space:nowrap;
+
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .16s, transform .16s, box-shadow .16s;
+}
+.ido-pordo:hover{
+  opacity:1;
+  transform:translateY(-2px);
+  box-shadow:0 0 0 4px #fbfaf7, 0 5px 16px rgba(0,0,0,.2);
+}
+.ido-pordo:active{transform:translateY(0)}
+.ido-pordo:focus-visible{
+  outline:2px solid #007FFF; outline-offset:5px;
+}
+
+/* L'étiquette, au survol seulement. Elle est dans la feuille et non dans
+   le lien : le mot du lien est déjà pris par le repli sans CSS, et il
+   n'y a aucune raison de faire porter deux fois la même chaîne aux trois
+   dépôts. */
+@media (hover:hover) and (pointer:fine){
+  .ido-pordo::after{
+    content:"Ido";
+    position:absolute; left:52px; top:50%;
+    transform:translateY(-50%);
+    text-indent:0;
+    font:600 12px/1 system-ui,sans-serif;
+    letter-spacing:.06em;
+    color:#fbfaf7; background:#007FFF;
+    padding:6px 9px; border-radius:6px;
+    opacity:0; pointer-events:none;
+    transition:opacity .16s;
+  }
+  /* La bulle sort du disque : le débordement doit être rendu visible, et
+     le retrait du texte annulé pour elle seule. */
+  .ido-pordo:hover{overflow:visible}
+  .ido-pordo:hover::after{opacity:1}
+}
+
+/* Le thème sombre des trois livres emploie le même papier, #16161a ; le
+   halo le suit. L'emblème, lui, ne change pas : l'azur et l'étoile
+   blanche tiennent sur les deux fonds. */
+@media (prefers-color-scheme:dark){
+  .ido-pordo{box-shadow:0 0 0 4px #16161a, 0 2px 11px rgba(0,0,0,.5)}
+  .ido-pordo:hover{box-shadow:0 0 0 4px #16161a, 0 5px 16px rgba(0,0,0,.62)}
+}
+
+/* Sur un petit écran, le disque descend à 36 px : la place y est comptée,
+   et le volet latéral, une fois ouvert, occupe déjà la moitié de la vue. */
+@media (max-width:560px){
+  .ido-pordo{width:38px; height:38px;
+    left:max(12px, env(safe-area-inset-left));
+    bottom:max(12px, env(safe-area-inset-bottom))}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ido-pordo{transition:opacity .16s}
+  .ido-pordo:hover{transform:none}
+}
+
+/* À l'impression, un bouton n'a rien à faire sur le papier. */
+@media print{.ido-pordo{display:none}}
