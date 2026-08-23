@@ -48,11 +48,32 @@
 
      UN SEUL NOMBRE À TOUCHER si le compte n'y est pas encore. */
   --marjo:24px;
+  --grando:42px;
 
   position:fixed;
   left:max(var(--marjo), env(safe-area-inset-left));
+  width:var(--grando); height:var(--grando);
+
+  /* --- POURQUOI LE BOUTON EST POSE PAR LE HAUT, ET NON PAR LE BAS. ---
+     Sur iPhone, la barre d'adresse se rétracte quand on descend dans la
+     page, et le bas de la vue change alors de place. Un bouton posé par
+     « bottom » suit ce bas : il bouge, alors qu'un point de repère ne
+     doit pas bouger.
+
+     Il est donc posé par le HAUT — un bord, lui, qui ne bouge jamais —,
+     à la hauteur de la vue LA PLUS PETITE que le navigateur puisse
+     offrir, celle où toutes les barres sont déployées. C'est ce que dit
+     « svh », et cette unité ne varie pas quand les barres se rétractent.
+     Le bouton reste donc immobile, quel que soit l'état des barres, et
+     il est visible dans tous les cas puisqu'il tient dans la plus petite
+     vue.
+
+     « bottom » est laissé AVANT, et sert de repli : un navigateur qui ne
+     connaît pas « svh » — Safari d'avant 15.4 — écarte la déclaration
+     « top » et retombe sur l'ancien comportement. Quand les deux sont
+     comprises, c'est « top » qui l'emporte, la hauteur étant fixée. */
   bottom:max(var(--marjo), env(safe-area-inset-bottom));
-  width:42px; height:42px;
+  top:calc(100svh - var(--grando) - max(var(--marjo), env(safe-area-inset-bottom)));
   border-radius:50%;
   background:url(/emblemo.svg) center/contain no-repeat;
 
@@ -72,14 +93,24 @@
   overflow:hidden; text-indent:110%; white-space:nowrap;
 
   -webkit-tap-highlight-color:transparent;
+
+  /* SA PROPRE COUCHE. WebKit ne repositionne pas les éléments fixes en
+     continu pendant l'inertie du défilement : ils dérivent avec le texte
+     puis reviennent d'un coup. Une transformation en trois dimensions,
+     même nulle, force une couche composée que le moteur sait déplacer à
+     part — c'est le remède usuel, et il ne coûte rien pour un disque de
+     42 px. La transformation du survol doit donc être en 3D elle aussi,
+     sans quoi elle défait la promotion. */
+  transform:translate3d(0,0,0);
+
   transition:opacity .16s, transform .16s, box-shadow .16s;
 }
 .ido-pordo:hover{
   opacity:1;
-  transform:translateY(-2px);
+  transform:translate3d(0,-2px,0);
   box-shadow:0 0 0 4px #fbfaf7, 0 5px 16px rgba(0,0,0,.2);
 }
-.ido-pordo:active{transform:translateY(0)}
+.ido-pordo:active{transform:translate3d(0,0,0)}
 .ido-pordo:focus-visible{
   outline:2px solid #007FFF; outline-offset:5px;
 }
@@ -121,12 +152,12 @@
    l'écran est le plus mordant, et un téléphone est justement l'appareil
    qui en a un. */
 @media (max-width:560px){
-  .ido-pordo{width:38px; height:38px}
+  .ido-pordo{--grando:38px}
 }
 
 @media (prefers-reduced-motion:reduce){
   .ido-pordo{transition:opacity .16s}
-  .ido-pordo:hover{transform:none}
+  .ido-pordo:hover{transform:translate3d(0,0,0)}
 }
 
 /* À l'impression, un bouton n'a rien à faire sur le papier. */

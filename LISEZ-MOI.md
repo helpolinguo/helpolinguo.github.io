@@ -329,6 +329,30 @@ Deux choses à savoir :
   une colonne de 250, et le lien s'atteint partout ailleurs. Réserver le
   coin demanderait de retoucher la mise en page de chaque livre, ce qui
   ferait perdre le bénéfice du fichier unique.
+* **Le bouton est posé par le haut, et non par le bas.** Sur iPhone, la barre
+  d'adresse se rétracte quand on descend dans la page, et le bas de la vue
+  change alors de place : un bouton posé par `bottom` suivait ce bas, et
+  bougeait — alors qu'un point de repère ne doit pas bouger. Il est donc posé
+  par le haut, un bord qui ne bouge jamais, à la hauteur de la vue **la plus
+  petite** que le navigateur puisse offrir :
+
+  ```css
+  top: calc(100svh - var(--grando) - max(var(--marjo), env(safe-area-inset-bottom)))
+  ```
+
+  `svh` ne varie pas quand les barres se rétractent. Le bouton reste donc
+  immobile quel que soit leur état, et reste visible dans tous les cas
+  puisqu'il tient dans la plus petite vue. La déclaration `bottom` est laissée
+  avant, en repli : un navigateur qui ignore `svh` — Safari d'avant 15.4 —
+  écarte le `top` et retrouve l'ancien comportement ; quand les deux sont
+  comprises, c'est `top` qui l'emporte, la hauteur étant fixée.
+
+  Le disque est en outre promu sur sa propre couche par une transformation en
+  trois dimensions nulle. WebKit ne repositionne pas les éléments fixes en
+  continu pendant l'inertie du défilement : ils dérivent avec le texte, puis
+  reviennent d'un coup. C'est le remède usuel, et il ne coûte rien pour un
+  disque de 42 px.
+
 * **Le bouton passe sous les volets** (`z-index: 12`). Sur écran étroit, la
   table des matières se déploie par-dessus la page avec un voile ; le
   bouton n'a rien à dire tant qu'elle est ouverte.
