@@ -22,11 +22,36 @@
    ===================================================================== */
 
 .ido-pordo{
-  /* Les deux marges suivent les encoches : sur un téléphone couché, le
-     coin inférieur gauche peut être sous l'arrondi de l'écran. */
+  /* --- L'ECART AU COIN. -------------------------------------------
+     Un écran de téléphone a des coins ARRONDIS, et l'arrondi mange la
+     vue en diagonale. Un coin de rayon r coupe tout ce qui se trouve,
+     SUR LA DIAGONALE, à moins de r(V2 - 1) = 0,414 r du coin — et cette
+     distance-là est bien plus grande que l'écart aux deux bords.
+
+     Le point du disque le plus proche du coin est à V2(m + R) - (R + h)
+     du coin, où m est l'écart, R le rayon du disque et h le halo. Avec
+     l'écart de 12 px qu'avait ce bouton, un disque de 19 et un halo de
+     4, cela donne 20,8 px : il fallait un écran de rayon inférieur à
+     50 px pour que rien ne soit rogné. Or un iPhone récent tourne autour
+     de 55 à 62. Le bouton était donc mangé, et il l'était sur l'appareil
+     sans que la capture d'écran le montre — iOS rend les captures
+     rectangulaires.
+
+     À 24 px, le jeu passe à 37,8 px et le bouton tient jusqu'à un rayon
+     d'écran de 91 px. C'est le double de ce qu'aucun appareil courant
+     n'atteint.
+
+     Les encoches restent prises en compte par-dessus : « max » retient
+     la plus grande des deux contraintes. Elles ne valent toutefois que
+     sur une page déclarant « viewport-fit=cover » ; les trois livres ne
+     le font pas, et c'est bien l'écart littéral qui les protège.
+
+     UN SEUL NOMBRE À TOUCHER si le compte n'y est pas encore. */
+  --marjo:24px;
+
   position:fixed;
-  left:max(16px, env(safe-area-inset-left));
-  bottom:max(16px, env(safe-area-inset-bottom));
+  left:max(var(--marjo), env(safe-area-inset-left));
+  bottom:max(var(--marjo), env(safe-area-inset-bottom));
   width:42px; height:42px;
   border-radius:50%;
   background:url(/emblemo.svg) center/contain no-repeat;
@@ -90,12 +115,13 @@
   .ido-pordo:hover{box-shadow:0 0 0 4px #16161a, 0 5px 16px rgba(0,0,0,.62)}
 }
 
-/* Sur un petit écran, le disque descend à 36 px : la place y est comptée,
-   et le volet latéral, une fois ouvert, occupe déjà la moitié de la vue. */
+/* Sur un petit écran, le disque descend à 38 px : la place y est comptée,
+   et le volet latéral, une fois ouvert, occupe déjà la moitié de la vue.
+   L'écart au coin, lui, ne diminue PAS — c'est là que l'arrondi de
+   l'écran est le plus mordant, et un téléphone est justement l'appareil
+   qui en a un. */
 @media (max-width:560px){
-  .ido-pordo{width:38px; height:38px;
-    left:max(12px, env(safe-area-inset-left));
-    bottom:max(12px, env(safe-area-inset-bottom))}
+  .ido-pordo{width:38px; height:38px}
 }
 
 @media (prefers-reduced-motion:reduce){
