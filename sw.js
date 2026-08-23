@@ -119,7 +119,18 @@ self.addEventListener('message', e => {
   if (e.data === 'refresho') e.waitUntil(refreshigi());
   if (e.data === 'tuto')     e.waitUntil(deskargi());
   if (e.data === 'stato')    e.waitUntil(diriStaton());
+  if (e.data === 'forgesi')  e.waitUntil(forgesi());
 });
+
+/* La désinstallation : tout part, sauf la coquille. La porte doit rester
+   lisible hors ligne — c'est soixante-dix kilo-octets, et sans elle on ne
+   pourrait même plus redemander le téléchargement. */
+async function forgesi() {
+  const c = await caches.open(VERSIO);
+  const gardi = new Set(SHELO.map(u => new URL(u, location).href));
+  for (const req of await c.keys()) if (!gardi.has(req.url)) await c.delete(req);
+  await sciigi({ tipo: 'forgesita' });
+}
 
 async function sciigi(msg) {
   for (const kl of await self.clients.matchAll({ includeUncontrolled: true })) kl.postMessage(msg);
@@ -152,23 +163,15 @@ async function planoTuta(c) {
   return [...new Set(listo)];
 }
 
-/* Le poids annoncé par les adresses elles-mêmes, en octets. Les fichiers
-   non versionnés — coquille, textes, PDF — n'annoncent rien : ils sont
-   comptés à la pesée, quand ils arrivent. */
-const pezoAnoncita = u => {
-  const m = u.match(/\?v=(\d+)$/);
-  return m ? +m[1] : 0;
-};
-
 async function deskargi() {
   const c = await caches.open(VERSIO);
   const listo = await planoTuta(c);
   let faritaj = 0, oktetoj = 0;
-  const anoncita = listo.reduce((s, u) => s + pezoAnoncita(u), 0);
-  await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj, anoncita });
+  await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj });
 
   for (const u of listo) {
-    if (!(await c.match(u))) {
+    const jam = await c.match(u);
+    if (!jam) {
       try {
         const r = await fetch(freshe(u));
         if (r && r.ok) { const kopio = r.clone(); await c.put(u, r); oktetoj += (await kopio.blob()).size; }
@@ -177,11 +180,15 @@ async function deskargi() {
         return;
       }
     } else {
-      oktetoj += pezoAnoncita(u);
+      /* Déjà détenu : on le PÈSE, on ne le devine pas. Les fichiers non
+         versionnés n'annoncent aucune taille, et « /tabeli/ » est justement
+         de ceux-là — pris avant la boucle pour y lire le plan. Le compter
+         pour zéro perdait ses trois méga-octets. */
+      oktetoj += (await jam.blob()).size;
     }
     faritaj++;
     if (faritaj % 2 === 0 || faritaj === listo.length) {
-      await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj, anoncita });
+      await sciigi({ tipo: 'progreso', faritaj, totalaj: listo.length, oktetoj });
     }
   }
   await sciigi({ tipo: 'preta', totalaj: listo.length, oktetoj });

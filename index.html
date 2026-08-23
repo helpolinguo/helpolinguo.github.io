@@ -188,28 +188,73 @@ body{background:var(--pap);color:var(--enk);
  padding:0 16px}
 @media (max-height:430px){.pedo{display:none}}
 
-/* --- LA LEKTO SENRETA. Une ligne de plus dans le pied, et rien d'autre :
-   la page ne défile pas, et la place y est comptée. Elle ne paraît que si
-   le navigateur sait tenir un servanto, et disparaît sur les vues basses,
-   où le pied entier est déjà caché. */
-.senrete{display:none;margin-top:6px;align-items:center;gap:9px;justify-content:center}
-.senrete.vidas{display:flex}
-@media (max-height:560px){.senrete.vidas{display:none}}
-.senrete button{border:0;background:none;padding:0;cursor:pointer;
- color:var(--sub);font:inherit;font-size:12px;
- border-bottom:1px solid var(--lin);transition:color .16s,border-color .16s}
-.senrete button:not(:disabled):hover{color:var(--azuro);border-color:var(--azuro)}
-/* Un bouton désactivé ne doit pas se donner l'air actif : « :hover »
-   continue de l'atteindre, il faut donc l'en écarter explicitement. */
-.senrete button:disabled{cursor:default;border-color:transparent;color:var(--sub)}
-.senrete button:focus-visible{outline:2px solid var(--azuro);outline-offset:3px}
-/* La barre ne prend sa place qu'une fois le téléchargement commencé :
-   vide, elle laisserait un trait mort sous le texte. */
-.senrete .baro{display:none;width:104px;height:3px;border-radius:2px;
- background:var(--lin);overflow:hidden;flex:none}
-.senrete.kuras .baro{display:block}
-.senrete .baro i{display:block;height:100%;width:0;background:var(--azuro);
- transition:width .3s ease-out}
+/* =====================================================================
+   LE DISQUE DE DESKARGO
+   =====================================================================
+   Mêmes mesures que le bouton de retour des trois livres — voir
+   pordo.css : 42 px, 38 sous 560 px de large, à 24 px des deux bords.
+   Le coin porte la même chose des deux côtés du site, et l'œil n'a pas à
+   réapprendre.
+
+   AUCUN MOT. Le site s'adresse à toutes les langues ; « Deskargar » n'en
+   disait rien à qui ne lit pas l'ido. Une flèche, un crochet, une
+   corbeille — et un anneau qui fait le tour pendant la prise. Le nom
+   accessible, lui, reste en ido, pour les lecteurs d'écran. */
+.deskargilo{
+  --marjo:24px; --grando:42px;
+  position:fixed; z-index:12;
+  left:max(var(--marjo), env(safe-area-inset-left));
+  bottom:max(var(--marjo), env(safe-area-inset-bottom));
+  top:calc(100svh - var(--grando) - max(var(--marjo), env(safe-area-inset-bottom)));
+  width:var(--grando); height:var(--grando);
+  padding:0; border:0; border-radius:50%;
+  background:var(--pap);
+  box-shadow:0 2px 11px rgba(0,0,0,.12);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transform:translate3d(0,0,0);
+  transition:box-shadow .16s, transform .16s;
+}
+.deskargilo:hover{transform:translate3d(0,-2px,0);box-shadow:0 5px 16px rgba(0,0,0,.18)}
+.deskargilo:active{transform:translate3d(0,0,0)}
+.deskargilo:focus-visible{outline:2px solid var(--azuro);outline-offset:5px}
+@media (prefers-color-scheme:dark){
+  .deskargilo{box-shadow:0 2px 11px rgba(0,0,0,.5)}
+  .deskargilo:hover{box-shadow:0 5px 16px rgba(0,0,0,.62)}
+}
+@media (max-width:560px){.deskargilo{--grando:38px}}
+
+.deskargilo svg{display:block;width:100%;height:100%}
+.deskargilo circle{fill:none;stroke-width:2.4}
+.ringo-fono{stroke:var(--lin)}
+/* L'anneau part du haut et tourne dans le sens des aiguilles : d'où le
+   quart de tour à rebours. Sa circonférence vaut 2*pi*20 = 125,66, et
+   c'est ce nombre qui sert d'unité au décalage. */
+.ringo-progreso{stroke:var(--azuro);stroke-linecap:round;
+  stroke-dasharray:125.66; stroke-dashoffset:125.66;
+  transform:rotate(-90deg); transform-origin:50% 50%;
+  transition:stroke-dashoffset .3s ease-out}
+.signo path{fill:none;stroke:var(--sub);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;transition:stroke .16s}
+.deskargilo:hover .signo path{stroke:var(--azuro)}
+/* Un seul des trois signes paraît à la fois. */
+.s-hoko,.s-rubo{display:none}
+.deskargilo.preta .s-sago{display:none}
+.deskargilo.preta .s-hoko{display:block}
+.deskargilo.preta .signo path{stroke:var(--azuro)}
+.deskargilo.preta .ringo-progreso{stroke-dashoffset:0}
+.deskargilo.demandas .s-sago,.deskargilo.demandas .s-hoko{display:none}
+.deskargilo.demandas .s-rubo{display:block}
+.deskargilo.demandas .signo path{stroke:var(--flag,#b4552d)}
+.deskargilo.demandas .ringo-progreso{stroke:var(--flag,#b4552d)}
+
+/* Le compte, à droite du disque, seulement pendant la prise : « 23/66 MB »
+   se lit partout, ce qui n'est pas le cas d'une phrase. */
+.cifro{position:absolute; left:calc(var(--grando) + 11px); top:50%;
+  transform:translateY(-50%); white-space:nowrap;
+  font:600 12px/1 system-ui,sans-serif; letter-spacing:.03em;
+  color:var(--sub); opacity:0; pointer-events:none; transition:opacity .2s}
+.deskargilo.kuras .cifro{opacity:1}
+@media (max-width:380px){.cifro{display:none}}
 
 /* =====================================================================
    5. L'ENTREE — la roue arrive, et pose les lettres
@@ -280,6 +325,7 @@ body{background:var(--pap);color:var(--enk);
 .enkonduko .devizo{animation:levar .55s ease-out 1.02s both}
 .enkonduko .pordi {animation:levar .55s ease-out 1.16s both}
 .enkonduko .pedo  {animation:levar .55s ease-out 1.30s both}
+.enkonduko .deskargilo{animation:aparar .55s ease-out 1.42s both}
 @keyframes levar{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
 
 /* Le ciel se lève seul, plus lentement : il ne doit pas disputer le
@@ -292,7 +338,8 @@ body{background:var(--pap);color:var(--enk);
   .vorto{animation:none}
   /* L'entrée entière tombe : la page se peint dans son état final. */
   .enkonduko .grupo-O,.enkonduko .kurteno,.enkonduko .devizo,
-  .enkonduko .pordi,.enkonduko .pedo,.enkonduko .cielo{animation:none}
+  .enkonduko .pordi,.enkonduko .pedo,.enkonduko .cielo,
+  .enkonduko .deskargilo{animation:none}
   .cielo{transition:none}
   .marko .stelo{transition:none}
   .pordo{transition:background .16s,color .16s}
@@ -359,11 +406,26 @@ body{background:var(--pap);color:var(--enk);
   <p class="pedo">
     Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
     transskribita, lektebla e deskargebla.
-    <span class="senrete" id="senrete" hidden>
-      <span class="baro"><i id="baro"></i></span>
-      <button type="button" id="deskargi">Deskargar por senreta lekto</button>
-    </span>
   </p>
+
+  <!-- LE DISQUE DE DESKARGO. Il occupe, sur la porte, la place que le
+       bouton de retour occupe sur les trois livres : même coin, même
+       taille, même écart — le coin porte « l'action globale », qui est le
+       retour quand on lit, et le téléchargement quand on est à la porte.
+       Aucun mot : une icône, et un anneau qui fait le tour. -->
+  <button type="button" class="deskargilo" id="deskargi" hidden
+          aria-label="Deskargar la tota sitio por senreta lekto">
+    <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+      <circle class="ringo-fono" cx="22" cy="22" r="20"/>
+      <circle class="ringo-progreso" id="ringo" cx="22" cy="22" r="20"/>
+      <g class="signo" id="signo">
+        <path class="s-sago" d="M22 13v13m-5.5-5.5L22 26l5.5-5.5M13.5 31h17"/>
+        <path class="s-hoko" d="M14.5 22.5l5.5 5.5 9.5-11"/>
+        <path class="s-rubo" d="M15.5 17.5h13M18 17.5l.8 13h6.4l.8-13M19.5 14.5h5"/>
+      </g>
+    </svg>
+    <span class="cifro" id="cifro" aria-hidden="true"></span>
+  </button>
 </div>
 
 <script>
@@ -474,6 +536,14 @@ function semar(){
   /* Le bloc central, elargi : rien ne s'en approche. */
   interdikto.push({x:b.left-MARJ,y:b.top-MARJ,w:b.width+2*MARJ,h:b.height+2*MARJ});
   if(c.height) interdikto.push({x:c.left,y:c.top-12,w:c.width,h:c.height+16});
+  /* Le disque de deskargo, et la place que prend son compte à droite. La
+     marge est celle du bloc central, et pour la même raison : les mots
+     DERIVENT une fois posés, de treize pixels au plus. Une réserve juste
+     assez large pour le rectangle laisserait un mot entrer en flottant. */
+  const d=document.querySelector('.deskargilo');
+  if(d){const rd=d.getBoundingClientRect();
+    if(rd.width) interdikto.push({x:rd.left-MARJ, y:rd.top-MARJ,
+      w:rd.width+MARJ+120, h:rd.height+2*MARJ});}
 
   for(let i=0;i<VORTI.length;i++){
     const [lg,kodo,tx]=VORTI[i];
@@ -605,38 +675,77 @@ if ('serviceWorker' in navigator) {
          applications de l'écran d'accueil. */
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
 
-      const zono = document.getElementById('senrete');
       const butono = document.getElementById('deskargi');
-      const baro = document.getElementById('baro');
-      const mo = o => (o / 1048576).toFixed(o < 10485760 ? 1 : 0) + ' Mo';
-      zono.hidden = false; zono.classList.add('vidas');
+      const ringo  = document.getElementById('ringo');
+      const cifro  = document.getElementById('cifro');
+      const KURBO  = 125.66;                       /* 2*pi*20, la circonférence */
+      const mb = o => Math.round(o / 1048576);
+      let stato = 'ripozas';                       /* ripozas | kuras | preta | demandas */
+      let horlojeto = 0;
+
+      /* Le ciel a été semé avant que ce bouton ne paraisse — son rectangle
+         était alors nul, et des mots pouvaient tomber dessous. On resème
+         une fois qu'il occupe sa place. */
+      butono.hidden = false;
+      semar();
+
+      const pozi = (nova, etikedo) => {
+        stato = nova;
+        butono.classList.toggle('kuras',    nova === 'kuras');
+        butono.classList.toggle('preta',    nova === 'preta');
+        butono.classList.toggle('demandas', nova === 'demandas');
+        butono.setAttribute('aria-label', etikedo);
+      };
 
       navigator.serviceWorker.addEventListener('message', ev => {
         const m = ev.data || {};
-        if (m.tipo === 'stato') {
-          if (m.totalaj && m.faritaj >= m.totalaj) {
-            butono.textContent = 'Senrete disponebla'; butono.disabled = true;
-          }
+        if (m.tipo === 'stato' && m.totalaj && m.faritaj >= m.totalaj) {
+          ringo.style.strokeDashoffset = 0;
+          pozi('preta', 'La tota sitio esas senrete disponebla — klikez por efacar');
         }
         if (m.tipo === 'progreso') {
-          zono.classList.add('kuras'); butono.disabled = true;
           const p = m.totalaj ? m.faritaj / m.totalaj : 0;
-          baro.style.width = (p * 100).toFixed(1) + '%';
-          butono.textContent = 'Deskargas… ' + m.faritaj + '/' + m.totalaj
-                             + (m.oktetoj ? ' · ' + mo(m.oktetoj) : '');
+          ringo.style.strokeDashoffset = (KURBO * (1 - p)).toFixed(2);
+          /* Le compte dit ce qui est DESCENDU, sans dénominateur : c'est
+             l'anneau qui dit la part faite, et un total annoncé d'avance
+             reposerait sur une estimation — les fichiers non versionnés
+             n'annoncent pas leur taille. */
+          cifro.textContent = mb(m.oktetoj) + ' MB';
+          pozi('kuras', 'Deskargas… ' + Math.round(p * 100) + ' %');
         }
         if (m.tipo === 'preta') {
-          zono.classList.remove('kuras');
-          butono.textContent = 'Senrete disponebla · ' + mo(m.oktetoj);
-          butono.disabled = true;
+          ringo.style.strokeDashoffset = 0;
+          cifro.textContent = mb(m.oktetoj) + ' MB';
+          pozi('preta', 'La tota sitio esas senrete disponebla — klikez por efacar');
         }
         if (m.tipo === 'rompita') {
-          zono.classList.remove('kuras'); butono.disabled = false;
-          butono.textContent = 'Interruptita — probar itere';
+          pozi('ripozas', 'Interruptita — klikez por probar itere');
+        }
+        if (m.tipo === 'forgesita') {
+          ringo.style.strokeDashoffset = KURBO;
+          cifro.textContent = '';
+          pozi('ripozas', 'Deskargar la tota sitio por senreta lekto');
         }
       });
 
-      butono.addEventListener('click', () => { butono.disabled = true; diri('tuto'); });
+      /* Trois clics possibles, selon l'état. Sur l'état « prêt », le
+         premier clic ARME seulement : effacer soixante-six méga-octets par
+         mégarde serait pénible, et une confirmation en toutes lettres
+         reviendrait à remettre du texte. Le signe devient une corbeille
+         pendant quatre secondes ; un second clic efface, sinon on revient
+         en arrière tout seul. */
+      butono.addEventListener('click', () => {
+        clearTimeout(horlojeto);
+        if (stato === 'ripozas') { diri('tuto'); pozi('kuras', 'Deskargas…'); return; }
+        if (stato === 'preta') {
+          pozi('demandas', 'Efacar la deskargita kontenajo? Klikez itere por konfirmar');
+          horlojeto = setTimeout(() => pozi('preta',
+            'La tota sitio esas senrete disponebla — klikez por efacar'), 4000);
+          return;
+        }
+        if (stato === 'demandas') { diri('forgesi'); return; }
+      });
+
       diri('stato');
       if (instalita) setTimeout(() => diri('tuto'), 4000);
 
