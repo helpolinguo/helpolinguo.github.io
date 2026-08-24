@@ -298,7 +298,23 @@ dépôts n'en porte donc que deux lignes, qui ne changeront plus :
 
 Le mot « Ido » est dans le lien et non dans la feuille : si celle-ci ne se
 charge pas — page ouverte hors du site, fichier déplacé — il reste un lien
-lisible en fin de document au lieu d'un carré vide. Le dessin, lui, est
+lisible en fin de document au lieu d'un carré vide.
+
+**Il est caché par un corps nul, et non par le débordement.** Il était
+d'abord poussé hors du disque par `text-indent`, et c'est `overflow: hidden`
+qui le retenait — mais le débordement doit être rendu visible au survol,
+sinon l'étiquette ne pourrait pas sortir du disque. Le mot sortait donc avec
+elle, et « Ido » paraissait deux fois : une en étiquette, une en toutes
+lettres, dans la police et la couleur des liens. Un corps nul ne dépend
+d'aucun débordement.
+
+**Et l'étiquette ne compte pas dans le nom du lien.** Le navigateur ajoute le
+contenu du pseudo-élément au nom accessible, qui devenait « Ido Ido » — le
+même doublon, mais pour qui écoute la page. La syntaxe
+`content: "Ido" / ""` lui donne un texte de remplacement vide : elle se voit,
+elle ne se dit plus. Elle est posée sous `@supports`, car un navigateur qui
+l'ignore écarterait la déclaration entière, et l'étiquette ne paraîtrait plus
+du tout. Le dessin, lui, est
 `emblemo.svg`, déjà servi comme icône de cette page : un seul fichier pour
 les quatre.
 
