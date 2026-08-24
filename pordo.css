@@ -10,10 +10,12 @@
    la MEME origine : la page d'accueil est le site d'utilisateur, et les
    trois livres en sont des sites de projet, servis sous ido.help/<depot>.
    Un fichier posé à la racine est donc lisible par les trois. Toute
-   l'apparence du bouton tient ici ; chaque livre n'en porte que deux
-   lignes, qui ne changeront plus :
+   l'apparence tient ici, et le peu de conduite qu'il faut est dans
+   /pordo.js, à côté. Chaque livre n'en porte que trois lignes, qui ne
+   changeront plus :
 
      <link rel="stylesheet" href="/pordo.css">
+     <script src="/pordo.js" defer></script>
      <a class="ido-pordo" href="/">Ido</a>
 
    Le mot « Ido » est dans le lien, et non dans la feuille : si celle-ci
@@ -192,27 +194,94 @@
 
 
 /* =====================================================================
-   LE BOUTON D'EFFACEMENT DU CHAMP DE RECHERCHE
+   LA CROIX QUI VIDE LE CHAMP DE RECHERCHE
    =====================================================================
-   Sur les appareils d'Apple, la croix qui vide le champ ne paraissait
-   pas. Aucune règle ne la supprimait : c'est WebKit qui ABANDONNE le
-   rendu natif d'un contrôle dès qu'on lui pose une bordure et un fond —
-   ce que font les trois livres —, et la croix s'en va avec le reste.
+   PREMIERE TENTATIVE, ET POURQUOI ELLE NE POUVAIT PAS ABOUTIR. La croix
+   avait d'abord été redemandée au navigateur, en redonnant au
+   pseudo-élément « ::-webkit-search-cancel-button » son apparence propre.
+   Sur iPhone, rien n'a paru — et rien ne pouvait paraître : WebKit ne
+   rend ce pseudo-élément QUE sur macOS. Sur iOS il n'existe pas ; le
+   champ de recherche y est un champ de texte ordinaire, et l'usage veut
+   qu'on le vide au clavier. Aucune CSS n'y changera quoi que ce soit.
 
-   Elle se rappelle en redonnant au pseudo-élément son apparence propre.
-   La règle est sans risque : un navigateur qui l'ignore reste où il en
-   était, et celui qui dessine déjà sa croix — Chrome — n'en met pas deux,
-   le pseudo-élément étant unique.
+   Il faut donc dessiner la croix nous-mêmes. Ce qui suit la fait paraître
+   partout de la même façon — c'est bien pour cela que la feuille est
+   commune. La croix native est du même coup ÉCARTÉE : macOS la dessinait,
+   et il y en aurait eu deux.
 
-   « color-scheme » accompagne, et ce n'est pas un détail d'agrément : la
-   croix est dessinée PAR LE NAVIGATEUR, qui en choisit la teinte d'après
-   le thème déclaré. Sans déclaration, il la croit claire et la dessine
-   sombre — invisible sur le fond sombre des trois livres. La déclaration
-   accorde du même coup les barres de défilement. */
+   « color-scheme » reste. Il ne sert plus la croix, mais il accorde au
+   thème sombre des trois livres les barres de défilement et le menu de
+   choix de langue, ce qu'il faisait déjà. */
 :root{color-scheme:light dark}
 
 input[type=search]::-webkit-search-cancel-button{
-  -webkit-appearance:searchfield-cancel-button;
-  appearance:auto;
-  cursor:pointer;
+  -webkit-appearance:none; appearance:none; display:none;
 }
+
+/* --- L'ENVELOPPE. -----------------------------------------------------
+   La croix se pose SUR le champ, donc dans une boîte qui le suit. Deux
+   des trois livres posent leur champ à nu dans la barre ; le script leur
+   met alors cette enveloppe. Le troisième — les Tabeli — en a déjà une,
+   pour sa loupe, et le script s'en sert telle quelle plutôt que d'en
+   empiler une seconde.
+
+   ELLE NE PORTE AUCUNE MESURE. C'est là le point délicat : le champ garde
+   ses propres « flex » et « min-width », que chaque livre règle à sa
+   guise et change encore selon la largeur de l'écran. Si l'enveloppe les
+   recopiait, la copie serait figée au chargement et fausse dès la première
+   rotation du téléphone. Elle se contente donc de « flex:1 1 auto » avec
+   une base et une taille minimale AUTOMATIQUES : l'une et l'autre se
+   déduisent du champ qu'elle contient, à chaque largeur d'écran, sans
+   qu'aucun nombre n'ait à être répété ici. */
+.ido-envelopo{
+  position:relative;
+  display:flex; align-items:stretch;
+  flex:1 1 auto;
+}
+
+/* --- LA CROIX. --------------------------------------------------------
+   Même trait que les icônes des Tabeli — 15 px, épaisseur 1,8, bouts
+   ronds, couleur du texte secondaire — pour qu'elle ait l'air d'avoir
+   toujours été là. La zone tactile, elle, fait toute la hauteur du champ
+   sur 34 px de large : un doigt ne vise pas un trait de 15 px.
+
+   Elle ne paraît QUE si le champ porte quelque chose. Un champ vide n'a
+   rien à vider, et la croix mangerait la place du texte d'invite — déjà
+   coupé sur un téléphone. */
+.ido-kruco{
+  position:absolute; top:0; right:0; bottom:0;
+  width:34px;
+  display:none; place-items:center;
+  margin:0; padding:0; border:0; background:none;
+  color:var(--sub,#6b6560);
+  cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .16s, opacity .16s;
+}
+.ido-plena > .ido-kruco{display:grid}
+
+/* Le texte s'arrête avant la croix, mais SEULEMENT quand elle est là :
+   sinon le texte d'invite perdrait 34 px en pure perte. Le retrait arrive
+   avec la première lettre frappée — à ce moment le texte d'invite a déjà
+   disparu et le champ ne porte qu'un caractère, de sorte que rien ne se
+   déplace sous l'œil. */
+.ido-plena input[type=search]{padding-right:34px}
+
+.ido-kruco svg{
+  width:15px; height:15px;
+  pointer-events:none;              /* le clic va au bouton, pas au trait */
+  fill:none; stroke:currentColor; stroke-width:1.8;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+@media (hover:hover) and (pointer:fine){
+  .ido-kruco:hover{color:var(--enk,#1a1a1a)}
+}
+.ido-kruco:active{opacity:.55}
+
+@media (prefers-reduced-motion:reduce){
+  .ido-kruco{transition:none}
+}
+
+/* Sur le papier, il n'y a rien à vider. */
+@media print{.ido-kruco{display:none}}

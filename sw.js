@@ -29,12 +29,12 @@
    l'activation, et tout est repris au réseau.
    ===================================================================== */
 
-const VERSIO = 'ido-1';
+const VERSIO = 'ido-2';
 
 /* La coquille : quelques dizaines de kilo-octets, prise à l'installation
    par tout visiteur. */
 const SHELO = [
-  '/', '/pordo.css', '/emblemo.svg', '/manifest.webmanifest',
+  '/', '/pordo.css', '/pordo.js', '/emblemo.svg', '/manifest.webmanifest',
   '/apple-touch-icon.png', '/ikono-192.png', '/ikono-512.png',
   '/polices/Jost-Medium.woff2', '/polices/Jost-Bold.woff2'
 ];
