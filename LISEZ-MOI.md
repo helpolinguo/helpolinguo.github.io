@@ -289,10 +289,11 @@ fichier**, `pordo.css`, servi depuis cette racine.
 C'est possible parce que les quatre sites sont servis depuis la **même
 origine** — c'est tout l'objet du § 1. Un fichier posé ici est lisible par
 `ido.help/tabeli/`, `…/dicionario/` et `…/gramatiko/`. Chacun des trois
-dépôts n'en porte donc que deux lignes, qui ne changeront plus :
+dépôts n'en porte donc que trois lignes, qui ne changeront plus :
 
 ```html
 <link rel="stylesheet" href="/pordo.css">
+<script src="/pordo.js" defer></script>
 <a class="ido-pordo" href="/">Ido</a>
 ```
 
@@ -378,33 +379,106 @@ Deux choses à savoir :
 
 ### La croix qui vide le champ de recherche
 
-Sur les appareils d'Apple, elle ne paraissait pas. Aucune règle ne la
-supprimait : **WebKit abandonne le rendu natif d'un contrôle dès qu'on lui
-pose une bordure et un fond** — ce que font les trois livres —, et la croix
-s'en va avec le reste. Elle se rappelle en redonnant au pseudo-élément son
-apparence propre :
+**Première tentative, et pourquoi elle ne pouvait pas aboutir.** La croix
+avait d'abord été redemandée au navigateur, en redonnant au pseudo-élément
+`::-webkit-search-cancel-button` son apparence propre — WebKit abandonnant le
+rendu natif d'un contrôle dès qu'on lui pose une bordure et un fond, ce que
+font les trois livres. Sur iPhone, rien n'a paru, et **rien ne pouvait
+paraître** : WebKit ne rend ce pseudo-élément que sur macOS. Sur iOS il
+n'existe pas ; le champ de recherche y est un champ de texte ordinaire, et
+l'usage veut qu'on le vide au clavier. Aucune CSS n'y changera quoi que ce
+soit.
+
+Il faut donc **dessiner la croix nous-mêmes**. Elle est posée par
+`pordo.js`, compagnon de `pordo.css` et servi de la même racine : chaque
+livre n'en porte qu'une ligne de plus. La croix native est du même coup
+écartée — macOS la dessinait, et il y en aurait eu deux. Mesuré dans
+Chromium : règle annulée, deux croix ; règle active, une seule.
+
+`color-scheme: light dark` reste. Il ne sert plus la croix, mais il accorde
+au thème sombre des trois livres les barres de défilement et le menu de choix
+de langue, ce qu'il faisait déjà.
+
+**Rien ne casse si le script ne se charge pas.** Sans lui, les trois champs
+sont exactement ce qu'ils étaient : on vide au clavier, comme avant.
+
+#### L'enveloppe, et le seul vrai piège
+
+La croix se pose en absolu ; il lui faut donc un parent positionné qui épouse
+le champ. Les *Tabeli* en ont déjà un — l'enveloppe de leur loupe —, et le
+script s'en sert tel quel plutôt que d'en empiler un second. Il le reconnaît
+à deux conditions, nécessaires toutes les deux : le parent est déjà
+positionné, et le champ est son **seul enfant dans le flux** (une icône posée
+en absolu ne compte pas). La barre des deux autres livres échoue aux deux —
+elle est statique, et porte le bouton du sommaire ; ils reçoivent donc une
+enveloppe.
+
+Et là est le piège. Une enveloppe s'interpose entre la barre et le champ :
+c'est elle, désormais, que la barre range. Les mesures qui décident de la
+place du champ doivent donc passer de l'un à l'autre. Ce n'est pas une
+précaution de principe :
 
 ```css
-input[type=search]::-webkit-search-cancel-button{
-  -webkit-appearance:searchfield-cancel-button;
-}
+/* gramatiko, sous 900 px */
+input[type=search]{flex:1 1 120px;min-width:0}
 ```
 
-La règle est sans risque : un navigateur qui l'ignore reste où il en était, et
-celui qui dessine déjà sa croix — Chrome — n'en met pas deux, le
-pseudo-élément étant unique.
+L'auteur dit pourquoi en toutes lettres — à 260 px de base, le champ
+passerait sous le bouton du sommaire. Une enveloppe qui prendrait sa base de
+son contenu mesurerait plus large, et le champ repasserait à la ligne. C'est
+exactement ce qui arrivait, à 340 px de vue.
 
-**`color-scheme: light dark` accompagne, et ce n'est pas un agrément.** La
-croix est dessinée *par le navigateur*, qui en choisit la teinte d'après le
-thème déclaré. Sans déclaration, il la croit claire et la dessine sombre —
-invisible sur le fond sombre des trois livres. Mesuré dans Chromium en thème
-sombre : la croix passe du bleu au blanc, et la différence tient tout entière
-dans un carré de 22 × 22 pixels au bout du champ. Rien d'autre dans l'en-tête
-ne bouge.
+**Les mesures sont donc relues, et non recopiées une fois.** Elles changent
+avec la largeur de l'écran, chaque livre ayant les siennes ; une copie prise
+au chargement serait fausse dès la première rotation du téléphone. À chaque
+changement réel de la vue, le script efface ses surcharges, relit ce que le
+livre dit du champ *à cette largeur*, et repose. Vérifié en comparant la
+boîte du champ, avant et après, à dix-huit largeurs de 1280 à 300 px sur les
+trois livres : identique partout, aux deux centièmes de pixel.
+
+Sur le reste de l'en-tête, à champ vide : aucune différence sur les *Tabeli*,
+qui n'ont pas d'enveloppe ; quinze à vingt-cinq pixels sur les deux autres,
+d'une amplitude maximale de 2 sur 255, tous sur le bord arrondi du champ.
+C'est du crénelage, non un déplacement.
+
+#### Quelques choix qui ne se devinent pas
+
+* **Elle ne paraît que si le champ porte quelque chose**, et le retrait de
+  34 px qui lui fait place arrive avec elle. Un champ vide n'a rien à vider,
+  et la croix mangerait la place du texte d'invite — déjà coupé sur un
+  téléphone. Le retrait arrive avec la première lettre frappée : à ce moment
+  le texte d'invite a disparu et le champ ne porte qu'un caractère, de sorte
+  que rien ne se déplace sous l'œil.
+
+* **La pression du doigt ne doit pas faire fuir le clavier.** Une pression
+  sur un bouton retire le curseur du champ, et sur iPhone le clavier se
+  replie aussitôt pour se rouvrir juste après : la page saute deux fois.
+  Refuser l'effet par défaut de la pression laisse le curseur où il est, et
+  le clic suit tout de même.
+
+* **Le curseur n'est rendu au champ que s'il y était.** Vider depuis une page
+  déjà parcourue — le clavier replié, un résultat sous les yeux — ne doit pas
+  faire remonter le clavier par-dessus ce qu'on lisait.
+
+* **L'événement `input` est émis à la main.** Les trois livres filtrent
+  dessus, et affecter `value` directement n'en émet aucun : sans cela le
+  champ serait vide et la liste toujours filtrée.
+
+* **La croix n'est pas une halte de tabulation**, comme la croix native de
+  macOS. Elle s'insère entre le champ et la commande suivante ; en faire un
+  arrêt en ajouterait un là où il n'y en avait pas, pour un service que le
+  clavier rend déjà. Les lecteurs d'écran l'atteignent néanmoins, le bouton
+  restant dans le document et nommé — « Efacar la sercho », en ido comme le
+  reste des trois interfaces.
+
+* **La zone tactile fait 34 px sur toute la hauteur du champ**, pour un trait
+  de 15 px : un doigt ne vise pas un trait.
 
 Cette section est la raison pour laquelle `pordo.css` n'est plus seulement le
 bouton de retour, mais **la feuille commune** : ce qui doit être uniforme sur
-les trois livres et ne peut pas l'être autrement y a désormais sa place.
+les trois livres et ne peut pas l'être autrement y a désormais sa place —
+l'apparence dans la feuille, le peu de conduite qu'il faut dans `pordo.js`,
+à côté.
 
 ---
 
@@ -550,7 +624,7 @@ après sept jours sans visite.
 
 | | poids | quand |
 |---|---|---|
-| la coquille — porte, feuille, polices, icônes | 0,07 Mo | à l'installation, pour tout visiteur |
+| la coquille — porte, feuille, script, polices, icônes | 0,09 Mo | à l'installation, pour tout visiteur |
 | les trois textes et les quatre PDF | ≈ 12 Mo | **seulement en application installée**, quatre secondes après l'ouverture |
 | les 52 langues des *Tabeli* | 24,5 Mo | à la suite, dans l'ordre où la page les cite |
 | les 38 planches gravées, deux résolutions | 32 Mo | avec le reste |
@@ -588,7 +662,7 @@ resteraient indéfiniment.
 
 Servi localement dans l'arborescence réelle, avec coupure du réseau :
 
-* la coquille est prise à l'installation — 9 entrées ; le corps sur demande —
+* la coquille est prise à l'installation — 10 entrées ; le corps sur demande —
   7 entrées, soit 16 en tout ;
 * **hors ligne**, la porte, les trois livres et les PDF répondent tous, sans
   qu'aucun livre ait été ouvert au préalable ;
