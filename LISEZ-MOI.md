@@ -280,7 +280,7 @@ pas le contraste sur `#16161a`.
 
 ---
 
-## 8. Le bouton de retour, sur les trois livres
+## 8. La feuille commune aux trois livres
 
 Les trois livres portent, dans le coin inférieur gauche, l'emblème azur en
 petit : un lien vers cette page. **Toute son apparence tient dans un seul
@@ -375,6 +375,36 @@ Deux choses à savoir :
 * **Le bouton passe sous les volets** (`z-index: 12`). Sur écran étroit, la
   table des matières se déploie par-dessus la page avec un voile ; le
   bouton n'a rien à dire tant qu'elle est ouverte.
+
+### La croix qui vide le champ de recherche
+
+Sur les appareils d'Apple, elle ne paraissait pas. Aucune règle ne la
+supprimait : **WebKit abandonne le rendu natif d'un contrôle dès qu'on lui
+pose une bordure et un fond** — ce que font les trois livres —, et la croix
+s'en va avec le reste. Elle se rappelle en redonnant au pseudo-élément son
+apparence propre :
+
+```css
+input[type=search]::-webkit-search-cancel-button{
+  -webkit-appearance:searchfield-cancel-button;
+}
+```
+
+La règle est sans risque : un navigateur qui l'ignore reste où il en était, et
+celui qui dessine déjà sa croix — Chrome — n'en met pas deux, le
+pseudo-élément étant unique.
+
+**`color-scheme: light dark` accompagne, et ce n'est pas un agrément.** La
+croix est dessinée *par le navigateur*, qui en choisit la teinte d'après le
+thème déclaré. Sans déclaration, il la croit claire et la dessine sombre —
+invisible sur le fond sombre des trois livres. Mesuré dans Chromium en thème
+sombre : la croix passe du bleu au blanc, et la différence tient tout entière
+dans un carré de 22 × 22 pixels au bout du champ. Rien d'autre dans l'en-tête
+ne bouge.
+
+Cette section est la raison pour laquelle `pordo.css` n'est plus seulement le
+bouton de retour, mais **la feuille commune** : ce qui doit être uniforme sur
+les trois livres et ne peut pas l'être autrement y a désormais sa place.
 
 ---
 
