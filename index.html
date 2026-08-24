@@ -15,7 +15,14 @@
 <meta name="apple-mobile-web-app-title" content="Ido">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#fbfaf7">
+<!-- LA COULEUR DE LA BARRE. Le navigateur retient LE PREMIER « theme-color »
+     dont le « media » correspond. L'inconditionnel était en tête : il
+     correspondait toujours, et celui du thème sombre n'était jamais atteint —
+     d'où une barre blanche en mode sombre, dans l'application du Dock.
+     Les deux portent donc désormais leur condition, et la claire vient en
+     premier : un navigateur qui ignorerait l'attribut « media » prendrait la
+     première, et le clair est le parti par défaut de la page. -->
+<meta name="theme-color" media="(prefers-color-scheme:light)" content="#fbfaf7">
 <meta name="theme-color" media="(prefers-color-scheme:dark)" content="#16161a">
 <meta property="og:title" content="Ido — helpolinguo internaciona">
 <meta property="og:description" content="Tri libri dil helpolinguo internaciona Ido: la Delmas-Tabeli, la Dicionario de la 10.000 radiki, la Kompleta Gramatiko Detaloza.">
@@ -57,6 +64,11 @@
    En mode sombre l'azur s'eclaircit : pose sur #16161a, #007FFF ne tient
    pas le contraste d'un texte de petit corps. */
 :root{
+  /* La page se peint dans les deux thèmes : autant le dire au navigateur,
+     qui accorde alors ses propres surfaces — barres de défilement, champs,
+     et l'habillage de l'application enregistrée. */
+  color-scheme:light dark;
+
   --azuro:#007FFF;
   --pap:#fbfaf7; --enk:#1a1a1a; --sub:#6b6560; --lin:#e2ddd5;
   --vualo:rgba(0,127,255,.055);
