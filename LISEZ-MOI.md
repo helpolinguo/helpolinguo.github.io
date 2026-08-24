@@ -395,6 +395,29 @@ d'Apple donnent donc **« Ido »** seul.
 `ikono-512.png`, refaites par `outils/ikoni.py`) et trois raccourcis vers les
 livres.
 
+**La couleur de la barre de fenêtre.** Le navigateur retient **le premier**
+`theme-color` dont le `media` correspond. L'inconditionnel était en tête : il
+correspondait toujours, et celui du thème sombre n'était jamais atteint — d'où
+une barre blanche en mode sombre dans l'application du Dock, alors que les
+trois livres suivaient le thème, n'en déclarant aucun et laissant Safari
+déduire la couleur du fond réellement peint.
+
+Les deux portent donc leur condition, et **la claire vient en premier** : un
+navigateur qui ignorerait l'attribut `media` prendrait la première, et le
+clair est le parti par défaut de la page.
+
+```html
+<meta name="theme-color" media="(prefers-color-scheme:light)" content="#fbfaf7">
+<meta name="theme-color" media="(prefers-color-scheme:dark)"  content="#16161a">
+```
+
+Le manifeste **ne déclare plus de `theme_color`** : c'était une seconde source,
+statique et claire, qui n'aurait pas su suivre le thème. Sans elle, il ne reste
+que les deux balises — et si un navigateur les ignorait, il ferait comme pour
+les trois livres, qui n'en ont pas et vont bien. `:root` déclare en outre
+`color-scheme: light dark`, pour que le navigateur accorde ses propres
+surfaces.
+
 > **Un choix qui mérite d'être su.** Le manifeste déclare
 > `"display": "standalone"`, et la balise `apple-mobile-web-app-capable`
 > l'accompagne pour les iOS antérieurs à 16.4 : l'application enregistrée
