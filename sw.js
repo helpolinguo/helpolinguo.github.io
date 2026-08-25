@@ -102,15 +102,30 @@ self.addEventListener('fetch', e => {
   e.respondWith(req.mode === 'navigate' ? fromNetwork(req) : fromCache(req));
 });
 
-/* Network first: the page one reads is always the latest published. */
+/* Network first: the page one reads is always the latest published.
+
+   A SEARCH ADDRESS IS THE SAME PAGE. "/dicionario/?q=amiko" is served by
+   GitHub Pages with the same bytes as "/dicionario/" — a static host does
+   not vary by query, and it is the page's own script that reads "?q=".
+   MEASURED, filed under the full address: two entries in the cache after
+   one search, of 2.1 MB each, and one more for every distinct word looked
+   up from Spotlight. Under the bare address: one. The lookup follows the
+   filing — the copy is now kept there, so that is where it is sought.
+
+   WHAT WAS EXPECTED AND DID NOT HAPPEN: that a search address, offline,
+   should fall back on "/" — the home page — for want of a hit. It does
+   not: with the server stopped, Chromium answered the navigation all the
+   same, from its own store. The fallback is corrected nonetheless, being
+   the other half of the filing rule, not a fix for an observed fault. */
 async function fromNetwork(req) {
   const c = await caches.open(CACHE);
+  const page = req.url.split('?')[0];
   try {
     const r = await fetch(fresh(req.url));
-    if (r && r.ok) c.put(req.url, r.clone());
+    if (r && r.ok) c.put(page, r.clone());
     return r;
   } catch (_) {
-    return (await c.match(req.url)) || (await c.match('/')) || Response.error();
+    return (await c.match(page)) || (await c.match('/')) || Response.error();
   }
 }
 

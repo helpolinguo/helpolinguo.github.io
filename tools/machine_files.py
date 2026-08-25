@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
-"""Generates the site's front-door files FOR MACHINES: robots, map, llms.
+"""Generates the site's front-door files FOR MACHINES: robots, map, llms,
+search.
 
 WHY AT THE ROOT. The four sites share one origin — the home page is the
 user site, the three books are project sites. But "/robots.txt" and
 "/sitemap.xml" are only read at the ROOT of a domain: a robots.txt dropped
-into /tabeli/ would be read by nobody. These three files can therefore only
-live here, and they speak for all four.
+into /tabeli/ would be read by nobody. These four files can therefore only
+live here, and they speak for all four sites.
 
 WHAT EACH ONE DOES
 
-  robots.txt   says yes to everyone, by name — including the language
-               models' crawlers, which many sites block and which, for want
-               of a mention, sometimes abstain of their own accord.
-  sitemap.xml  lists the pages for search engines.
-  llms.txt     the map, for the use of models: what the site holds, in what
-               form, AND AT WHAT PRICE. It is the stated weight that
-               counts: it allows a choice to be made BEFORE downloading,
-               and that, far more than compression, is where the saving is.
+  robots.txt      says yes to everyone, by name — including the language
+                  models' crawlers, which many sites block and which, for
+                  want of a mention, sometimes abstain of their own accord.
+  sitemap.xml     lists the pages for search engines.
+  llms.txt        the map, for the use of models: what the site holds, in
+                  what form, AND AT WHAT PRICE. It is the stated weight
+                  that counts: it allows a choice to be made BEFORE
+                  downloading, and that, far more than compression, is
+                  where the saving is.
+  opensearch.xml  says that this domain HAS A SEARCH, and at what address.
+                  Safari reads it, and macOS 26 hands what Safari has
+                  learnt to Spotlight — see write_opensearch below.
 
 THIS SCRIPT READS THE NEIGHBOURING REPOSITORIES. The three books are
 separate repositories; the script expects their clones beside this one. It
@@ -248,12 +253,61 @@ def write_llms():
     (ROOT / 'llms.txt').write_text('\n'.join(L), encoding='utf-8')
 
 
+# --------------------------------------------------------------------------
+# opensearch.xml
+# --------------------------------------------------------------------------
+# WHAT THIS BUYS: "ido.help" + Tab, IN SPOTLIGHT. macOS 26 lets one type a
+# site's name into Spotlight and press Tab to search INSIDE that site. It
+# invents nothing: it hands over the list Safari keeps under Settings →
+# Search → Manage Websites, and Safari fills that list from two sources —
+# an OpenSearch description document, which Apple has read since Safari 8
+# and calls the recommended way, or, failing that, a guess made from the
+# metadata of a search form. We declare it rather than let it be guessed.
+#
+# THE DOCUMENT DESCRIBES ONE SEARCH, AND IT IS THE DICTIONARY'S. A domain
+# gets one entry in that list, so the address below has to be the one worth
+# reaching by a word: /dicionario/?q=. The Tabeli and the Gramatiko are
+# searched from their own pages.
+#
+# THE TEMPLATE ONLY WORKS BECAUSE THE PAGE ANSWERS IT. /dicionario/ reads
+# "?q=" at load and applies it to its search field — that came in with this
+# file. An OpenSearch document pointing at an address that ignores its own
+# query is a promise the site does not keep.
+#
+# THE TEXT IS IN IDO because it is shown: Safari prints ShortName and
+# Description in the Manage Websites panel, and Spotlight prints the name
+# beside the field. Sixteen characters is the limit OpenSearch sets on
+# ShortName; « Ido » is the name the icon already carries.
+#
+# NOT DONE: the suggestions endpoint. OpenSearch allows a second address
+# that returns completions as JSON as one types; it takes the typed word as
+# a query parameter, which a static site on GitHub Pages cannot answer. The
+# page's own search, once reached, does the rest.
+OPENSEARCH = """<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Ido</ShortName>
+  <Description>Serchez vorto en la Dicionario de la 10.000 radiki</Description>
+  <Language>io</Language>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="192" height="192" type="image/png">{site}/icon-192.png</Image>
+  <Url type="text/html" method="get"
+       template="{site}/dicionario/?q={{searchTerms}}"/>
+</OpenSearchDescription>
+"""
+
+
+def write_opensearch():
+    (ROOT / 'opensearch.xml').write_text(OPENSEARCH.format(site=SITE),
+                                         encoding='utf-8')
+
+
 def main():
     today = os.environ.get('DATE') or datetime.date.today().isoformat()
     write_robots()
     n = write_sitemap(today)
     write_llms()
-    for f in ('robots.txt', 'sitemap.xml', 'llms.txt'):
+    write_opensearch()
+    for f in ('robots.txt', 'sitemap.xml', 'llms.txt', 'opensearch.xml'):
         print('  %-14s %8s' % (f, weight(ROOT / f)))
     print('  %d addresses in the sitemap' % n)
     print('  (re-run when a book changes: the script reads the neighbouring repositories)')

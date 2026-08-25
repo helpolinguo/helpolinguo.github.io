@@ -32,6 +32,7 @@ og-image.png            1200 × 630, the sharing image
 robots.txt              }
 sitemap.xml             }  generated — see tools/machine_files.py
 llms.txt                }
+opensearch.xml          }
 fonts/                  Jost* Bold and Medium, subset to this page
 tools/                  the generators; nothing here is served
 docs/journal.md         why the page is built the way it is
@@ -46,7 +47,7 @@ statically. Three scripts regenerate what is not written by hand.
 ```sh
 python3 tools/emblem.py         # the logotype, to be copied into index.html
 python3 tools/icons.py          # emblem.svg, the icons, og-image.png
-python3 tools/machine_files.py  # robots.txt, sitemap.xml, llms.txt
+python3 tools/machine_files.py  # robots.txt, sitemap.xml, llms.txt, opensearch.xml
 ```
 
 The first two need `fonttools` and `pymupdf`, and read the Jost\* TTFs from
@@ -54,8 +55,28 @@ the `dicionario` repository. The third reads the three book repositories, and
 so expects their clones beside this one; re-run it whenever a book changes.
 
 Files under `tools/` are **generators, not sources**: `robots.txt`,
-`sitemap.xml` and `llms.txt` are overwritten wholesale, so anything that must
-change is changed in `tools/machine_files.py`.
+`sitemap.xml`, `llms.txt` and `opensearch.xml` are overwritten wholesale, so
+anything that must change is changed in `tools/machine_files.py`.
+
+## Searching the site from outside it
+
+`opensearch.xml` declares that this domain has a search, and gives its
+address: `https://ido.help/dicionario/?q=`. The dictionary's page reads that
+`?q=` at load, so the address is a search one can copy, bookmark or send.
+
+Safari reads the declaration on the first visit — the `<link rel="search">`
+is on the home page and on the dictionary's — and files the site under
+*Settings → Search → Manage Websites*. **macOS 26 hands that list to
+Spotlight**: typing the site's name there and pressing Tab opens a field
+whose result lands on the dictionary, the word already sought. The same
+entry serves the address bar, where `ido.help` followed by a space does the
+same thing.
+
+Two limits worth knowing. Spotlight OPENS the page; it does not show the
+definition inside its own window — only a native application, through App
+Intents, can do that. And Safari has to have seen the site at least once:
+the list is built from visits, not from a registry. Safari on iOS ignores
+OpenSearch entirely.
 
 ## A note on language
 

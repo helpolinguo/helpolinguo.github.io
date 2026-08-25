@@ -822,3 +822,49 @@ Both scripts read `Jost-Bold.ttf` and `Jost-Medium.ttf` from
 `dicionario/pocket/fonts/`; they require `fonttools` and `pymupdf`.
 
 Jost\* is under the SIL OFL 1.1 — see `fonts/OFL.txt` and `fonts/README.md`.
+
+
+## 12. Spotlight, and the search from outside the site
+
+macOS 26 lets one type a site's name into Spotlight and press **Tab** to
+search inside that site. It invents nothing: it hands over the list Safari
+keeps under *Settings → Search → Manage Websites*, and Safari fills that
+list from an **OpenSearch description document** — read since Safari 8, and
+the way Apple recommends — or, failing one, from a guess made on the
+metadata of a search form. Adding the site to the Dock as a web application
+has nothing to do with it: that gives an icon and a name in Spotlight's
+list of applications, not a search.
+
+So `/opensearch.xml`, written by `tools/machine_files.py` like the three
+other files for machines, and declared by a `<link rel="search">` on the
+home page and on the dictionary's. It lives at the root for the reason the
+other three do: **Safari keeps one entry per domain**, and the four sites
+share this one.
+
+That entry has to name an address that works. It names
+`https://ido.help/dicionario/?q=` — the dictionary is the book one reaches
+by a word — and the dictionary's page did not read `?q=` at all: its search
+was a field and nothing else, and no search in it had an address. Reading
+the parameter, and writing it back at each keystroke, is the other half of
+this work; it was done in the `dicionario` repository, and its page's
+comments say how.
+
+**What the service worker was doing with it.** Pages are cached under the
+address asked for. Measured, before the change: one search from Spotlight
+laid a *second* copy of the dictionary in the cache — 2.1 MB — and every
+distinct word would have laid another. A static host cannot vary by query,
+so the copy is now filed under the address without its query, and one
+search leaves one entry.
+
+**What was expected and did not happen.** That the same rule should have
+made a search address, offline, fall back on `/` — the home page — for want
+of a hit. With the server stopped, Chromium answered the navigation all the
+same, from its own store: the fault was never visible. The fallback was
+corrected all the same, being the other half of the filing rule.
+
+**Not done: the suggestions endpoint.** OpenSearch allows a second address
+returning completions as JSON while one types. It takes the typed word as a
+query parameter, which GitHub Pages cannot answer. Spotlight opens the page;
+the page's own search does the rest — and it is worth saying plainly that
+Spotlight will not show a definition inside its own window. Only a native
+application, through App Intents, can do that.
