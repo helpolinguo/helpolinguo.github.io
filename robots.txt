@@ -1,4 +1,4 @@
-# ido.help — tri verki dil helpolinguo internaciona Ido.
+# ido.help — three works of the international auxiliary language Ido.
 #
 # Everything is open, to everyone, without delay. The site is static: no
 # rate of visits puts it under any strain.
