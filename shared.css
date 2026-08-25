@@ -1,0 +1,281 @@
+/* =====================================================================
+   THE STYLESHEET SHARED BY THE THREE BOOKS
+   =====================================================================
+   It carries, first, THE BACK BUTTON; and, since then, whatever has to be
+   uniform across the three and cannot be made so otherwise — at the foot
+   of the file, the button that clears the search field.
+   =====================================================================
+
+   WHY ONE FILE, AND NOT THREE. The four sites are served from the SAME
+   origin: the home page is the user site, and the three books are project
+   sites served under ido.help/<repository>. A file placed at the root is
+   therefore readable by all three. The whole appearance lives here, and
+   what little behaviour is needed lives beside it in /shared.js. Each book
+   carries three lines only, and they will not change again:
+
+     <link rel="stylesheet" href="/shared.css">
+     <script src="/shared.js" defer></script>
+     <a class="ido-home" href="/">Ido</a>
+
+   The word "Ido" is in the link and not in the stylesheet: if the sheet
+   fails to load — a page opened outside the site, a file moved — a legible
+   link is left at the end of the document instead of an empty square.
+
+   The button is the emblem itself, served from /emblem.svg: the azure disc
+   and the star from the Dicionario's title page. One drawing for all four
+   pages.
+   ===================================================================== */
+
+.ido-home{
+  /* --- THE INSET FROM THE CORNER. ---------------------------------
+     A phone screen has ROUNDED corners, and the rounding eats into the
+     viewport diagonally. A corner of radius r cuts off everything lying,
+     ON THE DIAGONAL, within r(sqrt2 - 1) = 0.414 r of the corner — and
+     that distance is far greater than the inset from either edge.
+
+     The point of the disc nearest the corner lies sqrt2(m + R) - (R + h)
+     from it, where m is the inset, R the radius of the disc and h the
+     halo. With the 12 px inset this button used to have, a radius of 19
+     and a halo of 4, that came to 20.8 px: the screen's corner radius had
+     to be under 50 px for nothing to be clipped. A recent iPhone is around
+     55 to 62. The button was therefore being eaten, and eaten ON THE
+     DEVICE without any screenshot showing it — iOS renders screenshots
+     rectangular.
+
+     At 24 px the clearance rises to 37.8 px, and the button survives up to
+     a screen corner radius of 91 px. That is double what any current
+     device reaches.
+
+     Notches are still accounted for on top: "max" keeps the larger of the
+     two constraints. They only apply, however, on a page declaring
+     "viewport-fit=cover"; the three books do not, and it is the literal
+     inset that protects them.
+
+     ONE NUMBER TO TOUCH if the sums ever stop working out. */
+  --margin:24px;
+  --size:42px;
+
+  position:fixed;
+  left:max(var(--margin), env(safe-area-inset-left));
+  width:var(--size); height:var(--size);
+
+  /* --- WHY THE BUTTON IS PLACED FROM THE TOP, AND NOT FROM THE BOTTOM. -
+     On iPhone the address bar retracts as one scrolls down the page, and
+     the bottom of the viewport then moves. A button placed by "bottom"
+     follows that bottom: it moves, and a landmark must not move.
+
+     It is therefore placed from the TOP — an edge that never moves — at
+     the height of the SMALLEST viewport the browser can offer, the one
+     where every bar is deployed. That is what "svh" means, and that unit
+     does not vary when the bars retract. The button therefore stays still
+     whatever the bars are doing, and is visible in every case since it
+     fits inside the smallest viewport.
+
+     "bottom" is left BEFORE it, and serves as a fallback: a browser that
+     does not know "svh" — Safari before 15.4 — discards the "top"
+     declaration and falls back on the old behaviour. When both are
+     understood it is "top" that wins, the height being fixed. */
+  bottom:max(var(--margin), env(safe-area-inset-bottom));
+  top:calc(100svh - var(--size) - max(var(--margin), env(safe-area-inset-bottom)));
+  border-radius:50%;
+  background:url(/emblem.svg) center/contain no-repeat;
+
+  /* UNDER THE PANELS, NOT OVER THEM. Two of the three books have a side
+     panel which, on a narrow screen, slides over the page behind a veil
+     (z-index 25 to 30). The button must pass underneath: it has nothing to
+     say while a panel is open. */
+  z-index:12;
+
+  /* A halo the colour of the paper lifts the disc off whatever text it
+     covers; without it the emblem merges into the line. */
+  box-shadow:0 0 0 4px #fbfaf7, 0 2px 11px rgba(0,0,0,.14);
+  opacity:.85;
+
+  /* The link carries the word "Ido"; it is hidden without being removed
+     from the document, so that screen readers keep reading it.
+
+     BY A NULL TYPE SIZE, AND NOT BY OVERFLOW. It was at first pushed out
+     of the disc by "text-indent", and it was hidden overflow that held it
+     back — but the overflow has to be MADE VISIBLE on hover, or the label
+     could not leave the disc. The word therefore came out with it, and
+     "Ido" appeared twice: once as a label, once spelled out, in the font
+     and colour of links.
+
+     A null type size depends on no overflow. The label sets its own in so
+     many words, and is not affected. */
+  font-size:0; color:transparent; white-space:nowrap;
+  overflow:hidden;
+
+  -webkit-tap-highlight-color:transparent;
+
+  /* ITS OWN LAYER. WebKit does not reposition fixed elements continuously
+     during scroll inertia: they drift with the text and then snap back. A
+     three-dimensional transform, even a null one, forces a composited
+     layer the engine knows how to move separately — the usual remedy, and
+     it costs nothing for a 42 px disc. The hover transform must therefore
+     be 3D as well, or it undoes the promotion. */
+  transform:translate3d(0,0,0);
+
+  transition:opacity .16s, transform .16s, box-shadow .16s;
+}
+.ido-home:hover{
+  opacity:1;
+  transform:translate3d(0,-2px,0);
+  box-shadow:0 0 0 4px #fbfaf7, 0 5px 16px rgba(0,0,0,.2);
+}
+.ido-home:active{transform:translate3d(0,0,0)}
+.ido-home:focus-visible{
+  outline:2px solid #007FFF; outline-offset:5px;
+}
+
+/* The label, on hover only. It is in the stylesheet and not in the link:
+   the link's word is already spoken for by the no-CSS fallback, and there
+   is no reason to make the three repositories carry the same string
+   twice. */
+@media (hover:hover) and (pointer:fine){
+  .ido-home::after{
+    content:"Ido";
+    position:absolute; left:52px; top:50%;
+    transform:translateY(-50%);
+    font:600 12px/1 system-ui,sans-serif;
+    letter-spacing:.06em;
+    color:#fbfaf7; background:#007FFF;
+    padding:6px 9px; border-radius:6px;
+    opacity:0; pointer-events:none;
+    transition:opacity .16s;
+  }
+  /* The bubble leaves the disc: the overflow has to be made visible, and
+     the text's suppression undone for it alone. */
+  .ido-home:hover{overflow:visible}
+  .ido-home:hover::after{opacity:1}
+
+  /* THE LABEL MUST NOT COUNT IN THE LINK'S NAME. The link already carries
+     "Ido"; the browser appends the pseudo-element's content, and the name
+     became "Ido Ido" — the same duplication one used to see on screen, but
+     for whoever listens to the page.
+
+     The "content / alt-text" syntax gives the pseudo-element an empty
+     alternative: it is seen, it is no longer spoken. It sits UNDER A
+     GUARD, because a browser that ignores it would discard the whole
+     declaration — and the label would not appear at all. */
+  @supports (content:"a" / "b"){
+    .ido-home::after{content:"Ido" / ""}
+  }
+}
+
+/* The dark theme of the three books uses the same paper, #16161a; the halo
+   follows it. The emblem does not change: the azure and the white star
+   hold on either ground. */
+@media (prefers-color-scheme:dark){
+  .ido-home{box-shadow:0 0 0 4px #16161a, 0 2px 11px rgba(0,0,0,.5)}
+  .ido-home:hover{box-shadow:0 0 0 4px #16161a, 0 5px 16px rgba(0,0,0,.62)}
+}
+
+/* On a small screen the disc drops to 38 px: room is scarce there, and the
+   side panel, once open, already takes half the viewport. The inset from
+   the corner does NOT shrink — that is where the screen's rounding bites
+   hardest, and a phone is precisely the device that has one. */
+@media (max-width:560px){
+  .ido-home{--size:38px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ido-home{transition:opacity .16s}
+  .ido-home:hover{transform:translate3d(0,0,0)}
+}
+
+/* In print, a button has no business being on paper. */
+@media print{.ido-home{display:none}}
+
+
+/* =====================================================================
+   THE CROSS THAT CLEARS THE SEARCH FIELD
+   =====================================================================
+   FIRST ATTEMPT, AND WHY IT COULD NOT HAVE WORKED. The cross was at first
+   asked back from the browser, by restoring the appearance of the
+   "::-webkit-search-cancel-button" pseudo-element. On iPhone nothing
+   appeared — and nothing could: WebKit renders that pseudo-element ONLY on
+   macOS. On iOS it does not exist; a search field there is an ordinary
+   text field, and the custom is to clear it from the keyboard. No CSS will
+   change that.
+
+   The cross therefore has to be drawn ourselves. What follows makes it
+   appear the same way everywhere — which is exactly why the stylesheet is
+   shared. The native cross is DISCARDED at the same time: macOS drew one,
+   and there would have been two.
+
+   "color-scheme" stays. It no longer serves the cross, but it matches the
+   scrollbars and the language menu to the dark theme of the three books,
+   which it already did. */
+:root{color-scheme:light dark}
+
+input[type=search]::-webkit-search-cancel-button{
+  -webkit-appearance:none; appearance:none; display:none;
+}
+
+/* --- THE WRAPPER. ----------------------------------------------------
+   The cross is laid ON the field, hence inside a box that follows it. Two
+   of the three books put their field bare in the bar; the script then
+   gives them this wrapper. The third — the Tabeli — already has one, for
+   its magnifier, and the script uses that one as it stands rather than
+   stacking a second.
+
+   IT CARRIES NO MEASUREMENTS. That is the delicate point: the field keeps
+   its own "flex" and "min-width", which each book sets to its own taste
+   and changes again with the screen width. If the wrapper copied them, the
+   copy would be frozen at load and wrong from the phone's first rotation.
+   It therefore settles for "flex:1 1 auto" with an AUTOMATIC basis and
+   minimum size: both are deduced from the field it contains, at every
+   screen width, without a single number having to be repeated here. */
+.ido-search-shell{
+  position:relative;
+  display:flex; align-items:stretch;
+  flex:1 1 auto;
+}
+
+/* --- THE CROSS. ------------------------------------------------------
+   The same stroke as the Tabeli's icons — 15 px, weight 1.8, round caps,
+   the colour of secondary text — so that it looks as though it had always
+   been there. The touch target, on the other hand, is the full height of
+   the field by 34 px wide: a finger does not aim at a 15 px stroke.
+
+   It appears ONLY if the field holds something. An empty field has nothing
+   to clear, and the cross would eat into the placeholder — already
+   truncated on a phone. */
+.ido-clear{
+  position:absolute; top:0; right:0; bottom:0;
+  width:34px;
+  display:none; place-items:center;
+  margin:0; padding:0; border:0; background:none;
+  color:var(--muted,#6b6560);
+  cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .16s, opacity .16s;
+}
+.ido-filled > .ido-clear{display:grid}
+
+/* The text stops before the cross, but ONLY while it is there: otherwise
+   the placeholder would lose 34 px for nothing. The indent arrives with
+   the first letter typed — by which time the placeholder has already gone
+   and the field holds a single character, so that nothing moves under the
+   eye. */
+.ido-filled input[type=search]{padding-right:34px}
+
+.ido-clear svg{
+  width:15px; height:15px;
+  pointer-events:none;              /* the click goes to the button, not the stroke */
+  fill:none; stroke:currentColor; stroke-width:1.8;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+@media (hover:hover) and (pointer:fine){
+  .ido-clear:hover{color:var(--ink,#1a1a1a)}
+}
+.ido-clear:active{opacity:.55}
+
+@media (prefers-reduced-motion:reduce){
+  .ido-clear{transition:none}
+}
+
+/* On paper there is nothing to clear. */
+@media print{.ido-clear{display:none}}

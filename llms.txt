@@ -39,4 +39,4 @@ Tabelo komparanta en **57 lingui**. La klefi di `tabeli.json` esas ti di `lingui
 
 - La `.md` e `.json` esas ENGENDRATA de la pagini. La fonto restas `index.html` en singla deposito.
 - Nula limito di frequeso : la sito esas statika.
-- Kodexo e transskribi : https://github.com/GPhMorin
+- Kodexo e transskribi : https://github.com/helpolinguo
