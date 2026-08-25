@@ -1,42 +1,42 @@
 # ido.help
 
-> Tri verki dil helpolinguo internaciona **Ido**, transskribita ed exhaustive serchebla : la Delmas-Tabeli (1926), la Dicionario de la 10.000 radiki (1934/1964), e la Kompleta Gramatiko Detaloza (1925). Pri la yuri di singla verko, videz la pagino di la deposito.
+> Three works of the international auxiliary language **Ido**, transcribed and exhaustively searchable: the Delmas-Tabeli (1926), the Dicionario de la 10.000 radiki (1934/1964), and the Kompleta Gramatiko Detaloza (1925). For the rights in each work, see the repository's page.
 
-Ido esas helpolinguo internaciona, publikigita en 1907, derivita de Esperanto. Ca sito ofras la tri verki fundamentala en formo lektebla da homi ed da mashini.
+Ido is an international auxiliary language, published in 1907 and derived from Esperanto. This site offers the three fundamental works in a form legible to people and to machines.
 
-## Por komencar
+## Where to start
 
-Se vu volas **lernar la gramatiko**, la chapitri esas la maxim ekonomiala voyo : singla chapitro esas apartra dosiero de cirkum 10 Ko. Ne deskargez la tota libro por un questiono.
+To **learn the grammar**, the chapters are the cheapest way in: each chapter is a separate file of some 10 kB. Do not download the whole book for one question.
 
-- [Tabelo dil chapitri](https://ido.help/gramatiko/chapitri/index.md) — la 49 chapitri, kun lia grandeso
+- [Table of the chapters](https://ido.help/gramatiko/chapitri/index.md) — the 49 chapters, with their sizes
 
-Se vu volas **serchar vorto**, la vortlisto esas kurta ; la kompleta artikli esas plu longa.
+To **look up a word**, the word list is short; the full entries are longer.
 
 ## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925
 
-- [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — la tabelo, kun la grandeso di singla chapitro
-- 49 chapitri apartra, en `https://ido.help/gramatiko/chapitri/` — cirkum 10 Ko singla
-- [gramatiko.md](https://ido.help/gramatiko/gramatiko.md) — 480 Ko — la tota libro
-- [gramatiko/](https://ido.help/gramatiko/) — la pagino, kun sercho
+- [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — the table, with each chapter's size
+- 49 separate chapters, under `https://ido.help/gramatiko/chapitri/` — some 10 kB each
+- [gramatiko.md](https://ido.help/gramatiko/gramatiko.md) — 480 kB — the whole book
+- [gramatiko/](https://ido.help/gramatiko/) — the page, with its search
 
 ## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964
 
-- [vortlisto.md](https://ido.help/dicionario/vortlisto.md) — 923 Ko — vedvorto e unesma senco nur
-- [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 Mo — la kompleta artikli
-- [dicionario.json](https://ido.help/dicionario/dicionario.json) — 2.1 Mo — la datumi, por interogar
-- [dicionario/](https://ido.help/dicionario/) — la pagino, kun sercho
+- [vortlisto.md](https://ido.help/dicionario/vortlisto.md) — 923 kB — headword and first sense only
+- [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 MB — the full entries
+- [dicionario.json](https://ido.help/dicionario/dicionario.json) — 2.1 MB — the data, to be queried
+- [dicionario/](https://ido.help/dicionario/) — the page, with its search
 
 ## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926
 
-Tabelo komparanta en **57 lingui**. La klefi di `tabeli.json` esas ti di `lingui/*.json` : por obtenar irga paro di lingui, junktez li per la klefo.
+A table comparing **57 languages**. The keys of `tabeli.json` are those of `lingui/*.json`: to obtain any pair of languages, join them on the key.
 
-- [tabeli.md](https://ido.help/tabeli/tabeli.md) — 283 Ko — Ido e Franca en regardo
-- [tabeli.json](https://ido.help/tabeli/tabeli.json) — 288 Ko — la klefi e la du lingui
-- [lingui/index.json](https://ido.help/tabeli/lingui/index.json) — 2 Ko — la 55 altra lingui ofrata
-- [tabeli/](https://ido.help/tabeli/) — la pagino, kun sercho
+- [tabeli.md](https://ido.help/tabeli/tabeli.md) — 283 kB — Ido and French side by side
+- [tabeli.json](https://ido.help/tabeli/tabeli.json) — 288 kB — the keys and the two languages
+- [lingui/index.json](https://ido.help/tabeli/lingui/index.json) — 2 kB — the 55 other languages offered
+- [tabeli/](https://ido.help/tabeli/) — the page, with its search
 
-## Noti
+## Notes
 
-- La `.md` e `.json` esas ENGENDRATA de la pagini. La fonto restas `index.html` en singla deposito.
-- Nula limito di frequeso : la sito esas statika.
-- Kodexo e transskribi : https://github.com/helpolinguo
+- The `.md` and `.json` files are GENERATED from the pages. The source stays `index.html` in each repository.
+- No rate limit: the site is static.
+- Code and transcriptions: https://github.com/helpolinguo

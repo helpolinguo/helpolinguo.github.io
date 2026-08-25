@@ -61,8 +61,14 @@ change is changed in `tools/machine_files.py`.
 
 The source is in English — comments, identifiers, filenames and commits. **The
 interface is in Ido** and stays so: page text, accessible names, tooltips and
-the labels on hover are all Ido, as are the published `llms.txt` and the URLs
-of the three books. Translating the source changed nothing a visitor can see.
+the labels on hover are all Ido, as are the URLs of the three books.
+Translating the source changed nothing a visitor can see.
+
+**`/llms.txt` is the one published page in English.** The interfaces are in
+Ido because they are read by people who came for Ido; `/llms.txt` is read by
+crawlers and by whoever is wiring a program up to the site, and English is
+what serves them. The three works keep their own titles, which are their
+names.
 
 ## Licence
 

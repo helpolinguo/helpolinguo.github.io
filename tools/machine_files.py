@@ -38,16 +38,16 @@ SITE = 'https://ido.help'
 def weight(p: Path) -> str:
     """A weight legible at a glance, so as to choose without arithmetic.
 
-    The units are the ones the page itself uses, in Ido: "o" for octets,
-    "Ko" and "Mo" for their multiples. They are published text, not code,
-    and they stay as they are.
+    In bytes and their multiples. This function serves /llms.txt alone,
+    which is in English: the pages themselves say « Ko » and « Mo », in
+    Ido, and are not touched by it.
     """
     n = p.stat().st_size
     if n >= 1_048_576:
-        return '%.1f Mo' % (n / 1_048_576)
+        return '%.1f MB' % (n / 1_048_576)
     if n >= 1024:
-        return '%d Ko' % (n / 1024)
-    return '%d o' % n
+        return '%d kB' % (n / 1024)
+    return '%d bytes' % n
 
 
 def found(book: str, *names):
@@ -72,7 +72,7 @@ def found(book: str, *names):
 # nothing addresses them. An explicit permission removes the doubt. Nor are
 # they subject to any delay: the site is static and sits on GitHub Pages,
 # which has no interest in the rate of visits.
-ROBOTS = """# ido.help — tri verki dil helpolinguo internaciona Ido.
+ROBOTS = """# ido.help — three works of the international auxiliary language Ido.
 #
 # Everything is open, to everyone, without delay. The site is static: no
 # rate of visits puts it under any strain.
@@ -168,9 +168,11 @@ def write_sitemap(today: str):
 # --------------------------------------------------------------------------
 # llms.txt
 # --------------------------------------------------------------------------
-# The body below is IN IDO, like the three interfaces: it is published text,
-# addressed to whoever reads the site, and it is not translated with the rest
-# of the source.
+# THE BODY BELOW IS IN ENGLISH, and it is the one published page that is.
+# The three interfaces are in Ido because they are read by people who came
+# for Ido; /llms.txt is read by crawlers and by whoever is wiring a program
+# up to the site, and English is what serves them. The titles of the three
+# works keep their own names, which are the works' names.
 def write_llms():
     def listing(book, names, suffix=''):
         return [f'- [{n}]({SITE}/{book}/{n}) — {w}{suffix}'
@@ -179,64 +181,69 @@ def write_llms():
     L = [
         '# ido.help',
         '',
-        '> Tri verki dil helpolinguo internaciona **Ido**, transskribita ed '
-        'exhaustive serchebla : la Delmas-Tabeli (1926), la Dicionario de la '
-        '10.000 radiki (1934/1964), e la Kompleta Gramatiko Detaloza (1925). '
-        'Pri la yuri di singla verko, videz la pagino di la deposito.',
+        '> Three works of the international auxiliary language **Ido**, '
+        'transcribed and exhaustively searchable: the Delmas-Tabeli (1926), '
+        'the Dicionario de la 10.000 radiki (1934/1964), and the Kompleta '
+        'Gramatiko Detaloza (1925). For the rights in each work, see the '
+        "repository's page.",
         '',
-        'Ido esas helpolinguo internaciona, publikigita en 1907, derivita de '
-        'Esperanto. Ca sito ofras la tri verki fundamentala en formo lektebla '
-        'da homi ed da mashini.',
+        'Ido is an international auxiliary language, published in 1907 and '
+        'derived from Esperanto. This site offers the three fundamental works '
+        'in a form legible to people and to machines.',
         '',
-        '## Por komencar',
+        '## Where to start',
         '',
-        'Se vu volas **lernar la gramatiko**, la chapitri esas la maxim '
-        'ekonomiala voyo : singla chapitro esas apartra dosiero de cirkum '
-        '10 Ko. Ne deskargez la tota libro por un questiono.',
+        'To **learn the grammar**, the chapters are the cheapest way in: each '
+        'chapter is a separate file of some 10 kB. Do not download the whole '
+        'book for one question.',
         '',
-        '- [Tabelo dil chapitri](%s/gramatiko/chapitri/index.md) — la 49 '
-        'chapitri, kun lia grandeso' % SITE,
+        '- [Table of the chapters](%s/gramatiko/chapitri/index.md) — the 49 '
+        'chapters, with their sizes' % SITE,
         '',
-        'Se vu volas **serchar vorto**, la vortlisto esas kurta ; la kompleta '
-        'artikli esas plu longa.',
+        'To **look up a word**, the word list is short; the full entries are '
+        'longer.',
         '',
         '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
         '',
     ]
-    L += ['- [chapitri/index.md](%s/gramatiko/chapitri/index.md) — la tabelo, '
-          'kun la grandeso di singla chapitro' % SITE]
+    L += ['- [chapitri/index.md](%s/gramatiko/chapitri/index.md) — the table, '
+          "with each chapter's size" % SITE]
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
     if chapters.exists():
         n = len([f for f in chapters.glob('*.md') if f.name != 'index.md'])
-        L += ['- %d chapitri apartra, en `%s/gramatiko/chapitri/` — '
-              'cirkum 10 Ko singla' % (n, SITE)]
-    L += listing('gramatiko', ('gramatiko.md',), ' — la tota libro')
-    L += ['- [gramatiko/](%s/gramatiko/) — la pagino, kun sercho' % SITE, '']
+        L += ['- %d separate chapters, under `%s/gramatiko/chapitri/` — '
+              'some 10 kB each' % (n, SITE)]
+    L += listing('gramatiko', ('gramatiko.md',), ' — the whole book')
+    L += ['- [gramatiko/](%s/gramatiko/) — the page, with its search' % SITE, '']
 
     L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964',
           '']
-    L += listing('dicionario', ('vortlisto.md',), ' — vedvorto e unesma senco nur')
-    L += listing('dicionario', ('dicionario.md',), ' — la kompleta artikli')
-    L += listing('dicionario', ('dicionario.json',), ' — la datumi, por interogar')
-    L += ['- [dicionario/](%s/dicionario/) — la pagino, kun sercho' % SITE, '']
+    L += listing('dicionario', ('vortlisto.md',),
+                 ' — headword and first sense only')
+    L += listing('dicionario', ('dicionario.md',), ' — the full entries')
+    L += listing('dicionario', ('dicionario.json',),
+                 ' — the data, to be queried')
+    L += ['- [dicionario/](%s/dicionario/) — the page, with its search' % SITE,
+          '']
 
     L += ['## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926',
           '',
-          'Tabelo komparanta en **57 lingui**. La klefi di `tabeli.json` esas '
-          'ti di `lingui/*.json` : por obtenar irga paro di lingui, junktez li '
-          'per la klefo.',
+          'A table comparing **57 languages**. The keys of `tabeli.json` are '
+          'those of `lingui/*.json`: to obtain any pair of languages, join '
+          'them on the key.',
           '']
-    L += listing('tabeli', ('tabeli.md',), ' — Ido e Franca en regardo')
-    L += listing('tabeli', ('tabeli.json',), ' — la klefi e la du lingui')
-    L += listing('tabeli', ('lingui/index.json',), ' — la 55 altra lingui ofrata')
-    L += ['- [tabeli/](%s/tabeli/) — la pagino, kun sercho' % SITE, '']
+    L += listing('tabeli', ('tabeli.md',), ' — Ido and French side by side')
+    L += listing('tabeli', ('tabeli.json',), ' — the keys and the two languages')
+    L += listing('tabeli', ('lingui/index.json',),
+                 ' — the 55 other languages offered')
+    L += ['- [tabeli/](%s/tabeli/) — the page, with its search' % SITE, '']
 
-    L += ['## Noti',
+    L += ['## Notes',
           '',
-          '- La `.md` e `.json` esas ENGENDRATA de la pagini. La fonto restas '
-          '`index.html` en singla deposito.',
-          '- Nula limito di frequeso : la sito esas statika.',
-          '- Kodexo e transskribi : https://github.com/helpolinguo',
+          '- The `.md` and `.json` files are GENERATED from the pages. The '
+          'source stays `index.html` in each repository.',
+          '- No rate limit: the site is static.',
+          '- Code and transcriptions: https://github.com/helpolinguo',
           '']
     (ROOT / 'llms.txt').write_text('\n'.join(L), encoding='utf-8')
 
