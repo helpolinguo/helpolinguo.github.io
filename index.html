@@ -1,51 +1,49 @@
 <!DOCTYPE html>
-<html lang="io" class="enkonduko">
+<html lang="io" class="intro">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ido — helpolinguo internaciona</title>
 <meta name="description" content="Tri libri dil helpolinguo internaciona Ido, lektebla e deskargebla: la Delmas-Tabeli (1926), la Dicionario de la 10.000 radiki (1934/1964), la Kompleta Gramatiko Detaloza (1925).">
-<link rel="icon" href="emblemo.svg" type="image/svg+xml">
+<link rel="icon" href="emblem.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-<!-- LE NOM. Le titre ci-dessus est celui de l'onglet ; le manifeste et la
-     balise d'Apple donnent celui de l'icône, plus court, parce qu'un nom
-     sous une icône dispose de deux mots au plus. -->
+<!-- THE NAME. The title above is the one shown on the tab; the manifest and
+     Apple's meta tag give the icon's name, which is shorter, because a name
+     under an icon has room for two words at most. -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-title" content="Ido">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<!-- LA COULEUR DE LA BARRE. Le navigateur retient LE PREMIER « theme-color »
-     dont le « media » correspond. L'inconditionnel était en tête : il
-     correspondait toujours, et celui du thème sombre n'était jamais atteint —
-     d'où une barre blanche en mode sombre, dans l'application du Dock.
-     Les deux portent donc désormais leur condition, et la claire vient en
-     premier : un navigateur qui ignorerait l'attribut « media » prendrait la
-     première, et le clair est le parti par défaut de la page. -->
+<!-- THE STATUS BAR COLOUR. A browser keeps THE FIRST "theme-color" whose
+     "media" matches. The unconditional one used to come first: it always
+     matched, so the dark-theme one was never reached — hence a white bar in
+     dark mode, in the Dock application. Both therefore now carry their own
+     condition, and the light one comes first: a browser that ignored the
+     "media" attribute would take that one, and light is the page's default. -->
 <meta name="theme-color" media="(prefers-color-scheme:light)" content="#fbfaf7">
 <meta name="theme-color" media="(prefers-color-scheme:dark)" content="#16161a">
 <meta property="og:title" content="Ido — helpolinguo internaciona">
 <meta property="og:description" content="Tri libri dil helpolinguo internaciona Ido: la Delmas-Tabeli, la Dicionario de la 10.000 radiki, la Kompleta Gramatiko Detaloza.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://ido.help/og-imajo.png">
+<meta property="og:image" content="https://ido.help/og-image.png">
 <meta property="og:url" content="https://ido.help/">
 
 <!-- ===================================================================
-     POR LA MASHINI — ce que lisent les moteurs et les robots.
+     FOR THE MACHINES — what search engines and crawlers read.
      ===================================================================
-     Le lien « canonical » fixe l'adresse de reference : le site repond
-     aussi sous gphmorin.github.io, et sans cette ligne un moteur peut
-     tenir les deux pour deux sites, et diviser entre eux ce qu'il
-     accorde a l'un.
+     The "canonical" link fixes the reference address: the site also answers
+     under its GitHub Pages hostname, and without this line an engine may
+     treat the two as two sites and split between them whatever credit it
+     grants to one.
 
-     Le lien vers /llms.txt annonce la carte du site — ou se trouve
-     chaque texte, sous quelle forme, et A QUEL POIDS. C'est cette
-     derniere indication qui compte : elle permet de choisir avant de
-     telecharger.
+     The link to /llms.txt announces the site map — where each text is, in
+     what form, and AT WHAT WEIGHT. That last figure is the one that counts:
+     it lets a reader choose before downloading.
 
-     Le bloc JSON-LD dit ce que le site EST et ce qu'il contient : trois
-     livres, leurs auteurs, leurs dates. Un moteur qui le comprend n'a
-     plus a le deviner du texte.
+     The JSON-LD block says what the site IS and what it holds: three books,
+     their authors, their dates. An engine that understands it no longer has
+     to guess from the prose.
      =================================================================== -->
 <link rel="canonical" href="https://ido.help/">
 <link rel="alternate" type="text/markdown" href="/llms.txt" title="Karto dil sito, por mashini">
@@ -98,425 +96,510 @@
 </script>
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="preload" href="polices/Jost-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Jost-Medium.woff2" as="font" type="font/woff2" crossorigin>
 
 <style>
 /* =====================================================================
-   PORDO-PAGINO — ido.help
+   THE DOOR PAGE — ido.help
    =====================================================================
 
-   La page ne porte qu'une chose : la marque du livre, sa devise, et
-   trois portes. Elle NE DEFILE PAS — ni sur ecran, ni sur telephone :
-   tout est mesure en unites de vue (svh, vw) et borne par « min() »,
-   de sorte que le bloc central tienne dans la plus PETITE hauteur que
-   le navigateur puisse offrir — celle ou la barre d'adresse est
-   deployee. C'est « svh » et non « vh » qui le garantit sur iOS.
+   The page carries one thing only: the book's mark, its motto, and three
+   doors. It DOES NOT SCROLL — not on a screen, not on a phone: everything
+   is measured in viewport units (svh, vw) and bounded by "min()", so that
+   the central block fits inside the SMALLEST height the browser can offer
+   — the one where the address bar is deployed. It is "svh" and not "vh"
+   that guarantees this on iOS.
    ===================================================================== */
 
-/* --- Les polices ------------------------------------------------------
-   Jost* Bold et Medium, reduites aux seuls signes de cette page (5,7 ko
-   chacune au lieu de 59). Ce sont celles de la couverture du Dicionario :
-   la reprise libre de la Futura, sous licence SIL OFL — voir
-   polices/OFL.txt. Elles sont servies par le site meme : aucune requete
-   vers un tiers, donc aucun temps mort et aucun traceur. */
+/* --- The typefaces ----------------------------------------------------
+   Jost* Bold and Medium, subset to the glyphs this page uses (5.7 kB each
+   instead of 59). They are the ones on the Dicionario's cover: the free
+   revival of Futura, under the SIL OFL — see fonts/OFL.txt. They are
+   served by the site itself: no third-party request, hence no stall and
+   no tracker. */
 @font-face{font-family:Jost;font-style:normal;font-weight:500;font-display:swap;
- src:url(polices/Jost-Medium.woff2) format("woff2")}
+ src:url(fonts/Jost-Medium.woff2) format("woff2")}
 @font-face{font-family:Jost;font-style:normal;font-weight:700;font-display:swap;
- src:url(polices/Jost-Bold.woff2) format("woff2")}
+ src:url(fonts/Jost-Bold.woff2) format("woff2")}
 
-/* --- Les couleurs -----------------------------------------------------
-   Les cinq jetons des trois pages de lecture (papier, encre, gris,
-   filet) plus l'AZUR du livre, #007FFF — la couleur nommee a mi-chemin
-   du bleu et du cyan, celle des deux plats et du disque du Dicionario.
-   En mode sombre l'azur s'eclaircit : pose sur #16161a, #007FFF ne tient
-   pas le contraste d'un texte de petit corps. */
+/* --- The colours ------------------------------------------------------
+   The five tokens of the three reading pages (paper, ink, muted, rule)
+   plus the book's AZURE, #007FFF — the colour named halfway between blue
+   and cyan, the one on both boards and on the Dicionario's disc. In dark
+   mode the azure lightens: laid on #16161a, #007FFF does not hold the
+   contrast of small text. */
 :root{
-  /* La page se peint dans les deux thèmes : autant le dire au navigateur,
-     qui accorde alors ses propres surfaces — barres de défilement, champs,
-     et l'habillage de l'application enregistrée. */
+  /* The page paints itself in both themes: it may as well say so to the
+     browser, which then matches its own surfaces — scrollbars, fields,
+     and the chrome of the installed application. */
   color-scheme:light dark;
 
-  --azuro:#007FFF;
-  --pap:#fbfaf7; --enk:#1a1a1a; --sub:#6b6560; --lin:#e2ddd5;
-  --vualo:rgba(0,127,255,.055);
+  --azure:#007FFF;
+  --paper:#fbfaf7; --ink:#1a1a1a; --muted:#6b6560; --rule:#e2ddd5;
+  --veil:rgba(0,127,255,.055);
 }
 @media (prefers-color-scheme:dark){:root{
-  --azuro:#4da3ff;
-  --pap:#16161a; --enk:#e8e4de; --sub:#9a938c; --lin:#2c2c33;
-  --vualo:rgba(77,163,255,.07);
+  --azure:#4da3ff;
+  --paper:#16161a; --ink:#e8e4de; --muted:#9a938c; --rule:#2c2c33;
+  --veil:rgba(77,163,255,.07);
 }}
 
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
-body{background:var(--pap);color:var(--enk);
+body{background:var(--paper);color:var(--ink);
  font:16px/1.55 "Iowan Old Style",Palatino,"Palatino Linotype",Georgia,serif;
  -webkit-text-size-adjust:100%}
 
-/* La scene occupe la vue entiere. « dvh » la fait suivre la barre
-   d'adresse quand elle se retracte, pour que le bloc reste optiquement
-   centre ; le contenu, lui, est dimensionne en « svh » et tient donc
-   dans le cas le plus etroit. */
-.sceno{position:fixed;inset:0;height:100vh;height:100dvh;
+/* The stage fills the whole viewport. "dvh" makes it follow the address
+   bar as that retracts, so the block stays optically centred; the content
+   itself is sized in "svh" and therefore fits the narrowest case. */
+.stage{position:fixed;inset:0;height:100vh;height:100dvh;
  display:flex;flex-direction:column;align-items:center;justify-content:center;
  padding:16px;isolation:isolate}
 
 /* =====================================================================
-   1. LE CIEL — « langue auxiliaire internationale » en soixante langues
+   1. THE SKY — "international auxiliary language" in sixty languages
    =====================================================================
-   Les mots sont poses par le script, jamais deux qui se recouvrent, et
-   aucun sous le bloc central : la mesure se fait sur les rectangles
-   reels, ce qui vaut pour toute taille de fenetre. Ils derivent
-   lentement, chacun a son pas. Le calque entier se decale de quelques
-   pixels sous le pointeur — une parallaxe, pas un mouvement. */
-.cielo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+   The words are placed by the script, never two overlapping, and none
+   under the central block: the test is run on the REAL rectangles, which
+   holds at any window size. They drift slowly, each at its own pace. The
+   whole layer shifts a few pixels under the pointer — a parallax, not a
+   movement. */
+.sky{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
  transform:translate3d(var(--px,0px),var(--py,0px),0);
  transition:transform .6s cubic-bezier(.2,.7,.3,1)}
-.vorto{position:absolute;white-space:nowrap;color:var(--sub);
+.word{position:absolute;white-space:nowrap;color:var(--muted);
  opacity:var(--op,.3);font-size:var(--sz,14px);letter-spacing:.01em;
  will-change:transform;
- animation:flosar var(--dur,32s) ease-in-out var(--del,0s) infinite}
-@keyframes flosar{
+ animation:drift var(--dur,32s) ease-in-out var(--del,0s) infinite}
+@keyframes drift{
   0%,100%{transform:translate(0,0)}
   25%{transform:translate(var(--dx),calc(var(--dy) * -1))}
   50%{transform:translate(calc(var(--dx) * -.6),var(--dy))}
   75%{transform:translate(var(--dx),calc(var(--dy) * .4))}
 }
-/* Sur une machine a pointeur, chaque mot se laisse survoler et dit sa
-   langue. Le calque reprend donc les evenements — mais lui seul : le
-   bloc central est au-dessus (z-index), les boutons restent atteignables. */
+/* On a machine with a pointer, each word can be hovered and names its
+   language. The layer therefore takes events back — but it alone: the
+   central block sits above it (z-index), so the buttons stay reachable. */
 @media (hover:hover) and (pointer:fine){
-  .cielo{pointer-events:auto}
-  .vorto{cursor:help;transition:color .18s,opacity .18s}
-  .vorto:hover{color:var(--azuro);opacity:.95}
-  .vorto::after{content:attr(data-lg);position:absolute;left:0;top:100%;
+  .sky{pointer-events:auto}
+  .word{cursor:help;transition:color .18s,opacity .18s}
+  .word:hover{color:var(--azure);opacity:.95}
+  .word::after{content:attr(data-lang);position:absolute;left:0;top:100%;
    font:600 10.5px/1.4 system-ui,sans-serif;letter-spacing:.08em;
-   text-transform:uppercase;color:var(--azuro);opacity:0;white-space:nowrap;
+   text-transform:uppercase;color:var(--azure);opacity:0;white-space:nowrap;
    transition:opacity .18s;pointer-events:none}
-  .vorto:hover::after{opacity:.85}
+  .word:hover::after{opacity:.85}
 }
 
 /* =====================================================================
-   2. LA MARQUE ET LA DEVISE
+   2. THE MARK AND THE MOTTO
    =====================================================================
-   Une seule mesure commande la page : --largo, la largeur du logotype.
-   La devise et les trois boutons s'y alignent exactement. Elle est
-   bornee par trois valeurs — la largeur de la vue, sa hauteur, et un
-   maximum absolu — et c'est la plus petite qui l'emporte : la page tient
-   ainsi aussi bien sur un telephone couche que sur un grand ecran. */
-.bloko{position:relative;z-index:2;
- --largo:min(74vw,54svh,560px);
- width:var(--largo);display:flex;flex-direction:column;align-items:center}
-.marko{display:block;width:100%;margin:0;color:var(--azuro);
- --stelo:var(--pap)}
-.marko svg{display:block;width:100%;height:auto}
-/* L'etoile est invariante par rotation d'un tiers de tour : la faire
-   tourner de 120 degres la ramene exactement sur elle-meme. Un clic sur
-   la marque le fait voir.
+   A single measure governs the page: --width, the width of the logotype.
+   The motto and the three doors align to it exactly. It is bounded by
+   three values — the viewport width, its height, and an absolute maximum
+   — and the smallest wins: the page therefore fits a phone held sideways
+   as well as a large screen. */
+.block{position:relative;z-index:2;
+ --width:min(74vw,54svh,560px);
+ width:var(--width);display:flex;flex-direction:column;align-items:center}
+.mark{display:block;width:100%;margin:0;color:var(--azure);
+ --star:var(--paper)}
+.mark svg{display:block;width:100%;height:auto}
+/* The star is invariant under a third of a turn: rotating it 120 degrees
+   brings it back exactly onto itself. A click on the mark shows this.
 
-   ELLE TOURNE AUTOUR DU CENTRE DU DISQUE, QUI N'EST PAS LE CENTRE DE SA
-   PROPRE BOITE. « center » l'y placait, et la rotation partait de 93
-   millièmes trop haut. La boite de l'etoile n'est pas centree sur le
-   disque parce que la figure ne l'est pas : la longue pointe du haut
-   touche le cercle, a un rayon du centre, tandis que les deux longues
-   pointes du bas ne descendent qu'a un demi-rayon. La boite fait donc
-   1,5 rayon de haut, et le centre du disque tombe a un rayon du sommet,
-   c'est-a-dire aux DEUX TIERS — exactement, non par approximation.
-   En largeur elle est symetrique, et le centre reste a la moitie. */
-.marko .stelo{transform-box:fill-box;transform-origin:50% 66.6667%;
+   IT TURNS ABOUT THE CENTRE OF THE DISC, WHICH IS NOT THE CENTRE OF ITS
+   OWN BOX. "center" put it there, and the rotation started 93 thousandths
+   too high. The star's box is not centred on the disc because the figure
+   is not: the long point at the top touches the circle, one radius from
+   the centre, while the two long points at the bottom reach only half a
+   radius down. The box is therefore 1.5 radii tall, and the centre of the
+   disc falls one radius from the top — that is, at TWO THIRDS, exactly,
+   not by approximation. Across the width the figure is symmetric, and the
+   centre stays at one half. */
+.mark .star{transform-box:fill-box;transform-origin:50% 66.6667%;
  transition:rotate 1s cubic-bezier(.34,1.2,.4,1)}
-.marko button{display:block;width:100%;padding:0;border:0;background:none;
+.mark button{display:block;width:100%;padding:0;border:0;background:none;
  cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
-.marko button:focus-visible{outline:2px solid var(--azuro);outline-offset:6px;
+.mark button:focus-visible{outline:2px solid var(--azure);outline-offset:6px;
  border-radius:4px}
 
-/* La devise fait exactement la largeur du logotype : le texte est pose
-   dans un SVG de meme boite, avec « textLength », et c'est l'approche
-   qui s'etire — non le dessin des lettres. L'accord est donc exact a
-   toute taille, et ne depend pas de la police qui aura ete chargee. */
-.devizo{display:block;width:100%;margin:clamp(10px,1.8svh,20px) 0 0}
-.devizo svg{display:block;width:100%;height:auto}
+/* The motto is exactly as wide as the logotype: the text sits in an SVG of
+   the same box, with "textLength", and it is the letter-spacing that
+   stretches — not the letterforms. The agreement is therefore exact at any
+   size, and does not depend on which font ended up loading. */
+.motto{display:block;width:100%;margin:clamp(10px,1.8svh,20px) 0 0}
+.motto svg{display:block;width:100%;height:auto}
 
 /* =====================================================================
-   3. LES TROIS PORTES
+   3. THE THREE DOORS
    ===================================================================== */
-.pordi{display:flex;gap:9px;width:100%;margin-top:clamp(16px,3.4svh,34px)}
-.pordo{flex:1 1 0;min-width:0;
+.doors{display:flex;gap:9px;width:100%;margin-top:clamp(16px,3.4svh,34px)}
+.door{flex:1 1 0;min-width:0;
  display:flex;align-items:center;justify-content:center;
  padding:clamp(9px,1.5svh,13px) 6px;
- border:1px solid var(--lin);border-radius:9px;background:var(--pap);
- color:var(--azuro);text-decoration:none;
+ border:1px solid var(--rule);border-radius:9px;background:var(--paper);
+ color:var(--azure);text-decoration:none;
  font:500 clamp(13px,1.65vh + .8vw,17px)/1 Jost,system-ui,sans-serif;
  letter-spacing:.02em;white-space:nowrap;
  transition:background .16s,border-color .16s,color .16s,transform .16s}
-.pordo:hover{background:var(--azuro);border-color:var(--azuro);color:var(--pap);
+.door:hover{background:var(--azure);border-color:var(--azure);color:var(--paper);
  transform:translateY(-2px)}
-.pordo:active{transform:translateY(0)}
-.pordo:focus-visible{outline:2px solid var(--azuro);outline-offset:3px}
-/* Sur un telephone tenu debout, trois mots cote a cote deviennent
-   illisibles bien avant d'etre a l'etroit : ils passent alors l'un sous
-   l'autre, toujours a la largeur du logotype. */
+.door:active{transform:translateY(0)}
+.door:focus-visible{outline:2px solid var(--azure);outline-offset:3px}
+/* On a phone held upright, three words side by side become unreadable well
+   before they run out of room: they then stack, still at the width of the
+   logotype. */
 @media (max-width:430px) and (orientation:portrait){
-  .pordi{flex-direction:column;gap:8px}
+  .doors{flex-direction:column;gap:8px}
 }
 
 /* =====================================================================
-   4. LE PIED
+   4. THE FOOT
    ===================================================================== */
-.pedo{position:absolute;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));
- z-index:2;text-align:center;color:var(--sub);font-size:12px;line-height:1.5;
+.foot{position:absolute;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));
+ z-index:2;text-align:center;color:var(--muted);font-size:12px;line-height:1.5;
  padding:0 16px}
-@media (max-height:430px){.pedo{display:none}}
+@media (max-height:430px){.foot{display:none}}
 
 /* =====================================================================
-   LE DISQUE DE DESKARGO
+   THE TWO CORNER DISCS
    =====================================================================
-   Mêmes mesures que le bouton de retour des trois livres — voir
-   pordo.css : 42 px, 38 sous 560 px de large, à 24 px des deux bords.
-   Le coin porte la même chose des deux côtés du site, et l'œil n'a pas à
-   réapprendre.
+   The page carries a global action in each of two opposite corners, and
+   both wear the same disc: 42 px, 38 below 560 px of width, 24 px from
+   both edges. It is the measure of the back button on the three books —
+   see shared.css. The corner carries the same thing everywhere on the
+   site, and the eye does not have to learn it twice.
 
-   AUCUN MOT. Le site s'adresse à toutes les langues ; « Deskargar » n'en
-   disait rien à qui ne lit pas l'ido. Une flèche, un crochet, une
-   corbeille — et un anneau qui fait le tour pendant la prise. Le nom
-   accessible, lui, reste en ido, pour les lecteurs d'écran. */
-.deskargilo{
-  --marjo:24px; --grando:42px;
+   BOTTOM LEFT, the download. TOP RIGHT, the source code. Neither carries
+   a word: the site addresses every language, and a label in Ido would say
+   nothing to a reader who does not read Ido. The accessible names, and the
+   labels that appear on hover, do stay in Ido — they are the interface,
+   and the interface is in Ido throughout.
+   ===================================================================== */
+.corner{
+  --margin:24px; --size:42px;
   position:fixed; z-index:12;
-  left:max(var(--marjo), env(safe-area-inset-left));
-  bottom:max(var(--marjo), env(safe-area-inset-bottom));
-  top:calc(100svh - var(--grando) - max(var(--marjo), env(safe-area-inset-bottom)));
-  width:var(--grando); height:var(--grando);
+  width:var(--size); height:var(--size);
   padding:0; border:0; border-radius:50%;
-  background:var(--pap);
+  background:var(--paper);
   box-shadow:0 2px 11px rgba(0,0,0,.12);
-  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent;
+  /* ITS OWN LAYER. WebKit does not reposition fixed elements continuously
+     during scroll inertia. A 3D transform, even a null one, forces a
+     composited layer the engine knows how to move separately. The hover
+     transform must be 3D as well, or it undoes the promotion. */
   transform:translate3d(0,0,0);
   transition:box-shadow .16s, transform .16s;
 }
-.deskargilo:hover{transform:translate3d(0,-2px,0);box-shadow:0 5px 16px rgba(0,0,0,.18)}
-.deskargilo:active{transform:translate3d(0,0,0)}
-.deskargilo:focus-visible{outline:2px solid var(--azuro);outline-offset:5px}
+.corner:hover{transform:translate3d(0,-2px,0);box-shadow:0 5px 16px rgba(0,0,0,.18)}
+.corner:active{transform:translate3d(0,0,0)}
+.corner:focus-visible{outline:2px solid var(--azure);outline-offset:5px}
 @media (prefers-color-scheme:dark){
-  .deskargilo{box-shadow:0 2px 11px rgba(0,0,0,.5)}
-  .deskargilo:hover{box-shadow:0 5px 16px rgba(0,0,0,.62)}
+  .corner{box-shadow:0 2px 11px rgba(0,0,0,.5)}
+  .corner:hover{box-shadow:0 5px 16px rgba(0,0,0,.62)}
 }
-@media (max-width:560px){.deskargilo{--grando:38px}}
+@media (max-width:560px){.corner{--size:38px}}
+.corner svg{display:block;width:100%;height:100%}
 
-.deskargilo svg{display:block;width:100%;height:100%}
-.deskargilo circle{fill:none;stroke-width:2.4}
-.ringo-fono{stroke:var(--lin)}
-/* L'anneau part du haut et tourne dans le sens des aiguilles : d'où le
-   quart de tour à rebours. Sa circonférence vaut 2*pi*20 = 125,66, et
-   c'est ce nombre qui sert d'unité au décalage. */
-.ringo-progreso{stroke:var(--azuro);stroke-linecap:round;
+/* --- The download disc, bottom left ---------------------------------
+   NO WORD, an icon and a ring that goes round during the fetch: an arrow,
+   then a tick, then a bin. */
+.download{
+  left:max(var(--margin), env(safe-area-inset-left));
+  bottom:max(var(--margin), env(safe-area-inset-bottom));
+  top:calc(100svh - var(--size) - max(var(--margin), env(safe-area-inset-bottom)));
+  cursor:pointer;
+}
+.download circle{fill:none;stroke-width:2.4}
+.ring-track{stroke:var(--rule)}
+/* The ring starts at the top and runs clockwise: hence the quarter turn
+   backwards. Its circumference is 2*pi*20 = 125.66, and that number is the
+   unit of the dash offset. */
+.ring-progress{stroke:var(--azure);stroke-linecap:round;
   stroke-dasharray:125.66; stroke-dashoffset:125.66;
   transform:rotate(-90deg); transform-origin:50% 50%;
   transition:stroke-dashoffset .3s ease-out}
-.signo path{fill:none;stroke:var(--sub);stroke-width:2;
+.glyph path{fill:none;stroke:var(--muted);stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;transition:stroke .16s}
-.deskargilo:hover .signo path{stroke:var(--azuro)}
-/* Un seul des trois signes paraît à la fois. */
-.s-hoko,.s-rubo{display:none}
-.deskargilo.preta .s-sago{display:none}
-.deskargilo.preta .s-hoko{display:block}
-.deskargilo.preta .signo path{stroke:var(--azuro)}
-.deskargilo.preta .ringo-progreso{stroke-dashoffset:0}
-.deskargilo.demandas .s-sago,.deskargilo.demandas .s-hoko{display:none}
-.deskargilo.demandas .s-rubo{display:block}
-.deskargilo.demandas .signo path{stroke:var(--flag,#b4552d)}
-.deskargilo.demandas .ringo-progreso{stroke:var(--flag,#b4552d)}
+.download:hover .glyph path{stroke:var(--azure)}
+/* Only one of the three glyphs shows at a time. */
+.g-check,.g-bin{display:none}
+.download.ready .g-arrow{display:none}
+.download.ready .g-check{display:block}
+.download.ready .glyph path{stroke:var(--azure)}
+.download.ready .ring-progress{stroke-dashoffset:0}
+.download.confirming .g-arrow,.download.confirming .g-check{display:none}
+.download.confirming .g-bin{display:block}
+.download.confirming .glyph path{stroke:var(--warn,#b4552d)}
+.download.confirming .ring-progress{stroke:var(--warn,#b4552d)}
 
-/* Le compte, à droite du disque, seulement pendant la prise : « 23/66 MB »
-   se lit partout, ce qui n'est pas le cas d'une phrase. */
-.cifro{position:absolute; left:calc(var(--grando) + 11px); top:50%;
+/* The count, to the right of the disc and only during the fetch: "23 MB"
+   reads everywhere, which a sentence does not. */
+.count{position:absolute; left:calc(var(--size) + 11px); top:50%;
   transform:translateY(-50%); white-space:nowrap;
   font:600 12px/1 system-ui,sans-serif; letter-spacing:.03em;
-  color:var(--sub); opacity:0; pointer-events:none; transition:opacity .2s}
-.deskargilo.kuras .cifro{opacity:1}
-@media (max-width:380px){.cifro{display:none}}
+  color:var(--muted); opacity:0; pointer-events:none; transition:opacity .2s}
+.download.running .count{opacity:1}
+@media (max-width:380px){.count{display:none}}
+
+/* --- The source disc, top right -------------------------------------
+   The same disc, in the opposite corner. THE FLOURISH IS A RHYME: on
+   hover, a thin azure ring draws itself all the way round, clockwise, in
+   exactly the stroke of the progress ring on the download disc opposite.
+   The one corner measures a fetch, the other merely answers a glance —
+   but the eye recognises the same gesture, and the two corners read as
+   one pair rather than as two ornaments.
+
+   The mark itself is GitHub's own octicon, laid in the site's azure at the
+   centre of the same 44-unit box, so that ring and mark share a
+   coordinate system and no number has to be repeated. */
+.source{
+  right:max(var(--margin), env(safe-area-inset-right));
+  top:max(var(--margin), env(safe-area-inset-top));
+  color:var(--azure);
+}
+.source .octicon{fill:currentColor}
+.source .halo{
+  fill:none; stroke:var(--azure); stroke-width:2.4; stroke-linecap:round;
+  /* Same circumference as the progress ring — 2*pi*20 — and the same
+     quarter turn backwards, so that the sweep starts at the top. */
+  stroke-dasharray:125.66; stroke-dashoffset:125.66;
+  transform:rotate(-90deg); transform-origin:50% 50%;
+  transition:stroke-dashoffset .55s cubic-bezier(.3,.8,.3,1);
+}
+.source:hover .halo,
+.source:focus-visible .halo{stroke-dashoffset:0}
+/* The label, on hover only, and only where there is a real pointer. It is
+   the twin of the one on the back button of the three books — same type,
+   same azure ground — but hung on the other side. */
+@media (hover:hover) and (pointer:fine){
+  .source::after{
+    content:"Kodexo";
+    position:absolute; right:calc(var(--size) + 10px); top:50%;
+    transform:translateY(-50%) translateX(6px);
+    font:600 12px/1 system-ui,sans-serif; letter-spacing:.06em;
+    color:var(--paper); background:var(--azure);
+    padding:6px 9px; border-radius:6px;
+    opacity:0; pointer-events:none; white-space:nowrap;
+    transition:opacity .16s, transform .16s;
+  }
+  .source:hover::after{opacity:1; transform:translateY(-50%) translateX(0)}
+  /* THE LABEL MUST NOT COUNT IN THE LINK'S NAME. The link is already named
+     in Ido by its aria-label; the browser appends the pseudo-element's
+     content, and the name became "La kodexo … Kodexo". The
+     "content / alt-text" syntax gives the pseudo-element an empty
+     alternative: it is seen, it is no longer spoken. It sits under a guard,
+     because a browser that does not know the syntax would drop the whole
+     declaration — and the label would not appear at all. */
+  @supports (content:"a" / "b"){
+    .source::after{content:"Kodexo" / ""}
+  }
+}
 
 /* =====================================================================
-   5. L'ENTREE — la roue arrive, et pose les lettres
+   5. THE ENTRANCE — the wheel arrives, and lays down the letters
    =====================================================================
-   Au chargement, on ne voit d'abord que le disque : il entre par la
-   gauche en ROULANT, et les deux lettres se tracent à mesure qu'il les
-   dépasse. Puis la devise, les portes et le pied montent d'un cran.
+   On load, only the disc is visible at first: it comes in from the left,
+   ROLLING, and the two letters are drawn as it passes them. Then the
+   motto, the doors and the foot rise by one notch.
 
-   LA DISTANCE N'EST PAS CHOISIE A L'OEIL. Une roue qui roule tourne d'un
-   angle proportionnel au chemin parcouru : un tour de 120 degrés vaut
-   exactement un rayon fois 2*pi/3, soit 780,76 millièmes de cadratin. Le
-   trajet vaut DEUX de ces tours — 1561,52 —, ce qui a deux conséquences
-   heureuses :
+   THE DISTANCE IS NOT CHOSEN BY EYE. A rolling wheel turns through an
+   angle proportional to the distance covered: a 120-degree turn is exactly
+   one radius times 2*pi/3, that is 780.76 thousandths of an em. The
+   journey is TWO such turns — 1561.52 — which has two happy consequences:
 
-     1. l'étoile étant invariante par rotation d'un tiers de tour, elle
-        arrive dans sa position canonique sans le moindre recalage ;
-     2. au départ, le bord droit du disque tombe à 249,3, et l'encre du I
-        finit à 246 : le disque couvre exactement le I, ni plus ni moins.
+     1. the star being invariant under a third of a turn, it arrives in its
+        canonical position with no correction whatsoever;
+     2. at the start, the right edge of the disc falls at 249.3, and the
+        ink of the I ends at 246: the disc covers the I exactly, no more
+        and no less.
 
-   Le roulement est donc vrai, non mimé — et c'est la même figure que le
-   clic fait tourner ensuite, d'un tiers de tour à son tour. */
+   The roll is therefore true, not mimed — and it is the same figure that a
+   click then turns, by a third of a turn in its turn. */
 
-/* Le disque déborde la boîte du dessin pendant qu'il entre ; la vue le
-   recoupe, puisque la scène ne défile pas. */
-.enkonduko .marko svg{overflow:visible}
+/* The disc overflows the drawing's box while it comes in; the viewport
+   crops it, since the stage does not scroll. */
+.intro .mark svg{overflow:visible}
 
-.enkonduko .grupo-O{
-  /* La boîte du groupe EST celle du disque — l'étoile y est inscrite —,
-     donc son milieu est le centre du disque, et c'est autour de lui que
-     la roue tourne. */
+.intro .o-group{
+  /* The group's box IS the disc's — the star is inscribed in it — so its
+     middle is the centre of the disc, and it is about that centre that the
+     wheel turns. */
   transform-box:fill-box; transform-origin:center;
-  animation:rular 1.55s cubic-bezier(.42,.02,.22,1) both;
+  animation:roll 1.55s cubic-bezier(.42,.02,.22,1) both;
 }
-@keyframes rular{
+@keyframes roll{
   from{transform:translateX(-1561.52px) rotate(-240deg)}
   to  {transform:translateX(0) rotate(0deg)}
 }
 
-/* LES LETTRES NE SONT PAS ANIMEES : C'EST UN RIDEAU QUI LES DECOUVRE.
-   Elles étaient d'abord découpées chacune par sa propre animation, avec
-   son propre retard — et la coupure verticale se détachait du disque, qui
-   avait déjà roulé plus loin. On voyait la limite de l'animation au lieu
-   de voir la roue poser les lettres.
+/* THE LETTERS ARE NOT ANIMATED: A CURTAIN UNCOVERS THEM. They were at
+   first each clipped by their own animation, with their own delay — and
+   the vertical cut came away from the disc, which had already rolled
+   further. One saw the edge of the animation instead of seeing the wheel
+   lay the letters down.
 
-   Le rideau est un rectangle de la couleur du papier, posé PAR-DESSUS les
-   lettres et SOUS le disque, dont le bord gauche suit exactement le centre
-   du disque : même durée, même retard, même courbe d'accélération, et une
-   translation qui est la MEME fonction du temps. Les deux ne peuvent donc
-   plus se désaccorder — ce n'est pas un réglage, c'est une identité.
+   The curtain is a rectangle the colour of the paper, laid OVER the
+   letters and UNDER the disc, whose left edge follows the centre of the
+   disc exactly: same duration, same delay, same easing curve, and a
+   translation that is the SAME function of time. The two can therefore no
+   longer fall out of step — this is not a setting, it is an identity.
 
-   ET LA COUPURE EST INVISIBLE, parce que le disque est plus haut que les
-   lettres : son diamètre vaut 745,6 contre 700 de hauteur de capitale. Au
-   sommet des capitales, là où le disque est le plus étroit, il s'étend
-   encore de 128,3 millièmes de part et d'autre de son centre. Le bord du
-   rideau, qui passe par ce centre, est donc couvert sur toute la hauteur
-   où il est peint.
+   AND THE CUT IS INVISIBLE, because the disc is taller than the letters:
+   its diameter is 745.6 against 700 of cap height. At the top of the
+   capitals, where the disc is narrowest, it still extends 128.3
+   thousandths either side of its centre. The curtain's edge, which passes
+   through that centre, is therefore covered over the whole height at which
+   it is painted.
 
-   Le rideau est confiné à la boîte de l'encre des lettres : il s'efface de
-   lui-même dès qu'il en sort, à la fin du roulement comme au repos. */
-.enkonduko .kurteno{animation:movar 1.55s cubic-bezier(.42,.02,.22,1) both}
-@keyframes movar{
+   The curtain is confined to the box of the letters' ink: it erases itself
+   as soon as it leaves that box, at the end of the roll as at rest. */
+.intro .curtain{animation:sweep 1.55s cubic-bezier(.42,.02,.22,1) both}
+@keyframes sweep{
   from{transform:translateX(-1561.52px)}
   to  {transform:translateX(0)}
 }
-.kurteno{fill:var(--pap)}
+.curtain{fill:var(--paper)}
 
-/* Le reste de la page monte d'un cran, une fois la marque posée. */
-.enkonduko .devizo{animation:levar .55s ease-out 1.02s both}
-.enkonduko .pordi {animation:levar .55s ease-out 1.16s both}
-.enkonduko .pedo  {animation:levar .55s ease-out 1.30s both}
-.enkonduko .deskargilo{animation:aparar .55s ease-out 1.42s both}
-@keyframes levar{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+/* The rest of the page rises by one notch, once the mark is laid down. */
+.intro .motto{animation:rise .55s ease-out 1.02s both}
+.intro .doors{animation:rise .55s ease-out 1.16s both}
+.intro .foot {animation:rise .55s ease-out 1.30s both}
+.intro .download{animation:fade-in .55s ease-out 1.42s both}
+.intro .source  {animation:fade-in .55s ease-out 1.42s both}
+@keyframes rise{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
 
-/* Le ciel se lève seul, plus lentement : il ne doit pas disputer le
-   regard à la roue. Son opacité seule est animée — sa transformation
-   sert déjà à la parallaxe. */
-.enkonduko .cielo{animation:aparar 1.2s ease-out .55s both}
-@keyframes aparar{from{opacity:0} to{opacity:1}}
+/* The sky rises on its own, more slowly: it must not compete with the
+   wheel for attention. Only its opacity is animated — its transform is
+   already spoken for by the parallax. */
+.intro .sky{animation:fade-in 1.2s ease-out .55s both}
+@keyframes fade-in{from{opacity:0} to{opacity:1}}
 
 @media (prefers-reduced-motion:reduce){
-  .vorto{animation:none}
-  /* L'entrée entière tombe : la page se peint dans son état final. */
-  .enkonduko .grupo-O,.enkonduko .kurteno,.enkonduko .devizo,
-  .enkonduko .pordi,.enkonduko .pedo,.enkonduko .cielo,
-  .enkonduko .deskargilo{animation:none}
-  .cielo{transition:none}
-  .marko .stelo{transition:none}
-  .pordo{transition:background .16s,color .16s}
+  .word{animation:none}
+  /* The whole entrance falls away: the page paints itself in its final
+     state. */
+  .intro .o-group,.intro .curtain,.intro .motto,
+  .intro .doors,.intro .foot,.intro .sky,
+  .intro .download,.intro .source{animation:none}
+  .source .halo{transition:none}
+  .sky{transition:none}
+  .mark .star{transition:none}
+  .door{transition:background .16s,color .16s}
 }
 </style>
 </head>
 <body>
 
-<div class="sceno">
-  <div class="cielo" id="cielo" aria-hidden="true"></div>
+<div class="stage">
+  <div class="sky" id="sky" aria-hidden="true"></div>
 
-  <div class="bloko">
-    <h1 class="marko">
-      <button type="button" id="turno" aria-label="Ido">
+  <div class="block">
+    <h1 class="mark">
+      <button type="button" id="spin" aria-label="Ido">
         <svg viewBox="74 -22.79 1736.76 745.57" role="img" aria-hidden="true" focusable="false">
           <defs>
-          <!-- La boîte de l'encre des deux lettres — x de 74 à 1019, y de 0
-               à 700 — ELARGIE DE TROIS MILLIEMES sur les quatre côtés. Sans
-               cette marge, le bord du rideau tombait exactement sur celui des
-               lettres, et les deux anticrénelages ne se recouvraient pas tout
-               à fait : il restait une ligne d'un pixel, azurée, sur la ligne
-               de base. Le rideau étant de la couleur du papier, ses propres
-               bords ne se voient pas.
-               La marge ne compromet rien : à y = -3 comme à y = 703, le
-               disque s'étend encore de 119,9 millièmes de part et d'autre de
-               son centre, et couvre donc toujours le bord du rideau.
-               Le rideau y est confiné, et disparaît de lui-même quand il en
-               sort — à la fin du roulement, et au repos. -->
-          <clipPath id="literkesto" clipPathUnits="userSpaceOnUse">
+          <!-- The box of the two letters' ink — x from 74 to 1019, y from 0
+               to 700 — WIDENED BY THREE THOUSANDTHS on all four sides.
+               Without that margin the curtain's edge fell exactly on the
+               letters' edge, and the two antialiasings did not quite
+               overlap: a one-pixel azure line was left on the baseline. The
+               curtain being the colour of the paper, its own edges are
+               invisible.
+               The margin compromises nothing: at y = -3 as at y = 703, the
+               disc still extends 119.9 thousandths either side of its
+               centre, and so always covers the curtain's edge.
+               The curtain is confined here, and disappears of itself when
+               it leaves — at the end of the roll, and at rest. -->
+          <clipPath id="letter-box" clipPathUnits="userSpaceOnUse">
             <rect x="71" y="-3" width="951" height="706"/>
           </clipPath>
           </defs>
           <g transform="translate(0,700) scale(1,-1)" fill="currentColor">
-          <path class="litero litero-I" transform="translate(0,0)" d="M74.0 700.0V0.0H246.0V700.0Z"/>
-          <path class="litero litero-D" transform="translate(320,0)" d="M74.0 700.0V0.0H248.0V700.0ZM324.0 0.0Q439.0 0.0 523.0 43.0Q607.0 86.0 653.0 164.5Q699.0 243.0 699.0 350.0Q699.0 458.0 653.0 536.0Q607.0 614.0 523.0 657.0Q439.0 700.0 324.0 700.0H186.0V550.0H318.0Q358.0 550.0 395.5 540.0Q433.0 530.0 461.5 507.0Q490.0 484.0 507.0 445.5Q524.0 407.0 524.0 350.0Q524.0 293.0 507.0 254.5Q490.0 216.0 461.5 193.0Q433.0 170.0 395.5 160.0Q358.0 150.0 318.0 150.0H186.0V0.0Z"/>
+          <path class="letter letter-I" transform="translate(0,0)" d="M74.0 700.0V0.0H246.0V700.0Z"/>
+          <path class="letter letter-D" transform="translate(320,0)" d="M74.0 700.0V0.0H248.0V700.0ZM324.0 0.0Q439.0 0.0 523.0 43.0Q607.0 86.0 653.0 164.5Q699.0 243.0 699.0 350.0Q699.0 458.0 653.0 536.0Q607.0 614.0 523.0 657.0Q439.0 700.0 324.0 700.0H186.0V550.0H318.0Q358.0 550.0 395.5 540.0Q433.0 530.0 461.5 507.0Q490.0 484.0 507.0 445.5Q524.0 407.0 524.0 350.0Q524.0 293.0 507.0 254.5Q490.0 216.0 461.5 193.0Q433.0 170.0 395.5 160.0Q358.0 150.0 318.0 150.0H186.0V0.0Z"/>
           </g>
-          <g clip-path="url(#literkesto)">
-            <rect class="kurteno" x="1438" y="-3" width="1500" height="706"/>
+          <g clip-path="url(#letter-box)">
+            <rect class="curtain" x="1438" y="-3" width="1500" height="706"/>
           </g>
-          <g class="grupo-O">
+          <g class="o-group">
           <circle cx="1438.0" cy="350.0" r="372.8" fill="currentColor"/>
-          <polygon class="stelo" points="1438.0,-22.8 1384.2,256.8 1276.6,256.8 1330.4,350.0 1115.1,536.4 1384.2,443.2 1438.0,536.4 1491.8,443.2 1760.8,536.4 1545.6,350.0 1599.4,256.8 1491.8,256.8" fill="var(--stelo,#fbfaf7)"/>
+          <polygon class="star" points="1438.0,-22.8 1384.2,256.8 1276.6,256.8 1330.4,350.0 1115.1,536.4 1384.2,443.2 1438.0,536.4 1491.8,443.2 1760.8,536.4 1545.6,350.0 1599.4,256.8 1491.8,256.8" fill="var(--star,#fbfaf7)"/>
           </g>
         </svg>
       </button>
     </h1>
 
-    <p class="devizo">
+    <p class="motto">
       <svg viewBox="0 32 1736.76 132" role="img" aria-label="helpolinguo internaciona">
         <text x="-9.11" y="135" textLength="1753.39" lengthAdjust="spacing"
               font-family="Jost, system-ui, sans-serif" font-weight="500"
-              font-size="132" fill="var(--enk)" opacity=".82"
+              font-size="132" fill="var(--ink)" opacity=".82"
               aria-hidden="true">helpolinguo internaciona</text>
       </svg>
     </p>
 
-    <nav class="pordi" aria-label="La tri libri">
-      <a class="pordo" href="/tabeli/">Tabeli</a>
-      <a class="pordo" href="/dicionario/">Dicionario</a>
-      <a class="pordo" href="/gramatiko/">Gramatiko</a>
+    <nav class="doors" aria-label="La tri libri">
+      <a class="door" href="/tabeli/">Tabeli</a>
+      <a class="door" href="/dicionario/">Dicionario</a>
+      <a class="door" href="/gramatiko/">Gramatiko</a>
     </nav>
   </div>
 
-  <p class="pedo">
+  <p class="foot">
     Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
     transskribita, lektebla e deskargebla.
   </p>
 
-  <!-- LE DISQUE DE DESKARGO. Il occupe, sur la porte, la place que le
-       bouton de retour occupe sur les trois livres : même coin, même
-       taille, même écart — le coin porte « l'action globale », qui est le
-       retour quand on lit, et le téléchargement quand on est à la porte.
-       Aucun mot : une icône, et un anneau qui fait le tour. -->
-  <button type="button" class="deskargilo" id="deskargi" hidden
+  <!-- THE DOWNLOAD DISC. On the door page it occupies the place the back
+       button occupies on the three books: same corner, same size, same
+       inset — the corner carries "the global action", which is going back
+       when reading, and downloading when standing at the door.
+       No word: an icon, and a ring that goes round. -->
+  <button type="button" class="corner download" id="download" hidden
           aria-label="Deskargar la tota sitio por senreta lekto">
     <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
-      <circle class="ringo-fono" cx="22" cy="22" r="20"/>
-      <circle class="ringo-progreso" id="ringo" cx="22" cy="22" r="20"/>
-      <g class="signo" id="signo">
-        <path class="s-sago" d="M22 13v13m-5.5-5.5L22 26l5.5-5.5M13.5 31h17"/>
-        <path class="s-hoko" d="M14.5 22.5l5.5 5.5 9.5-11"/>
-        <path class="s-rubo" d="M15.5 17.5h13M18 17.5l.8 13h6.4l.8-13M19.5 14.5h5"/>
+      <circle class="ring-track" cx="22" cy="22" r="20"/>
+      <circle class="ring-progress" id="ring" cx="22" cy="22" r="20"/>
+      <g class="glyph">
+        <path class="g-arrow" d="M22 13v13m-5.5-5.5L22 26l5.5-5.5M13.5 31h17"/>
+        <path class="g-check" d="M14.5 22.5l5.5 5.5 9.5-11"/>
+        <path class="g-bin" d="M15.5 17.5h13M18 17.5l.8 13h6.4l.8-13M19.5 14.5h5"/>
       </g>
     </svg>
-    <span class="cifro" id="cifro" aria-hidden="true"></span>
+    <span class="count" id="count" aria-hidden="true"></span>
   </button>
+
+  <!-- THE SOURCE DISC. The corner opposite the download, and the same
+       disc: the site is made of four repositories, and this is where they
+       are. The mark is GitHub's own octicon, on a 16-unit box; the group
+       carries it to the middle of the 44-unit box the ring lives in —
+       25 units wide, so (44 - 25) / 2 = 9.5 of inset and 25/16 of scale.
+       Nothing here is measured by eye. -->
+  <a class="corner source" id="source"
+     href="https://github.com/helpolinguo/helpolinguo.github.io"
+     rel="noopener" aria-label="La kodexo dil sito, en GitHub">
+    <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+      <circle class="halo" cx="22" cy="22" r="20"/>
+      <g class="octicon" transform="translate(9.5,9.5) scale(1.5625)">
+        <path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38l-.01-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.19c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/>
+      </g>
+    </svg>
+  </a>
 </div>
 
 <script>
 /* =====================================================================
-   LE CIEL
+   THE SKY
    =====================================================================
-   « Langue auxiliaire internationale », dans les langues nationales.
-   L'ordre alterne volontairement les familles et les ecritures : quand
-   la fenetre est petite, seuls les premiers mots trouvent une place, et
-   il faut que ce debut soit deja varie.
+   "International auxiliary language", in the national languages. The order
+   deliberately alternates families and scripts: when the window is small,
+   only the first words find a place, and that beginning has to be varied
+   already.
    ===================================================================== */
-const VORTI = [
+const WORDS = [
  ["Français","fr","langue auxiliaire internationale"],
  ["Русский","ru","международный вспомогательный язык"],
  ["日本語","ja","国際補助語"],
@@ -578,269 +661,276 @@ const VORTI = [
  ["Filipino","fil","pandaigdigang wikang pantulong"]
 ];
 
-/* Un tirage PSEUDO-aleatoire, mais a graine fixe : la disposition est la
-   meme a chaque visite pour une meme fenetre. Elle a ete reglee a l'oeil ;
-   un vrai hasard la referait a chaque chargement, et parfois moins bien. */
-function hazardo(a){return function(){a|=0;a=a+0x6D2B79F5|0;
+/* A PSEUDO-random draw, but from a fixed seed: the layout is the same on
+   every visit for a given window. It was tuned by eye; true randomness
+   would redo it on every load, and sometimes redo it worse. */
+function seeded(a){return function(){a|=0;a=a+0x6D2B79F5|0;
   let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;
   return((t^t>>>14)>>>0)/4294967296}}
 
-const cielo=document.getElementById('cielo');
-const bloko=document.querySelector('.bloko');
-let pozita=[];
+const sky=document.getElementById('sky');
+const block=document.querySelector('.block');
+let placed=[];
 
-function semar(){
-  cielo.textContent='';
-  const L=cielo.clientWidth, A=cielo.clientHeight;
-  if(!L||!A) return;
+function sow(){
+  sky.textContent='';
+  const W=sky.clientWidth, H=sky.clientHeight;
+  if(!W||!H) return;
 
-  const b=bloko.getBoundingClientRect();
-  const c=document.querySelector('.pedo').getBoundingClientRect();
-  const interdikto=[];
+  const b=block.getBoundingClientRect();
+  const f=document.querySelector('.foot').getBoundingClientRect();
+  const keepOut=[];
 
-  /* Le corps suit la fenetre : sur un telephone, les memes corps qu'un
-     grand ecran donneraient trois mots et rien d'autre. */
-  const eskalo=Math.min(1,L/1040)*(A<560?.86:1);
-  const KORPI=[21,15,13,17,12,14,19,12.5,16,13.5];
-  const r=hazardo(0x1D0);
-  pozita=[];
+  /* Type size follows the window: the sizes of a large screen would give
+     three words and nothing else on a phone. */
+  const scale=Math.min(1,W/1040)*(H<560?.86:1);
+  const SIZES=[21,15,13,17,12,14,19,12.5,16,13.5];
+  const rand=seeded(0x1D0);
+  placed=[];
 
-  /* Sur une petite fenetre, le bloc central mange les deux tiers de la
-     place : sans desserrer les ecarts et sans multiplier les essais, il
-     ne resterait que six ou sept mots, et le ciel serait vide. */
-  const strita=L<560;
-  const MARJ=strita?12:26, INTERV=strita?8:13,
-        ESAI=strita?260:110, MINKORP=strita?9.5:10.5;
+  /* On a small window the central block eats two thirds of the room:
+     without loosening the gaps and multiplying the attempts, only six or
+     seven words would be left, and the sky would be empty. */
+  const narrow=W<560;
+  const MARGIN=narrow?12:26, GAP=narrow?8:13,
+        TRIES=narrow?260:110, MIN_SIZE=narrow?9.5:10.5;
 
-  /* Le bloc central, elargi : rien ne s'en approche. */
-  interdikto.push({x:b.left-MARJ,y:b.top-MARJ,w:b.width+2*MARJ,h:b.height+2*MARJ});
-  if(c.height) interdikto.push({x:c.left,y:c.top-12,w:c.width,h:c.height+16});
-  /* Le disque de deskargo, et la place que prend son compte à droite. La
-     marge est celle du bloc central, et pour la même raison : les mots
-     DERIVENT une fois posés, de treize pixels au plus. Une réserve juste
-     assez large pour le rectangle laisserait un mot entrer en flottant. */
-  const d=document.querySelector('.deskargilo');
-  if(d){const rd=d.getBoundingClientRect();
-    if(rd.width) interdikto.push({x:rd.left-MARJ, y:rd.top-MARJ,
-      w:rd.width+MARJ+120, h:rd.height+2*MARJ});}
+  /* The central block, widened: nothing comes near it. */
+  keepOut.push({x:b.left-MARGIN,y:b.top-MARGIN,w:b.width+2*MARGIN,h:b.height+2*MARGIN});
+  if(f.height) keepOut.push({x:f.left,y:f.top-12,w:f.width,h:f.height+16});
 
-  for(let i=0;i<VORTI.length;i++){
-    const [lg,kodo,tx]=VORTI[i];
-    const s=document.createElement('span');
-    s.className='vorto'; s.lang=kodo; s.dir='auto';
-    s.dataset.lg=lg; s.textContent=tx;
-    const sz=Math.max(MINKORP,KORPI[i%KORPI.length]*eskalo);
-    s.style.setProperty('--sz',sz.toFixed(1)+'px');
-    s.style.visibility='hidden'; s.style.left='0'; s.style.top='0';
-    cielo.appendChild(s);
-    const l=s.offsetWidth, h=s.offsetHeight;
-    if(l>L-24){s.remove();continue}
+  /* The two corner discs, and the room their labels take beside them —
+     120 px to the right for the download count, and as much to the left
+     for the source label. The margin is the block's, and for the same
+     reason: words DRIFT once placed, by up to thirteen pixels. A reserve
+     just wide enough for the rectangle would let a word drift in. */
+  const d=document.querySelector('.download');
+  if(d){const r=d.getBoundingClientRect();
+    if(r.width) keepOut.push({x:r.left-MARGIN, y:r.top-MARGIN,
+      w:r.width+MARGIN+120, h:r.height+2*MARGIN});}
+  const s=document.querySelector('.source');
+  if(s){const r=s.getBoundingClientRect();
+    if(r.width) keepOut.push({x:r.left-MARGIN-120, y:r.top-MARGIN,
+      w:r.width+MARGIN+120, h:r.height+2*MARGIN});}
 
-    let pozo=null;
-    for(let p=0;p<ESAI;p++){
-      const x=12+r()*(L-l-24), y=10+r()*(A-h-20);
-      const kand={x,y,w:l,h};
-      if(interdikto.some(k=>kolizo(kand,k,0))) continue;
-      if(pozita.some(k=>kolizo(kand,k,INTERV))) continue;
-      pozo=kand; break;
+  for(let i=0;i<WORDS.length;i++){
+    const [name,code,text]=WORDS[i];
+    const el=document.createElement('span');
+    el.className='word'; el.lang=code; el.dir='auto';
+    el.dataset.lang=name; el.textContent=text;
+    const sz=Math.max(MIN_SIZE,SIZES[i%SIZES.length]*scale);
+    el.style.setProperty('--sz',sz.toFixed(1)+'px');
+    el.style.visibility='hidden'; el.style.left='0'; el.style.top='0';
+    sky.appendChild(el);
+    const w=el.offsetWidth, h=el.offsetHeight;
+    if(w>W-24){el.remove();continue}
+
+    let spot=null;
+    for(let p=0;p<TRIES;p++){
+      const x=12+rand()*(W-w-24), y=10+rand()*(H-h-20);
+      const cand={x,y,w,h};
+      if(keepOut.some(k=>overlaps(cand,k,0))) continue;
+      if(placed.some(k=>overlaps(cand,k,GAP))) continue;
+      spot=cand; break;
     }
-    if(!pozo){s.remove();continue}
-    pozita.push(pozo);
+    if(!spot){el.remove();continue}
+    placed.push(spot);
 
-    /* Plus un mot est loin du centre, plus il s'affirme : le regard va
-       ainsi au bloc, et le ciel reste un fond. */
-    const dx=(pozo.x+l/2)/L-.5, dy=(pozo.y+h/2)/A-.5;
-    const fora=Math.min(1,Math.hypot(dx*1.15,dy)*2.1);
-    s.style.setProperty('--op',(.17+fora*.26).toFixed(3));
-    s.style.left=Math.round(pozo.x)+'px';
-    s.style.top=Math.round(pozo.y)+'px';
-    s.style.setProperty('--dx',(4+r()*9).toFixed(1)+'px');
-    s.style.setProperty('--dy',(4+r()*8).toFixed(1)+'px');
-    s.style.setProperty('--dur',(26+r()*26).toFixed(1)+'s');
-    s.style.setProperty('--del',(-r()*40).toFixed(1)+'s');
-    s.style.visibility='';
+    /* The further a word is from the centre, the more it asserts itself:
+       the eye goes to the block, and the sky stays a background. */
+    const dx=(spot.x+w/2)/W-.5, dy=(spot.y+h/2)/H-.5;
+    const far=Math.min(1,Math.hypot(dx*1.15,dy)*2.1);
+    el.style.setProperty('--op',(.17+far*.26).toFixed(3));
+    el.style.left=Math.round(spot.x)+'px';
+    el.style.top=Math.round(spot.y)+'px';
+    el.style.setProperty('--dx',(4+rand()*9).toFixed(1)+'px');
+    el.style.setProperty('--dy',(4+rand()*8).toFixed(1)+'px');
+    el.style.setProperty('--dur',(26+rand()*26).toFixed(1)+'s');
+    el.style.setProperty('--del',(-rand()*40).toFixed(1)+'s');
+    el.style.visibility='';
   }
 }
-function kolizo(a,b,m){
+function overlaps(a,b,m){
   return a.x < b.x+b.w+m && a.x+a.w+m > b.x &&
          a.y < b.y+b.h+m && a.y+a.h+m > b.y;
 }
 
-/* Les polices changent la largeur des mots : on seme une premiere fois
-   tout de suite, puis a nouveau quand elles sont la. */
-semar();
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(semar);
+/* Fonts change the width of words: sow once immediately, then again once
+   they have arrived. */
+sow();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(sow);
 
-let horlojo;
-addEventListener('resize',()=>{clearTimeout(horlojo);horlojo=setTimeout(semar,160)});
-addEventListener('orientationchange',()=>setTimeout(semar,260));
+let sowTimer;
+addEventListener('resize',()=>{clearTimeout(sowTimer);sowTimer=setTimeout(sow,160)});
+addEventListener('orientationchange',()=>setTimeout(sow,260));
 
-/* --- La parallaxe. Quelques pixels, et seulement sous un vrai pointeur. */
+/* --- The parallax. A few pixels, and only under a real pointer. */
 if(matchMedia('(hover:hover) and (pointer:fine)').matches &&
    !matchMedia('(prefers-reduced-motion:reduce)').matches){
   addEventListener('pointermove',e=>{
     const x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5);
-    cielo.style.setProperty('--px',(-x*16).toFixed(1)+'px');
-    cielo.style.setProperty('--py',(-y*12).toFixed(1)+'px');
+    sky.style.setProperty('--px',(-x*16).toFixed(1)+'px');
+    sky.style.setProperty('--py',(-y*12).toFixed(1)+'px');
   },{passive:true});
 }
 
 /* =====================================================================
-   LA FIN DE L'ENTREE
+   THE END OF THE ENTRANCE
    =====================================================================
-   La classe est posée dans le HTML et non par le script : sinon la page
-   serait peinte une fois dans son état final avant que le script n'agisse,
-   et l'entrée commencerait par un sursaut.
+   The class is set in the HTML and not by the script: otherwise the page
+   would be painted once in its final state before the script ran, and the
+   entrance would begin with a jolt.
 
-   On la retire quand la roue s'arrête — ce qui rend au dessin sa boîte
-   normale — mais aussi au premier geste : qui touche la page a autre
-   chose à faire que regarder une animation. Le retrait fige tout dans
-   l'état final, l'entrée est donc abrégeable à tout instant.
+   It is removed when the wheel stops — which gives the drawing back its
+   normal box — but also on the first gesture: whoever touches the page has
+   better things to do than watch an animation. Removing it freezes
+   everything in the final state, so the entrance can be cut short at any
+   moment.
 
-   Sans JavaScript, la classe reste et rien ne change : l'animation se
-   termine d'elle-même sur l'état final.
+   Without JavaScript the class stays and nothing changes: the animation
+   ends of itself on the final state.
    ===================================================================== */
-const rado=document.documentElement;
-function finiEnkonduko(){rado.classList.remove('enkonduko')}
-document.querySelector('.grupo-O')
-  .addEventListener('animationend', finiEnkonduko, {once:true});
-addEventListener('pointerdown', finiEnkonduko, {once:true});
-addEventListener('keydown', finiEnkonduko, {once:true});
-/* Filet : une animation qui n'aurait jamais démarré — onglet ouvert en
-   arrière-plan, par exemple — ne doit pas laisser la classe à demeure. */
-setTimeout(finiEnkonduko, 3200);
+const root=document.documentElement;
+function endIntro(){root.classList.remove('intro')}
+document.querySelector('.o-group')
+  .addEventListener('animationend', endIntro, {once:true});
+addEventListener('pointerdown', endIntro, {once:true});
+addEventListener('keydown', endIntro, {once:true});
+/* Safety net: an animation that never started — a tab opened in the
+   background, for instance — must not leave the class in place. */
+setTimeout(endIntro, 3200);
 
 /* =====================================================================
-   LE SERVANTO — hors-ligne
+   THE SERVICE WORKER — offline
    =====================================================================
-   Posé à la racine, il a pour portée tout le site : la porte ET les trois
-   livres, qui sont servis sous la même origine. Les trois dépôts n'ont
-   donc rien à porter. Le détail des règles est dans sw.js.
+   Placed at the root, its scope is the whole site: the door AND the three
+   books, which are served from the same origin. The three repositories
+   therefore carry nothing. The rules are detailed in sw.js.
 
-   Le corps des livres — douze méga-octets — n'est pris d'avance QUE si la
-   page tourne comme application installée. Un visiteur qui ne fait que
-   passer par la porte n'a pas à payer ce prix ; chez lui, chaque page se
-   met en cache à la lecture.
+   The body of the books — twelve megabytes — is only fetched ahead of time
+   IF the page is running as an installed application. A visitor who merely
+   passes through the door should not pay that price; for them, each page
+   is cached as it is read.
 
-   Au retour de la connexion, on redemande le servanto lui-même et on lui
-   fait revalider ce qu'il détient : les textes sont corrigés souvent, et
-   une copie ne doit pas survivre à sa correction.
+   When the connection returns, the service worker itself is re-requested
+   and made to revalidate what it holds: the texts are corrected often, and
+   a copy must not outlive its correction.
    ===================================================================== */
 if ('serviceWorker' in navigator) {
   addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('sw.js', {updateViaCache:'none'});
       await navigator.serviceWorker.ready;
-      const instalita = matchMedia('(display-mode: standalone)').matches
+      const installed = matchMedia('(display-mode: standalone)').matches
                         || navigator.standalone === true;
-      const diri = m => reg.active && reg.active.postMessage(m);
+      const tell = m => reg.active && reg.active.postMessage(m);
 
-      /* --- LA LEKTO SENRETA ------------------------------------------
-         Le site entier pèse une soixantaine de méga-octets : les trois
-         textes, les PDF, les 52 langues et les 38 planches gravées dans
-         leurs deux résolutions.
+      /* --- OFFLINE READING -------------------------------------------
+         The whole site weighs some sixty megabytes: the three texts, the
+         PDFs, the 52 languages and the 38 engraved plates in both of their
+         resolutions.
 
-         INSTALLÉE, l'application le prend d'elle-même — c'est ce qu'on
-         attend d'une application, et c'est le moment le plus proche de
-         l'ajout à l'écran d'accueil qu'un site puisse observer : iOS
-         n'annonce pas cet ajout.
+         INSTALLED, the application fetches it of its own accord — that is
+         what one expects of an application, and it is the closest moment
+         to "added to the home screen" that a site can observe: iOS does
+         not announce that addition.
 
-         DANS UN ONGLET, rien n'est pris sans qu'on le demande : un
-         visiteur de passage n'a pas à payer soixante méga-octets. Le
-         bouton le propose, et la barre dit où l'on en est.
+         IN A TAB, nothing is fetched unasked: a passing visitor should not
+         pay sixty megabytes. The button offers it, and the ring says how
+         far along it is.
 
-         La demande de stockage durable écarte, sur Chrome, l'effacement
-         automatique quand la place manque ; iOS l'accorde d'office aux
-         applications de l'écran d'accueil. */
+         The request for persistent storage keeps Chrome from evicting the
+         cache automatically when space runs short; iOS grants it outright
+         to home-screen applications. */
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
 
-      const butono = document.getElementById('deskargi');
-      const ringo  = document.getElementById('ringo');
-      const cifro  = document.getElementById('cifro');
-      const KURBO  = 125.66;                       /* 2*pi*20, la circonférence */
+      const button = document.getElementById('download');
+      const ring   = document.getElementById('ring');
+      const count  = document.getElementById('count');
+      const CIRCUM = 125.66;                    /* 2*pi*20, the circumference */
       const mb = o => Math.round(o / 1048576);
-      let stato = 'ripozas';                       /* ripozas | kuras | preta | demandas */
-      let horlojeto = 0;
+      let state = 'idle';                       /* idle | running | ready | confirming */
+      let revertTimer = 0;
 
-      /* Le ciel a été semé avant que ce bouton ne paraisse — son rectangle
-         était alors nul, et des mots pouvaient tomber dessous. On resème
-         une fois qu'il occupe sa place. */
-      butono.hidden = false;
-      semar();
+      /* The sky was sown before this button appeared — its rectangle was
+         null then, and words could fall underneath it. Sow again now that
+         it occupies its place. */
+      button.hidden = false;
+      sow();
 
-      const pozi = (nova, etikedo) => {
-        stato = nova;
-        butono.classList.toggle('kuras',    nova === 'kuras');
-        butono.classList.toggle('preta',    nova === 'preta');
-        butono.classList.toggle('demandas', nova === 'demandas');
-        butono.setAttribute('aria-label', etikedo);
+      const setState = (next, label) => {
+        state = next;
+        button.classList.toggle('running',    next === 'running');
+        button.classList.toggle('ready',      next === 'ready');
+        button.classList.toggle('confirming', next === 'confirming');
+        button.setAttribute('aria-label', label);
       };
 
       navigator.serviceWorker.addEventListener('message', ev => {
         const m = ev.data || {};
-        if (m.tipo === 'stato' && m.totalaj && m.faritaj >= m.totalaj) {
-          ringo.style.strokeDashoffset = 0;
-          pozi('preta', 'La tota sitio esas senrete disponebla — klikez por efacar');
+        if (m.kind === 'state' && m.total && m.done >= m.total) {
+          ring.style.strokeDashoffset = 0;
+          setState('ready', 'La tota sitio esas senrete disponebla — klikez por efacar');
         }
-        if (m.tipo === 'progreso') {
-          const p = m.totalaj ? m.faritaj / m.totalaj : 0;
-          ringo.style.strokeDashoffset = (KURBO * (1 - p)).toFixed(2);
-          /* Le compte dit ce qui est DESCENDU, sans dénominateur : c'est
-             l'anneau qui dit la part faite, et un total annoncé d'avance
-             reposerait sur une estimation — les fichiers non versionnés
-             n'annoncent pas leur taille. */
-          cifro.textContent = mb(m.oktetoj) + ' MB';
-          pozi('kuras', 'Deskargas… ' + Math.round(p * 100) + ' %');
+        if (m.kind === 'progress') {
+          const p = m.total ? m.done / m.total : 0;
+          ring.style.strokeDashoffset = (CIRCUM * (1 - p)).toFixed(2);
+          /* The count states what has COME DOWN, with no denominator: it is
+             the ring that says what share is done, and a total announced in
+             advance would rest on an estimate — unversioned files do not
+             announce their size. */
+          count.textContent = mb(m.bytes) + ' MB';
+          setState('running', 'Deskargas… ' + Math.round(p * 100) + ' %');
         }
-        if (m.tipo === 'preta') {
-          ringo.style.strokeDashoffset = 0;
-          cifro.textContent = mb(m.oktetoj) + ' MB';
-          pozi('preta', 'La tota sitio esas senrete disponebla — klikez por efacar');
+        if (m.kind === 'done') {
+          ring.style.strokeDashoffset = 0;
+          count.textContent = mb(m.bytes) + ' MB';
+          setState('ready', 'La tota sitio esas senrete disponebla — klikez por efacar');
         }
-        if (m.tipo === 'rompita') {
-          pozi('ripozas', 'Interruptita — klikez por probar itere');
+        if (m.kind === 'interrupted') {
+          setState('idle', 'Interruptita — klikez por probar itere');
         }
-        if (m.tipo === 'forgesita') {
-          ringo.style.strokeDashoffset = KURBO;
-          cifro.textContent = '';
-          pozi('ripozas', 'Deskargar la tota sitio por senreta lekto');
+        if (m.kind === 'cleared') {
+          ring.style.strokeDashoffset = CIRCUM;
+          count.textContent = '';
+          setState('idle', 'Deskargar la tota sitio por senreta lekto');
         }
       });
 
-      /* Trois clics possibles, selon l'état. Sur l'état « prêt », le
-         premier clic ARME seulement : effacer soixante-six méga-octets par
-         mégarde serait pénible, et une confirmation en toutes lettres
-         reviendrait à remettre du texte. Le signe devient une corbeille
-         pendant quatre secondes ; un second clic efface, sinon on revient
-         en arrière tout seul. */
-      butono.addEventListener('click', () => {
-        clearTimeout(horlojeto);
-        if (stato === 'ripozas') { diri('tuto'); pozi('kuras', 'Deskargas…'); return; }
-        if (stato === 'preta') {
-          pozi('demandas', 'Efacar la deskargita kontenajo? Klikez itere por konfirmar');
-          horlojeto = setTimeout(() => pozi('preta',
+      /* Three possible clicks, according to the state. In the "ready"
+         state the first click only ARMS: erasing sixty-six megabytes by
+         mistake would be painful, and a confirmation spelled out in words
+         would amount to putting the text back. The glyph becomes a bin for
+         four seconds; a second click erases, otherwise it reverts on its
+         own. */
+      button.addEventListener('click', () => {
+        clearTimeout(revertTimer);
+        if (state === 'idle') { tell('fetch-all'); setState('running', 'Deskargas…'); return; }
+        if (state === 'ready') {
+          setState('confirming', 'Efacar la deskargita kontenajo? Klikez itere por konfirmar');
+          revertTimer = setTimeout(() => setState('ready',
             'La tota sitio esas senrete disponebla — klikez por efacar'), 4000);
           return;
         }
-        if (stato === 'demandas') { diri('forgesi'); return; }
+        if (state === 'confirming') { tell('clear'); return; }
       });
 
-      diri('stato');
-      if (instalita) setTimeout(() => diri('tuto'), 4000);
+      tell('state');
+      if (installed) setTimeout(() => tell('fetch-all'), 4000);
 
       addEventListener('online', () => {
         reg.update();
-        diri('refresho');
+        tell('revalidate');
       });
-    } catch (_) { /* sans servanto, la page reste entière */ }
+    } catch (_) { /* without a service worker the page stays whole */ }
   });
 }
 
-/* --- L'etoile. Un tiers de tour : la figure revient sur elle-meme. */
-let anguli=0;
-document.getElementById('turno').addEventListener('click',()=>{
-  anguli+=120;
-  document.querySelector('.marko .stelo').style.rotate=anguli+'deg';
+/* --- The star. A third of a turn: the figure comes back onto itself. */
+let degrees=0;
+document.getElementById('spin').addEventListener('click',()=>{
+  degrees+=120;
+  document.querySelector('.mark .star').style.rotate=degrees+'deg';
 });
 </script>
 </body>

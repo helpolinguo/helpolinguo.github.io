@@ -1,17 +1,17 @@
 # ido.help — tri verki dil helpolinguo internaciona Ido.
 #
-# Tout est ouvert, a tous, sans delai. Le site est statique : aucune
-# cadence de visite ne le met en peine.
+# Everything is open, to everyone, without delay. The site is static: no
+# rate of visits puts it under any strain.
 #
-# Les versions LISIBLES PAR LES MACHINES sont annoncees dans /llms.txt —
-# texte brut et JSON, bien moins couteux que les pages elles-memes.
+# The MACHINE-READABLE versions are announced in /llms.txt — plain text
+# and JSON, far cheaper than the pages themselves.
 
 User-agent: *
 Allow: /
 
-# Robots des modeles de langue, nommes un a un : plusieurs cherchent leur
-# propre nom avant la regle generale, et s'abstiennent quand rien ne les
-# vise. Ici, rien ne les empeche.
+# The language models' crawlers, named one by one: several look for their
+# own name before the general rule, and abstain when nothing addresses
+# them. Here, nothing stands in their way.
 User-agent: ClaudeBot
 Allow: /
 User-agent: Claude-Web

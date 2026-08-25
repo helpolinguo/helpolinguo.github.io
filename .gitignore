@@ -1,0 +1,8 @@
+# Python bytecode, produced by the tools. Regenerated on every run, specific
+# to the machine and the interpreter version. Nothing to version.
+__pycache__/
+*.py[cod]
+
+# Editor and OS leavings.
+.DS_Store
+*.swp
