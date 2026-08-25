@@ -29,11 +29,12 @@ piece of work starts again from `main`, and it is a new pull request.
 
 ## THIS REPOSITORY IS THE SITE'S ROOT, AND THREE OTHERS DEPEND ON IT
 
-`shared.css`, `shared.js`, `emblem.svg` and `llms.txt` are served from
-here and read by `tabeli`, `gramatiko` and `dicionario`, which reference
-them as `/shared.css`, `/shared.js` and `/llms.txt`. **A rename here
-breaks all three**, and nothing inside this repository can tell: there
-is no root to 404 against when you serve this folder alone.
+`shared.css`, `shared.js`, `emblem.svg`, `llms.txt` and `opensearch.xml`
+are served from here and read by `tabeli`, `gramatiko` and `dicionario`,
+which reference them as `/shared.css`, `/shared.js`, `/llms.txt` and
+`/opensearch.xml`. **A rename here breaks all three**, and nothing inside
+this repository can tell: there is no root to 404 against when you serve
+this folder alone.
 
 The same goes for the class names those pages carry — `.ido-home`,
 `.ido-clear`, `.ido-search-shell`, `.ido-filled`. They are defined here
@@ -65,7 +66,8 @@ hand:
 
     python3 tools/emblem.py         # the logotype, to be copied into index.html
     python3 tools/icons.py          # emblem.svg, the icons, og-image.png
-    python3 tools/machine_files.py  # robots.txt, sitemap.xml, llms.txt
+    python3 tools/machine_files.py  # robots.txt, sitemap.xml, llms.txt,
+                                    # opensearch.xml
 
 `machine_files.py` reads the three book repositories and expects their
 clones **beside this one**; re-run it whenever a book changes. It stamps
@@ -79,8 +81,14 @@ And the page itself: no console error, and no horizontal scroll at
 ## Three rules that are not negotiable
 
 **A PRODUCED FILE IS NOT A PLACE WHERE ONE WRITES.** `robots.txt`,
-`sitemap.xml`, `llms.txt`, `emblem.svg`, the icons and `og-image.png`
-are overwritten wholesale. What must change is changed in `tools/`.
+`sitemap.xml`, `llms.txt`, `opensearch.xml`, `emblem.svg`, the icons and
+`og-image.png` are overwritten wholesale. What must change is changed in
+`tools/`.
+
+`machine_files.py` is the one to watch: **run without the three books
+beside it, it empties `sitemap.xml` of them and shortens `llms.txt`** —
+265 lines went out of the map that way here, and were put back by hand.
+`opensearch.xml` alone does not depend on them.
 
 **THE SERVICE WORKER'S CACHE NAME STAYS `ido-2`.** Changing `CACHE`
 purges everything at activation, and a reader who had taken the whole

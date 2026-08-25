@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Ido</ShortName>
+  <Description>Serchez vorto en la Dicionario de la 10.000 radiki</Description>
+  <Language>io</Language>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="192" height="192" type="image/png">https://ido.help/icon-192.png</Image>
+  <Url type="text/html" method="get"
+       template="https://ido.help/dicionario/?q={searchTerms}"/>
+</OpenSearchDescription>

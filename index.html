@@ -44,9 +44,18 @@
      The JSON-LD block says what the site IS and what it holds: three books,
      their authors, their dates. An engine that understands it no longer has
      to guess from the prose.
+
+     The link to /opensearch.xml says THAT THE DOMAIN HAS A SEARCH, and at
+     what address — /dicionario/?q=. Safari reads it on the first visit and
+     files the site under Settings → Search → Manage Websites; macOS 26
+     hands that list to Spotlight, where the site's name followed by Tab
+     opens a field that searches the dictionary. It is declared here, on
+     the home page, and nowhere else: Safari keeps ONE entry per domain,
+     and the three books share this one.
      =================================================================== -->
 <link rel="canonical" href="https://ido.help/">
 <link rel="alternate" type="text/markdown" href="/llms.txt" title="Karto dil sito, por mashini">
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Ido">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
