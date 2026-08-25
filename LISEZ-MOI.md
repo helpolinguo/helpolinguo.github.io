@@ -690,7 +690,105 @@ Servi localement dans l'arborescence réelle, avec coupure du réseau :
 
 ---
 
-## 10. Refabriquer les images
+## 10. Le site, pour les machines
+
+Le site s'adresse d'abord à l'œil. Cette section-ci décrit ce qui a été
+ajouté pour ce qui n'a pas d'yeux : les moteurs de recherche, les
+aspirateurs, et les modèles de langue qui vont chercher une adresse.
+
+### Le vrai problème n'était pas le poids
+
+On croit d'abord que la difficulté est le nombre de jetons. Mesuré, elle
+était ailleurs :
+
+| page | poids | texte visible sans JavaScript |
+| --- | ---: | ---: |
+| `/dicionario/` | 2,1 Mo | **213 caractères** |
+| `/tabeli/` | 3,3 Mo | 257 Ko |
+| `/gramatiko/` | 1,2 Mo | 467 Ko |
+
+Le Dicionario est bâti par du JavaScript : ses 9473 articles vivent dans
+un tableau que le navigateur déroule au chargement. Excellent pour la
+recherche instantanée, désastreux pour tout ce qui n'exécute pas de
+script. La page ne rend d'ailleurs que 400 articles à la fois, même avec
+JavaScript. Un robot d'indexation sans moteur JS n'y voyait rien, et rien
+ne le lui disait.
+
+### Les fichiers engendrés
+
+Chaque livre porte désormais un `outils/robotoj.py` qui tire de sa page
+des versions lisibles par les machines. **Ils sont engendrés, jamais
+édités à la main** ; la source reste `index.html`.
+
+| livre | fichiers | contenu |
+| --- | --- | --- |
+| Dicionario | `dicionario.json` | les 9473 articles, données nues |
+| | `dicionario.md` | le livre à plat |
+| | `vortlisto.md` | vedette et premier sens seulement |
+| Gramatiko | `chapitri/*.md` | **un fichier par chapitre**, ~10 Ko |
+| | `chapitri/index.md` | la table, avec la taille de chacun |
+| | `gramatiko.md` | le livre entier |
+| Tabeli | `tabeli.json` | les 672 clés, ido et français |
+| | `tabeli.md` | le tableau à plat |
+| | `lingui/index.json` | les 55 autres langues offertes |
+
+### Le découpage vaut mieux que la compression
+
+C'est le point à retenir. Une grammaire ne se lit pas d'un bout à
+l'autre : on y cherche un point. Qui veut savoir comment se forme le
+pluriel n'a pas à charger 1,2 Mo — il charge un chapitre de 10 Ko. Le
+gain n'est pas de quelques pourcents, il est de deux ordres de grandeur,
+et il ne doit rien à une quelconque compression : il tient à ce que le
+texte soit **découpé et étiqueté**, et à ce que les tailles soient
+annoncées d'avance pour qu'on puisse choisir avant de télécharger.
+
+### La charnière des Tabeli
+
+Les clés des rangées (`data-cle`) sont exactement celles des fichiers
+`lingui/*.json`. Publier les paires ido/français sous ces mêmes clés rend
+donc tout le corpus des 57 langues joignable par programme : qui veut le
+couple ido-japonais joint `tabeli.json` et `lingui/ja.json` sur la clé,
+sans ouvrir la page ni exécuter son JavaScript. Les 672 clés
+correspondent à 100 %.
+
+### À la racine, et pourquoi seulement là
+
+`robots.txt` et `sitemap.xml` ne sont lus qu'à la RACINE d'un domaine :
+déposés dans `/tabeli/`, personne ne les lirait. Comme la feuille commune
+et le service worker, ils ne peuvent vivre qu'ici, et ils parlent pour
+les quatre pages. `outils/robotoj.py` les engendre — il lit les dépôts
+voisins, et doit donc être relancé quand un livre change.
+
+* **`robots.txt`** dit oui à tout le monde, et nomme un à un les robots
+  des modèles de langue. Ce n'est pas de la redondance avec l'étoile :
+  plusieurs cherchent leur propre nom avant la règle générale, et
+  certains exploitants s'abstiennent quand rien ne les vise.
+* **`sitemap.xml`** énumère les pages ET les fichiers engendrés. Sans
+  cela un moteur ne les trouverait que par le lien de la page, et un
+  aspirateur pas du tout.
+* **`llms.txt`** est la carte : ce que le site contient, sous quelle
+  forme, et à quel poids. C'est la dernière colonne qui compte.
+
+### Ce que porte chaque page
+
+Une description, un lien canonique — le site répond aussi sous
+`gphmorin.github.io`, et sans cette ligne un moteur peut tenir les deux
+pour deux sites —, un lien `alternate` vers la version Markdown, et un
+bloc JSON-LD qui dit ce que le document EST : un livre, son auteur, sa
+date, sa langue.
+
+Le Dicionario porte en plus un `<noscript>` qui ne tente pas de rendre le
+dictionnaire en HTML, mais indique où il est. Sans JavaScript, la page
+offrait 213 caractères et aucune issue ; elle en offre 465 et trois
+chemins vers le texte.
+
+**Aucune mention de licence n'a été inscrite.** Les données structurées
+pourraient porter un champ `license`, et il a été délibérément laissé
+vide : les trois œuvres n'ont pas le même statut — 1925 et 1926 d'un
+côté, une seconde édition de 1964 de l'autre — et cette décision-là
+revient à l'auteur du site, non à son outillage.
+
+## 11. Refabriquer les images
 
 ```sh
 python3 outils/emblemo.py   # le logotype, à recopier dans index.html

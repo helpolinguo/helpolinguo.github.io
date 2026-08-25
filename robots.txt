@@ -1,0 +1,50 @@
+# ido.help — tri verki dil helpolinguo internaciona Ido.
+#
+# Tout est ouvert, a tous, sans delai. Le site est statique : aucune
+# cadence de visite ne le met en peine.
+#
+# Les versions LISIBLES PAR LES MACHINES sont annoncees dans /llms.txt —
+# texte brut et JSON, bien moins couteux que les pages elles-memes.
+
+User-agent: *
+Allow: /
+
+# Robots des modeles de langue, nommes un a un : plusieurs cherchent leur
+# propre nom avant la regle generale, et s'abstiennent quand rien ne les
+# vise. Ici, rien ne les empeche.
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: ClaudeBot-User
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: meta-externalagent
+Allow: /
+User-agent: cohere-ai
+Allow: /
+User-agent: Diffbot
+Allow: /
+User-agent: omgili
+Allow: /
+
+Sitemap: https://ido.help/sitemap.xml
