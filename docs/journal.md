@@ -1152,14 +1152,49 @@ the same nothing.
   log-mel self-similarity matrix, agreed on by a 4 s and an 8 s kernel. Almost
   certainly the first sung note and the start of the closing tag.
 
-So the 32 lines are laid evenly between those two boundaries, 4.81 s apart —
-5.57 beats, which is not a round number of beats and is the honest sign that
-equal lines are an assumption, not a measurement. **The seed is derived from
-the audio; which line falls where is still not.**
+So the 32 lines were laid evenly between those two boundaries, 4.81 s apart.
+
+### The even seeding was wrong by construction: there are interludes
+
+Reported by ear, and the fault is a good one to have written down. **The song
+plays a few bars between one stanza and the next**, and a model with 32 equal
+lines has nowhere to put them: the drift starts at the end of the second
+stanza and every line after it is early.
+
+Trying to *measure* the interludes directly failed in the same way everything
+else did. A grid search over (start, cycle, sung length), scored on how much
+quieter the vocal band is during the gaps than during the singing, gave an
+unstable answer — the top candidates put the start anywhere from 20.8 s to
+33.2 s, and the interlude length ran to the floor of the search range every
+time, which is the optimiser saying *there is no gap here that I can see*. A
+choir does not stop for the soloist's breath.
+
+**What settles it is that three boundaries are three numbers, and the model
+has three unknowns.** Foote novelty on the log-mel self-similarity matrix
+gives, with a 4 s and an 8 s kernel agreeing on each:
+
+| boundary | what it fixes |
+|---|---|
+| 26.6 s | the first sung note — the start |
+| 106.8 s | the third stanza, two cycles in — the **cycle, 40.10 s** |
+| 180.6 s | the start of the closing tag — the **sung part, 33.70 s** |
+
+The interlude is what is left over: **6.40 s**. And the sung part comes out
+at 33.70 s against the 34.28 s the envelope's autocorrelation independently
+gives for the strophe — 0.58 s apart, by two methods that share no
+assumptions and no features. That agreement is the reason to believe the
+triangulation rather than the grid search.
+
+Eight equal lines inside a stanza remains an assumption. **The seed is
+derived from the audio; which line falls where is still not.**
 
 `tools/tap.html` closes that last gap by hand, and it is built so the hand
 does as little as possible: tap the lines that matter, skip the rest with the
 right arrow, and what was skipped is spread evenly between the taps either
-side — four taps, one to a stanza, already put every line close. It reads the
-poem out of `index.html` rather than keeping a copy, so it cannot go stale
-against the page, and it prints the block back ready to paste.
+side. **Eight taps are the right eight** — the first and the last line of
+each stanza — because a tap on either side of an interlude keeps that
+interlude out of the working-out. Tapping only the four stanza openings is
+worse than useless: each interlude is then spread back across the stanza
+before it, which is the very fault this section is about. It reads the poem
+out of `index.html` rather than keeping a copy, so it cannot go stale against
+the page, and it prints the block back ready to paste.

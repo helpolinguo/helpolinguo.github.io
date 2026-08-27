@@ -785,20 +785,36 @@ body.song-on.no-reel .credits{opacity:1;visibility:visible;transition:opacity .4
          "aria-hidden".
 
          "data-t" IS THE SECOND AT WHICH EACH LINE BEGINS, and it is the
-         weakest number on this page. What the recording WILL give up, it
-         has: a beat of 0.864 s, and two boundaries where the texture turns
-         over — 26.6 s and 180.6 s, agreed on by two novelty kernels, which
-         are almost certainly the first sung note and the start of the tag.
-         The 32 lines are laid evenly between them, 4.81 s apart. WHAT IT
-         WILL NOT GIVE UP IS WHICH LINE IS WHICH: the accompaniment is a
-         CHOIR, so the lead is neither the only harmonic thing nor the only
-         thing in the centre of the image, and every reading that separates
-         a voice from a band fails on a voice inside a choir. See § 15 of
-         docs/journal.md for what was tried.
+         weakest number on this page. WHAT IT WILL NOT GIVE UP IS WHICH LINE
+         IS WHICH: the accompaniment is a CHOIR, so the lead is neither the
+         only harmonic thing nor the only thing in the centre of the image,
+         and every reading that separates a voice from a band fails on a
+         voice inside a choir. See § 15 of docs/journal.md for what was
+         tried.
 
-         So tools/tap.html: it taps the lines that matter and interpolates
-         the rest, and prints this block back. The reel reads the times from
-         the attributes, so a line and its moment are edited in one place.
+         THE FIRST SEEDING LAID ALL 32 LINES EVENLY, AND WAS WRONG BY
+         CONSTRUCTION: it had no interludes in it, when the song plays a few
+         bars between one stanza and the next — reported by ear, at the end
+         of the second stanza, and the drift was audible from there on. The
+         model now has four stanzas and three interludes, and THREE MEASURED
+         BOUNDARIES FIX IT EXACTLY, being three numbers for three unknowns:
+
+             26.6 s   the first sung note      -> the start
+            106.8 s   the third stanza         -> the cycle, 40.10 s
+            180.6 s   the start of the tag     -> the sung part, 33.70 s
+
+         all three from Foote novelty on a log-mel self-similarity matrix,
+         each agreed on by a 4 s and an 8 s kernel. The interlude is what is
+         left: 6.40 s. And the sung part comes out at 33.70 s against the
+         34.28 s the envelope's autocorrelation gives for the strophe —
+         0.58 s apart, by two methods that share nothing.
+
+         EIGHT LINES TO A STANZA, EVENLY, IS STILL AN ASSUMPTION. So
+         tools/tap.html: tap the first and last line of each stanza — eight
+         taps — and the rest are worked out inside their own stanza, with
+         the interludes falling where they fall. It prints this block back.
+         The reel reads the times from the attributes, so a line and its
+         moment are edited in one place.
 
          THE PANEL HANGS BELOW THE BLOCK AND IS OUT OF ITS FLOW —
          "position:absolute; top:100%" — so the mark, the motto and the
@@ -808,42 +824,42 @@ body.song-on.no-reel .credits{opacity:1;visibility:visible;transition:opacity .4
     <div class="lyrics" id="lyrics">
       <div class="reel" id="reel">
         <p class="line" data-t="26.6">Tra densa tenebro, lumizas nin stelo</p>
-        <p class="line" data-t="31.41">Ad olqua konstante ni fidas.</p>
-        <p class="line" data-t="36.23">Per lua brilado en nigra cielo,</p>
-        <p class="line" data-t="41.04">La skopon montrata ni vidas.</p>
-        <p class="line" data-t="45.85">E nule ni timas la nokto-fantomi,</p>
-        <p class="line" data-t="50.66">La stroki dil fato, la moki dil homi,</p>
-        <p class="line" data-t="55.48">Nam rekta, sentrompa, justege trasita,</p>
-        <p class="line" data-t="60.29">La voyo da ni selektita.</p>
-        <p class="line stanza" data-t="65.1">Ni semas obstine, nultempe tedesas,</p>
-        <p class="line" data-t="69.91">Al tempi futura pensante,</p>
-        <p class="line" data-t="74.72">Mil grani perisas, dek mili perdesas;</p>
-        <p class="line" data-t="79.54">Ni plugas e semas konstante.</p>
-        <p class="line" data-t="84.35">&laquo;&#8239;Ha finez!&#8239;&raquo; klamachas la homi kun moko</p>
-        <p class="line" data-t="89.16">&laquo;&#8239;No, durez, avancez!&#8239;&raquo; adjuras nin voko;</p>
-        <p class="line" data-t="93.97">La nevi per benedikado vi pagos,</p>
-        <p class="line" data-t="98.79">Se kun persevero vi agos.</p>
-        <p class="line stanza" data-t="103.6">Dum longa sukusi dil vintro-tempesti,</p>
-        <p class="line" data-t="108.41">Ul branchi frapita ruptesas.</p>
-        <p class="line" data-t="113.22">L&rsquo;arboro ne mortis, e balde nov testi</p>
-        <p class="line" data-t="118.04">Pri lua vigoro trovesas.</p>
-        <p class="line" data-t="122.85">Certege permanos la brav idistaro:</p>
-        <p class="line" data-t="127.66">Lun ya ne faligos mult enemikaro.</p>
-        <p class="line" data-t="132.47">Plenfide lu marchas, ardore flamoza,</p>
-        <p class="line" data-t="137.29">Al skopo brilante lumoza.</p>
-        <p class="line stanza" data-t="142.1">Kuraje, persiste, ne deviacante,</p>
-        <p class="line" data-t="146.91">Ni sequez la voyo montrita!</p>
-        <p class="line" data-t="151.72">Mem singla guteti, sencese falante,</p>
-        <p class="line" data-t="156.54">Perforas la petro granita.</p>
-        <p class="line" data-t="161.35">L&rsquo;espero, l&rsquo;obstino e la konstanteso,</p>
-        <p class="line" data-t="166.16">Yen bela tri forci, di qui l&rsquo;efikado,</p>
-        <p class="line" data-t="170.97">Tra multa labori e persekuteso,</p>
-        <p class="line" data-t="175.79">Nin duktos a la triumfado.</p>
-        <p class="line credit" data-t="182.0">Poemo &laquo;&#8239;La Vojo&#8239;&raquo; da L. L. Zamenhof</p>
-        <p class="line credit" data-t="184.6">Tradukuro &laquo;&#8239;La Skopo&#8239;&raquo; da L. de Beaufront</p>
-        <p class="line credit" data-t="187.2">Melodio da Ren&eacute; Deshays</p>
-        <p class="line credit" data-t="189.8">Akompano por koro da F&eacute;licien Menu de M&eacute;nil</p>
-        <p class="line credit" data-t="192.4">Enrejistruro da Lucas Costa, per SUNO</p>
+        <p class="line" data-t="30.81">Ad olqua konstante ni fidas.</p>
+        <p class="line" data-t="35.03">Per lua brilado en nigra cielo,</p>
+        <p class="line" data-t="39.24">La skopon montrata ni vidas.</p>
+        <p class="line" data-t="43.45">E nule ni timas la nokto-fantomi,</p>
+        <p class="line" data-t="47.66">La stroki dil fato, la moki dil homi,</p>
+        <p class="line" data-t="51.88">Nam rekta, sentrompa, justege trasita,</p>
+        <p class="line" data-t="56.09">La voyo da ni selektita.</p>
+        <p class="line stanza" data-t="66.7">Ni semas obstine, nultempe tedesas,</p>
+        <p class="line" data-t="70.91">Al tempi futura pensante,</p>
+        <p class="line" data-t="75.12">Mil grani perisas, dek mili perdesas;</p>
+        <p class="line" data-t="79.34">Ni plugas e semas konstante.</p>
+        <p class="line" data-t="83.55">&laquo;&#8239;Ha finez!&#8239;&raquo; klamachas la homi kun moko</p>
+        <p class="line" data-t="87.76">&laquo;&#8239;No, durez, avancez!&#8239;&raquo; adjuras nin voko;</p>
+        <p class="line" data-t="91.98">La nevi per benedikado vi pagos,</p>
+        <p class="line" data-t="96.19">Se kun persevero vi agos.</p>
+        <p class="line stanza" data-t="106.8">Dum longa sukusi dil vintro-tempesti,</p>
+        <p class="line" data-t="111.01">Ul branchi frapita ruptesas.</p>
+        <p class="line" data-t="115.23">L&rsquo;arboro ne mortis, e balde nov testi</p>
+        <p class="line" data-t="119.44">Pri lua vigoro trovesas.</p>
+        <p class="line" data-t="123.65">Certege permanos la brav idistaro:</p>
+        <p class="line" data-t="127.86">Lun ya ne faligos mult enemikaro.</p>
+        <p class="line" data-t="132.08">Plenfide lu marchas, ardore flamoza,</p>
+        <p class="line" data-t="136.29">Al skopo brilante lumoza.</p>
+        <p class="line stanza" data-t="146.9">Kuraje, persiste, ne deviacante,</p>
+        <p class="line" data-t="151.11">Ni sequez la voyo montrita!</p>
+        <p class="line" data-t="155.33">Mem singla guteti, sencese falante,</p>
+        <p class="line" data-t="159.54">Perforas la petro granita.</p>
+        <p class="line" data-t="163.75">L&rsquo;espero, l&rsquo;obstino e la konstanteso,</p>
+        <p class="line" data-t="167.96">Yen bela tri forci, di qui l&rsquo;efikado,</p>
+        <p class="line" data-t="172.18">Tra multa labori e persekuteso,</p>
+        <p class="line" data-t="176.39">Nin duktos a la triumfado.</p>
+        <p class="line credit" data-t="183.0">Poemo &laquo;&#8239;La Vojo&#8239;&raquo; da L. L. Zamenhof</p>
+        <p class="line credit" data-t="185.6">Tradukuro &laquo;&#8239;La Skopo&#8239;&raquo; da L. de Beaufront</p>
+        <p class="line credit" data-t="188.2">Melodio da Ren&eacute; Deshays</p>
+        <p class="line credit" data-t="190.8">Akompano por koro da F&eacute;licien Menu de M&eacute;nil</p>
+        <p class="line credit" data-t="193.4">Enrejistruro da Lucas Costa, per SUNO</p>
       </div>
     </div>
   </div>
