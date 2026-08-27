@@ -91,6 +91,7 @@ textarea{width:100%;height:220px;font:12px/1.5 ui-monospace,monospace;
   <span class="clock" id="clock">0:00.00 / 0:00</span>
 </div>
 
+<p class="err" id="warn"></p>
 <ol id="list"></ol>
 <textarea id="out" readonly></textarea>
 
@@ -103,6 +104,7 @@ const out  = document.getElementById('out');
 let lines  = [];         /* {html, cls} straight out of index.html */
 let taps   = {};         /* SPARSE: only the lines actually tapped */
 let cursor = 0;          /* the line the next tap or skip belongs to */
+let overrun = 0;         /* worked-out lines that ran past the end of the file */
 
 /* THE POEM IS NOT KEPT HERE. It is read back out of the page it belongs
    to, so this tool can never drift from it: add a line there and it shows
@@ -131,14 +133,24 @@ const fmt = t => Math.floor(t / 60) + ':' +
    ones are spread evenly; beyond the last tap, and before the first, the
    nearest tapped interval is carried on. So a run of four taps — one to a
    stanza — already gives every line a time that is close, and every further
-   tap only sharpens it. Nothing is ever left at zero. */
+   tap only sharpens it. Nothing is ever left at zero.
+
+   AND NOTHING IS LEFT PAST THE END OF THE FILE EITHER. Carrying the rate on
+   is only a guess, and a guess that runs off the end is worse than useless:
+   MEASURED, on the first real use of this page — the five credits were
+   skipped, the average rate of 5.4939 s was carried on past the last line,
+   and the last credit landed at 221.00 s in a song that stops at 216.40. It
+   could never have been reached. Anything the carry pushes past the end is
+   now pulled back inside it, and the page says which lines those are, so
+   that a run of guesses cannot leave the file quietly. */
 function resolve() {
   const idx = Object.keys(taps).map(Number).sort((a, b) => a - b);
-  if (!idx.length) return lines.map((_, i) => i * 4.81);
+  const dur = song.duration || Infinity;
+  if (!idx.length) return lines.map((_, i) => Math.min(i * 4.81, dur - 0.05));
   const rate = idx.length > 1
     ? (taps[idx[idx.length-1]] - taps[idx[0]]) / (idx[idx.length-1] - idx[0])
     : 4.81;
-  return lines.map((_, i) => {
+  const raw = lines.map((_, i) => {
     if (i in taps) return taps[i];
     const before = idx.filter(k => k < i).pop();
     const after  = idx.find(k => k > i);
@@ -147,6 +159,8 @@ function resolve() {
     if (before !== undefined) return taps[before] + rate * (i - before);
     return Math.max(0, taps[after] - rate * (after - i));
   });
+  overrun = raw.filter((t, i) => !(i in taps) && t > dur).length;
+  return raw.map(t => Math.min(Math.max(0, t), dur - 0.05));
 }
 
 function draw() {
@@ -162,6 +176,11 @@ function draw() {
   });
   const next = list.querySelector('.next');
   if (next) next.scrollIntoView({block: 'center', behavior: 'smooth'});
+  const warn = document.getElementById('warn');
+  warn.textContent = overrun
+    ? overrun + (overrun === 1 ? ' line was' : ' lines were') +
+      ' worked out past the end of the song and pulled back to it — tap them.'
+    : '';
   write(times);
 }
 

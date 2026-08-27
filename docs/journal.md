@@ -1249,3 +1249,51 @@ novelty did find a texture change there, agreed on by both kernels, and it
 was taken for the end of the singing. It is not: it falls inside the fourth
 stanza, and is presumably a swell in the arrangement. The lesson is the same
 one as above — a boundary tells you the texture changed, not what changed.
+
+## 17. Tapped, and what the estimates had been getting wrong
+
+The 32 sung lines are now struck by hand against the recording, and the
+estimates can be scored against them. **All three earlier seedings were
+wrong**, and the last one — one break, in the middle — had the shape right
+and every boundary about five seconds late:
+
+| | estimated | tapped | out by |
+|---|---|---|---|
+| the singing starts | 27.1 | 23.22 | +3.9 s |
+| the break begins | 108.2 | ~103.5 | +4.7 s |
+| the break ends | 119.2 | 114.48 | +4.7 s |
+| the singing ends | 200.5 | ~198.9 | +1.6 s |
+
+**The lag is the measurement's own, and it is one-sided.** The modulation
+detector smooths over two seconds and then requires a run of 2.5 s before it
+will call a stretch quiet, so it is always late to declare a quiet passage
+*begun* — and by about the sum of those two numbers. Where the quiet *ends*
+it is much closer, because the modulation returns abruptly when a voice does.
+That the error is +3.9, +4.7, +4.7 and +1.6 rather than scattered in sign is
+the signature of a detector's latency, not of a wrong reading. Worth
+remembering the next time one of these curves looks convincing: **a
+systematic offset is invisible in the curve and obvious in the ledger.**
+
+What the estimate did have right was the structure. Tapped, the gap from the
+last line of the second stanza to the first of the third is **16.02 s**,
+against 4.02 s and 5.14 s for the gaps either side of it: one break, in the
+middle, and none between the other stanzas.
+
+And the lines are not evenly spaced within a half, which no estimate could
+have known. They run from **4.02 s to 5.54 s**. A poem in a strict metre is
+still not sung in one.
+
+### The tool put a line past the end of the song
+
+The five credits were skipped rather than tapped, so `resolve()` carried the
+average rate — 5.4939 s — on past the last line and put the fifth credit at
+**221.00 s in a file that stops at 216.40**. It could never have been
+reached, and nothing said so.
+
+Carrying the rate on is only a guess, and a guess that runs off the end of
+the file is worse than useless. Anything the carry pushes past the duration
+is now pulled back inside it, and the page counts those lines and says so —
+tested by tapping twice twelve seconds apart and skipping the other
+thirty-five, which reports twenty-seven lines pulled back. The credits
+themselves are placed in the closing tag, between the last word sung and the
+end.

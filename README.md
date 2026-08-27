@@ -141,14 +141,19 @@ the third and the fourth: the song runs two stanzas, breaks once, and runs two
 more. The reason to believe it is that the two halves this implies are
 **81.1 s and 81.3 s** long — 0.20 s apart in 81, sixteen lines each.
 
-Sixteen even lines to a half is still an assumption, and `tools/tap.html`
-settles it: serve the repository root, open it, and tap the space bar on each
-line as it begins. The right arrow skips a line and lets it be worked out
-from the taps either side, so **eight taps — the first and last line of each
-stanza — are enough**, the break falling outside the working-out. It prints
-the block of `<p class="line">` back with the times filled in, ready to
-replace the one in `index.html`, and reads the poem from `index.html` rather
-than keeping a copy, so it cannot go stale against it.
+**The 32 sung lines are now tapped, not estimated.** `tools/tap.html` struck
+each one by hand against the recording, and the estimate turns out to have
+had the shape right and every boundary about five seconds late — the lag of a
+detector that smooths over two seconds before it will call a stretch quiet.
+The tapped gaps run from 4.02 s to 5.54 s: a poem in a strict metre is still
+not sung in one, and no estimate could have known that.
+
+The tool remains the way to redo them: serve the repository root, open it,
+and tap the space bar on each line as it begins. The right arrow skips a
+line and lets it be worked out from the taps either side. It prints the block
+of `<p class="line">` back ready to replace the one in `index.html`, and
+reads the poem from `index.html` rather than keeping a copy, so it cannot go
+stale against it.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,
