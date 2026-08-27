@@ -115,16 +115,24 @@ between the doors and the foot runs from 94 px at 320 × 568 to 359 px at
 queries — five lines where there is room, three where there is less, none
 below that.
 
-**The times are the one thing on the page not measured from the thing they
-describe.** Each line carries a `data-t`, the second it begins at. They
-cannot be read off the recording: the arrangement is continuous, so its
-envelope has no phrase gaps to anchor on, and autocorrelation gives only the
-strophe — a sharp 34.28 s — which is not a line and does not say where the
-singing starts. `tools/tap.html` taps them out instead. Serve the repository
-root, open it, press the space bar on each line as it begins, and it prints
-the block of `<p class="line">` back with the times filled in, ready to
-replace the one in `index.html`. It reads the poem from `index.html` rather
-than keeping a copy, so it cannot go stale against it.
+**The times are the weakest number on the page.** Each line carries a
+`data-t`, the second it begins at, and following the voice automatically does
+not work here — because the accompaniment is a *choir*, so the lead singer is
+neither the only harmonic thing in the mix nor the only thing in the centre
+of it. Centre extraction, harmonic salience, chroma self-similarity, a search
+for the four repeats, and forced alignment against the one offline acoustic
+model available were all tried; `docs/journal.md` § 15 keeps the ledger.
+
+What the recording does give up is a **beat of 0.864 s** and two texture
+boundaries, **26.6 s and 180.6 s** — the first sung note and the closing tag.
+The 32 lines are laid evenly between them. Which line falls where is still an
+assumption, and `tools/tap.html` settles it: serve the repository root, open
+it, and tap the space bar on each line as it begins. The right arrow skips a
+line and lets it be worked out from the taps either side, so four taps — one
+to a stanza — already put every line close. It prints the block of
+`<p class="line">` back with the times filled in, ready to replace the one in
+`index.html`, and reads the poem from `index.html` rather than keeping a copy,
+so it cannot go stale against it.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,

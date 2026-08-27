@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Tapping out the times for La Skopo</title>
+<link rel="icon" href="/emblem.svg" type="image/svg+xml">
 <!--
   THE ONE THING ON THE PAGE THAT CANNOT BE MEASURED FROM THE RECORDING.
 
@@ -51,6 +52,7 @@ li.done .t{color:var(--azure)}
 li.next{background:color-mix(in srgb,var(--azure) 12%,transparent)}
 li.next .t::after{content:"\25C0"}
 li.credit{font-style:italic;color:var(--muted)}
+li.guessed .t{opacity:.45}          /* worked out, not tapped */
 textarea{width:100%;height:220px;font:12px/1.5 ui-monospace,monospace;
   background:var(--paper);color:var(--ink);border:1px solid var(--rule);
   border-radius:8px;padding:10px}
@@ -60,15 +62,19 @@ textarea{width:100%;height:220px;font:12px/1.5 ui-monospace,monospace;
 <body>
 <h1>Tapping out the times for <em>La Skopo</em></h1>
 <p class="hint">
-  Press <kbd>space</kbd> on each line as it begins &mdash; the poem first,
-  then the five credits. <kbd>&larr;</kbd> takes back the last tap,
-  <kbd>&darr;</kbd> rewinds five seconds, <kbd>R</kbd> starts over. Then copy
-  the block at the foot over the one in <code>index.html</code>.
+  Press <kbd>space</kbd> on each line as it begins. <kbd>&rarr;</kbd>
+  <b>skips</b> a line &mdash; skipped lines are worked out from the tapped
+  ones either side, so tapping the first line of each stanza is already
+  enough to be close, and tapping all of them is exact.
+  <kbd>&larr;</kbd> takes back the last tap, <kbd>&darr;</kbd> rewinds five
+  seconds, <kbd>R</kbd> starts over. Then copy the block at the foot over
+  the one in <code>index.html</code>.
 </p>
 
 <div class="bar">
   <button id="play">Play</button>
   <button id="back">&minus;5 s</button>
+  <button id="skip">Skip</button>
   <button id="undo">Undo</button>
   <button id="reset">Reset</button>
   <button id="copy">Copy the block</button>
@@ -84,8 +90,9 @@ textarea{width:100%;height:220px;font:12px/1.5 ui-monospace,monospace;
 const song = document.getElementById('song');
 const list = document.getElementById('list');
 const out  = document.getElementById('out');
-let lines = [];          /* {html, cls} straight out of index.html */
-let taps  = [];          /* one second per line, in order */
+let lines  = [];         /* {html, cls} straight out of index.html */
+let taps   = {};         /* SPARSE: only the lines actually tapped */
+let cursor = 0;          /* the line the next tap or skip belongs to */
 
 /* THE POEM IS NOT KEPT HERE. It is read back out of the page it belongs
    to, so this tool can never drift from it: add a line there and it shows
@@ -110,41 +117,62 @@ fetch('/index.html')
 const fmt = t => Math.floor(t / 60) + ':' +
   (t % 60).toFixed(2).padStart(5, '0');
 
+/* WHAT WAS NOT TAPPED IS WORKED OUT. Between two tapped lines the untapped
+   ones are spread evenly; beyond the last tap, and before the first, the
+   nearest tapped interval is carried on. So a run of four taps — one to a
+   stanza — already gives every line a time that is close, and every further
+   tap only sharpens it. Nothing is ever left at zero. */
+function resolve() {
+  const idx = Object.keys(taps).map(Number).sort((a, b) => a - b);
+  if (!idx.length) return lines.map((_, i) => i * 4.81);
+  const rate = idx.length > 1
+    ? (taps[idx[idx.length-1]] - taps[idx[0]]) / (idx[idx.length-1] - idx[0])
+    : 4.81;
+  return lines.map((_, i) => {
+    if (i in taps) return taps[i];
+    const before = idx.filter(k => k < i).pop();
+    const after  = idx.find(k => k > i);
+    if (before !== undefined && after !== undefined)
+      return taps[before] + (taps[after] - taps[before]) * (i - before) / (after - before);
+    if (before !== undefined) return taps[before] + rate * (i - before);
+    return Math.max(0, taps[after] - rate * (after - i));
+  });
+}
+
 function draw() {
+  const times = resolve();
   list.innerHTML = '';
   lines.forEach((l, i) => {
     const li = document.createElement('li');
     li.className = (l.cls.includes('credit') ? 'credit ' : '') +
-      (i < taps.length ? 'done' : i === taps.length ? 'next' : '');
-    li.innerHTML = '<span class="t">' +
-      (i < taps.length ? taps[i].toFixed(2) : '&mdash;') +
+      (i in taps ? 'done' : i === cursor ? 'next' : 'guessed');
+    li.innerHTML = '<span class="t">' + times[i].toFixed(2) +
       '</span><span>' + l.html + '</span>';
     list.appendChild(li);
   });
   const next = list.querySelector('.next');
   if (next) next.scrollIntoView({block: 'center', behavior: 'smooth'});
-  write();
+  write(times);
 }
 
 /* The block, exactly as index.html wants it back: eight spaces of indent,
    the classes untouched, one line to a line. */
-function write() {
+function write(times) {
   out.value = lines.map((l, i) =>
-    '        <p class="' + l.cls + '" data-t="' +
-    (i < taps.length ? taps[i].toFixed(2) : '0') + '">' + l.html + '</p>'
+    '        <p class="' + l.cls + '" data-t="' + times[i].toFixed(2) +
+    '">' + l.html + '</p>'
   ).join('\n');
 }
 
-function tap() {
-  if (taps.length >= lines.length) return;
-  taps.push(+song.currentTime.toFixed(2));
-  draw();
-}
+function tap()  { if (cursor < lines.length) { taps[cursor] = +song.currentTime.toFixed(2); cursor++; draw(); } }
+function skip() { if (cursor < lines.length) { cursor++; draw(); } }
+function undo() { cursor = Math.max(0, cursor - 1); delete taps[cursor]; draw(); }
 
 document.getElementById('play') .onclick = () => song.paused ? song.play() : song.pause();
 document.getElementById('back') .onclick = () => song.currentTime = Math.max(0, song.currentTime - 5);
-document.getElementById('undo') .onclick = () => { taps.pop(); draw(); };
-document.getElementById('reset').onclick = () => { taps = []; song.currentTime = 0; draw(); };
+document.getElementById('undo') .onclick = () => undo();
+document.getElementById('reset').onclick = () => { taps = {}; cursor = 0; song.currentTime = 0; draw(); };
+document.getElementById('skip') .onclick = () => skip();
 document.getElementById('copy') .onclick = () => {
   out.select(); navigator.clipboard.writeText(out.value);
 };
@@ -153,9 +181,10 @@ song.addEventListener('pause', () => document.getElementById('play').textContent
 
 addEventListener('keydown', e => {
   if (e.key === ' ')          { e.preventDefault(); tap(); }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); taps.pop(); draw(); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); skip(); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); undo(); }
   if (e.key === 'ArrowDown')  { e.preventDefault(); song.currentTime = Math.max(0, song.currentTime - 5); }
-  if (e.key.toLowerCase() === 'r') { taps = []; song.currentTime = 0; draw(); }
+  if (e.key.toLowerCase() === 'r') { taps = {}; cursor = 0; song.currentTime = 0; draw(); }
   if (e.key === 'Enter')      { e.preventDefault(); song.paused ? song.play() : song.pause(); }
 });
 

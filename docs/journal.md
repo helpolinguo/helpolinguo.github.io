@@ -1101,23 +1101,65 @@ classes, and one property written per line when the line changes. The reel
 rides the frame the ring already runs on, and returns at once when the answer
 is the one it gave last.
 
-### The times, which are not measured
+### Following the voice: what the recording will and will not give up
 
-Every other number on this page comes from the thing it describes. **These do
-not, and it is worth saying exactly why.** Three things were tried on the
-recording itself:
+Every other number on this page comes from the thing it describes, so the
+line times were pushed at hard before being left where they are. **The
+obstacle is one word in the credits: *akompano por koro*. The accompaniment
+is a CHOIR.** Every method for finding a singer inside a band assumes the
+singer is the harmonic thing, or the thing in the middle of the stereo image,
+or the thing that is not the steady texture. Against a choir the lead is none
+of those. Here is the whole ledger.
 
-* the **RMS envelope**, at 20 ms, over the whole 216.4 s — a continuous
-  crescendo, with no phrase gaps anywhere to anchor a line on;
-* a **brightness proxy** (mean absolute first difference over RMS, which
-  rises when a voice enters) — too noisy to give a vocal entry;
-* **autocorrelation of the detrended envelope**, which gives one clean
-  answer, a single sharp peak at **34.28 s**. That is the strophe. But a
-  strophe is not a line, and it does not say where the singing begins.
+**What failed, and why.**
 
-Real per-line timing wants forced alignment, and there is no aligner here —
-still less one that knows Ido. So the times shipped are a placeholder built
-from that 34.28 s, and `tools/tap.html` replaces them in one listen: play the
-song, tap the space bar on each line, copy the block it prints back over the
-one in `index.html`. It reads the poem out of `index.html` rather than keeping
-a copy of it, so the tool cannot go stale against the page.
+| tried | result |
+|---|---|
+| RMS envelope, 20 ms frames, all 216.4 s | a continuous crescendo; no phrase gaps to anchor a line on |
+| brightness (mean \|Δsample\| ÷ RMS) | too noisy to give a vocal entry |
+| centre extraction — `1 − \|L−R\|/(\|L\|+\|R\|)`, cubed, as a mask on the mid channel | the mix is true stereo (side/mid 0.46) and the mask works, but the choir is centre too |
+| harmonic salience — the sum of eight partials over a 90–420 Hz F0 sweep, on the centre channel | a choir is exactly as harmonic as a soloist; median 0.19, p90 0.29, no structure |
+| chroma self-similarity | a hymn's harmony repeats everywhere; the lag profile is flat and diffuse |
+| a search for four repeats over (start, strophe), on a 40-band log-mel feature | best agreement 0.057, and the top candidates — 38.1 s, 42.3 s, 53.95 s — disagree with each other and with the envelope. **A SUNO recording does not perform its verses identically**, which is the likeliest reading of that |
+| forced alignment | the right tool, and blocked twice over — see below |
+
+**Forced alignment, twice blocked.** It is the correct instrument: it does not
+have to *find* the voice, only to lay a known phone sequence along the audio
+on a monotonic path. Two walls. First, this environment's network policy
+reaches package registries and nothing else — `download.pytorch.org`,
+`huggingface.co` and `dl.fbaipublicfiles.com` all refuse, so no pretrained
+aligner weights can be fetched at all. Second, the one acoustic model that
+ships *inside* a PyPI wheel is `pocketsphinx`'s CMU Sphinx **en-us**, trained
+on English speech. Ido is strictly phonetic, so a grapheme-to-phone function
+for it is about thirty lines and was written; the dictionary came out at 133
+words. The alignment then fails at every beam setting, on the whole track and
+on a single line in a 20 s window alike:
+
+    ERROR: "fsg_search.c", line 944: Final result does not match the
+    grammar in frame 1999
+
+That is the Viterbi path never reaching the grammar's final state — sung Ido
+over a choir is too far from spoken English for the constrained search to
+survive. Widening the beams to 1e-300, raising the silence probability to
+absorb the instrumental stretches, and windowing to the sung region all gave
+the same nothing.
+
+**What the recording did give up**, and what the times now rest on:
+
+* a **beat of 0.864 s** — 69.5 BPM — from the autocorrelation of a proper
+  spectral-flux onset envelope. Clean and unambiguous;
+* two **texture boundaries at 26.6 s and 180.6 s**, from Foote novelty on a
+  log-mel self-similarity matrix, agreed on by a 4 s and an 8 s kernel. Almost
+  certainly the first sung note and the start of the closing tag.
+
+So the 32 lines are laid evenly between those two boundaries, 4.81 s apart —
+5.57 beats, which is not a round number of beats and is the honest sign that
+equal lines are an assumption, not a measurement. **The seed is derived from
+the audio; which line falls where is still not.**
+
+`tools/tap.html` closes that last gap by hand, and it is built so the hand
+does as little as possible: tap the lines that matter, skip the rest with the
+right arrow, and what was skipped is spread evenly between the taps either
+side — four taps, one to a stanza, already put every line close. It reads the
+poem out of `index.html` rather than keeping a copy, so it cannot go stale
+against the page, and it prints the block back ready to paste.
