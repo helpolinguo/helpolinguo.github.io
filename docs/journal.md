@@ -19,7 +19,7 @@ apple-touch-icon.png    the same, 180 × 180; icon-192/512.png for the manifest
 og-image.png            1200 × 630, the sharing image
 fonts/                  Jost* Bold and Medium, subset to this page
 tools/emblem.py         reconstructs the logotype
-tools/icons.py          rebuilds the images above
+tools/icons.py          rebuilds the images above, and icon-1536.png (§ 14)
 tools/machine_files.py  robots.txt, sitemap.xml, llms.txt (§ 10)
 CNAME                   the domain, for GitHub Pages
 ```
@@ -1002,3 +1002,51 @@ canonical position after every click and there is nothing to correct before
 it folds away — at seven as at eight. And the window is a sliding one, so
 no click has to be "the first": the change is two constants,
 `CLICKS` and `WINDOW`, and the prose around them.
+
+
+## 14. The lock screen, and an icon that was too small
+
+The song plays from a plain `<audio>` element, and iOS asks nothing more
+than that: it puts what is playing into its Now Playing panel by itself,
+the lock screen's controls drive the element, and the page — which set none
+of this up — hears the `pause` and `play` events back and swaps its glyph
+accordingly. That much was free.
+
+**What the panel SHOWED was not.** Left to itself it takes the page's title
+and the largest icon the manifest offers. MEASURED, from a screenshot of an
+iPhone 16 Pro at 1206 × 2622: the artwork is drawn **1111 px wide**, and
+`icon-512.png` was being blown up 2.17 times. The star's edges came out
+stepped, which is what one sees before one knows why.
+
+So `tools/icons.py` makes the same drawing at **1536** — three times 512,
+which covers 1111 with a third to spare. 1024, the size one reaches for
+without measuring, would still have been an upscale. It is a flat
+two-colour PNG and costs 46 kB.
+
+**It is deliberately not in the manifest.** Nothing installs from it: a
+launcher offered a 1536 icon may fetch it in place of the 512 it actually
+wants, and this file is meant to be fetched by the readers who find the egg,
+at the moment they find it, and by nobody else.
+
+### Naming the artwork means naming the song
+
+`MediaMetadata` has no notion of *leave that field as you found it*. The
+object replaces what the browser inferred, wholesale, and a title left unset
+is an **empty** title, not the page's. The artwork could not be corrected
+without also saying what was playing — no loss, as it turns out: the panel
+now reads *La Skopo* and its authors instead of the name of the site it came
+from. The names are the foot's credits in the foot's order, by surname. The
+panel gives them one line and cuts from the end; the order being the same,
+what survives the cut still reads as the beginning of that list.
+
+### One artwork is offered, and not a choice of sizes
+
+The `artwork` list is meant to be a list, and the browser takes from it
+whichever size suits the surface it is drawing. OBSERVED, with 512 and 1536
+both listed: Chromium fetched the 512 for its own small panel, and was right
+to. **But that mechanism — the browser judging which size will do — is
+exactly what produced the blurred star**, the largest thing on offer having
+been too small. There is nothing to be gained here by leaving it the room to
+judge again. Downscaling never looks bad; the 34 kB of difference is paid
+once, by a reader who has found the egg, in the same breath as 4.9 MB of
+song.

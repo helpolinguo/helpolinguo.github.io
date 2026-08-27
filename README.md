@@ -28,6 +28,7 @@ emblem.svg              the emblem alone: favicon, and the button's drawing
 apple-touch-icon.png    the same, 180 × 180
 icon-192.png            }  the manifest's icons
 icon-512.png            }
+icon-1536.png           the same drawing, for the lock screen — see below
 og-image.png            1200 × 630, the sharing image
 robots.txt              }
 sitemap.xml             }  generated — see tools/machine_files.py
@@ -86,6 +87,17 @@ player**: the star folds away, a ring takes the rim to measure the song,
 and the disc is the play and pause button of *La Skopo* — Zamenhof's
 *La Vojo* in de Beaufront's Ido. When the song ends the star comes back and
 turns again as before; Escape leaves early.
+
+**It plays in the background, and the lock screen shows it.** The song is a
+plain `<audio>` element, so iOS puts it in its Now Playing panel by itself
+and the controls there work without anything being asked of them. What that
+panel *shows*, left to itself, is the page's title and the largest icon the
+manifest offers — and 512 px, blown up to the 1111 the panel draws on an
+iPhone 16 Pro, came out with the star's edges stepped. So the page names
+the song itself, through the Media Session API, with `icon-1536.png` for
+artwork. Setting that metadata is all or nothing — an unset field is empty,
+not inherited — which is why the panel now reads *La Skopo* and its authors
+rather than the site's name.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,
