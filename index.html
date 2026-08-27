@@ -179,7 +179,7 @@ body{background:var(--paper);color:var(--ink);
  transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .word{position:absolute;white-space:nowrap;color:var(--muted);
  opacity:var(--op,.3);font-size:var(--sz,14px);letter-spacing:.01em;
- will-change:transform;
+ will-change:transform;transition:opacity .45s;
  animation:drift var(--dur,32s) ease-in-out var(--del,0s) infinite}
 @keyframes drift{
   0%,100%{transform:translate(0,0)}
@@ -192,7 +192,7 @@ body{background:var(--paper);color:var(--ink);
    central block sits above it (z-index), so the buttons stay reachable. */
 @media (hover:hover) and (pointer:fine){
   .sky{pointer-events:auto}
-  .word{cursor:help;transition:color .18s,opacity .18s}
+  .word{cursor:help;transition:color .18s,opacity .45s}
   .word:hover{color:var(--azure);opacity:.95}
   .word::after{content:attr(data-lang);position:absolute;left:0;top:100%;
    font:600 10.5px/1.4 system-ui,sans-serif;letter-spacing:.08em;
@@ -200,6 +200,12 @@ body{background:var(--paper);color:var(--ink);
    transition:opacity .18s;pointer-events:none}
   .word:hover::after{opacity:.85}
 }
+
+/* HUSHED: a word the song's credits have to be read over — see the script.
+   AFTER the hover block, and not before it: ":hover" weighs exactly what a
+   second class does, and the later rule takes it. The word is out of reach
+   as well as out of sight, so nothing can light it up again. */
+.word.hushed{opacity:0;pointer-events:none}
 
 /* =====================================================================
    2. THE MARK AND THE MOTTO
@@ -228,11 +234,71 @@ body{background:var(--paper);color:var(--ink);
    not by approximation. Across the width the figure is symmetric, and the
    centre stays at one half. */
 .mark .star{transform-box:fill-box;transform-origin:50% 66.6667%;
- transition:rotate 1s cubic-bezier(.34,1.2,.4,1)}
+ transition:rotate 1s cubic-bezier(.34,1.2,.4,1),
+            scale .5s cubic-bezier(.34,1.2,.4,1),opacity .35s}
 .mark button{display:block;width:100%;padding:0;border:0;background:none;
  cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 .mark button:focus-visible{outline:2px solid var(--azure);outline-offset:6px;
  border-radius:4px}
+
+/* --- THE O AS A PLAYER, BEHIND EIGHT CLICKS --------------------------
+   Eight clicks on the mark inside five seconds and the O stops being a
+   letter: the star folds away, a ring takes the rim, and the disc becomes
+   the play-and-pause button of one song — "La Skopo", Zamenhof's "La Vojo"
+   in de Beaufront's Ido. The song done, the star comes back and turns
+   again. The credits stand in the foot while it sounds.
+
+   NO NEW COLOUR IS INTRODUCED. The ring and the two glyphs are the paper
+   on the azure — which is exactly what the star already is: --star on
+   currentColor. The track under the ring is that same paper at a quarter
+   of its weight, the relation --rule bears to --ink on the page's own
+   ground.
+
+   THE RING IS NOT THE DOWNLOAD DISC'S PROPORTIONS, AND WAS. The corner
+   opposite carries its ring at 20 of radius on a disc of 22, in a stroke
+   of 2.4 — 91 and 11 hundredths of the radius. Transposed here that gave
+   339 and 40 on a disc of 372.8, and a circumference of 2130.00: a
+   satisfying number, and the wrong drawing. THE CORNER DISC CAN AFFORD A
+   RING THAT CLOSE TO ITS EDGE BECAUSE IT IS DRAWN ON THE PAPER — what lies
+   outside the ring there is the page. Here the disc is filled azure, so
+   what lies outside is a BAND, and at 13.8 units it read as a halo, an
+   accident of rendering rather than a figure.
+
+   The ring came in to 313, where the band is 39.8 against a stroke of 40:
+   the band is the ring's own weight, which is a rule and not a leftover.
+   Its circumference, 2*pi*313, is 1966.50 to within half a hundredth, and
+   that number is the unit of the dash offset, as 125.66 is on the corner.
+
+   AND IT TURNS ABOUT THE DISC, WHICH IS NOT THE MIDDLE OF THE VIEWBOX.
+   The quarter turn backwards — which starts the sweep at the top and sends
+   it clockwise — is written as an SVG attribute, "rotate(-90 1438 350)",
+   and not in CSS: "transform-origin:50% 50%" resolves against the viewBox,
+   whose middle falls at x = 942.4, five hundred units to the left of the
+   disc. The corner discs can afford the CSS form because their circle IS
+   at the middle of their box. This one is not — the same trap the star's
+   own origin fell into, one paragraph above. */
+.player{opacity:0;transition:opacity .35s}
+.mark.player-on .player{opacity:1}
+.song-track,.song-progress{fill:none;stroke:var(--star,#fbfaf7);stroke-width:40}
+.song-track{stroke-opacity:.26}
+.song-progress{stroke-linecap:round;
+ stroke-dasharray:1966.5;stroke-dashoffset:1966.5}
+
+/* The two glyphs stand in one box, 270 across by 312 down — the pause
+   centred on the disc, the triangle NOT: A TRIANGLE IS CENTRED ON ITS
+   CENTROID, and its box is not. (2*1348 + 1618) / 3 = 1438 exactly, and
+   (194 + 506 + 350) / 3 = 350. The triangle is equilateral to two tenths
+   of a unit — 270 across for 312 of side — which is 6 hundredths of a
+   pixel at the widest the mark is ever drawn. */
+.g-play,.g-pause{fill:var(--star,#fbfaf7);opacity:0;scale:.55;
+ transform-box:fill-box;transform-origin:center;
+ transition:opacity .22s,scale .22s cubic-bezier(.34,1.2,.4,1)}
+.mark.player-on .g-play{opacity:1;scale:1}
+.mark.player-on.singing .g-play{opacity:0;scale:.55}
+.mark.player-on.singing .g-pause{opacity:1;scale:1}
+/* The star goes where the glyph comes from: it shrinks into the centre of
+   the disc, about the same origin it turns about. */
+.mark.player-on .star{opacity:0;scale:.25}
 
 /* The motto is exactly as wide as the logotype: the text sits in an SVG of
    the same box, with "textLength", and it is the letter-spacing that
@@ -271,6 +337,70 @@ body{background:var(--paper);color:var(--ink);
  z-index:2;text-align:center;color:var(--muted);font-size:12px;line-height:1.5;
  padding:0 16px}
 @media (max-height:430px){.foot{display:none}}
+
+/* THE FOOT SAYS TWO THINGS, NEVER BOTH: the three books at rest, and the
+   song's credits while it sounds. The second is taken out of the flow and
+   hung on the foot's own bottom edge — the foot being anchored there, the
+   credits grow UPWARDS and the resting layout does not move by a pixel.
+
+   IT IS LAID OUT ALL THE SAME. "visibility:hidden" and not "display:none",
+   for two reasons. Hidden this way the credits are out of the accessible
+   tree, which mere opacity would not do — hence the visibility is switched
+   as well, at the END of the fade out and the START of the fade in. And
+   they still have a rectangle, which is what the script asks them for, at
+   the moment the player opens, to know which words of the sky it has to
+   hush; see "hush" below.
+
+   THE PADDING IS REPEATED HERE, AND HAS TO BE. It was left off on the
+   ground that "an absolutely placed child is laid against the PADDING box
+   of its containing block" — which is true, and says the opposite of what
+   was drawn from it: the padding box CONTAINS the padding, so "left:0" is
+   the foot's outer edge and not the inside of its 16 px. MEASURED, at
+   320 px of window: the credits ran 46 to 274 where the foot's own line
+   ran 62 to 258. */
+.credits{position:absolute;left:0;right:0;bottom:0;padding:0 16px;
+ opacity:0;visibility:hidden;transition:opacity .45s,visibility 0s .45s}
+.foot-line{transition:opacity .45s}
+body.song-on .foot-line{opacity:0}
+body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
+/* AND THE BOTTOM-LEFT CORNER IS TAKEN. The download disc sits 24 px from
+   the left edge and is 38 px across below 560 px of width: it reaches 62
+   px in, and it paints ABOVE the foot — z-index 12 against 2. MEASURED at
+   320 px of window: the longest line, "Akompano por koro da Félicien Menu
+   de Ménil", is 230 px and begins at 54. It is on the disc by 8 px.
+
+   SMALLER TYPE WAS TRIED FIRST, AND DOES NOT REACH: at 11 px that line is
+   211 px and still begins at 54.4. It had looked as though a point would
+   do it, on a reading of 198.6 px — WHICH WAS THE WIDTH OF A LINE ALREADY
+   WRAPPED by the narrower box it was measured in. A measurement of the
+   remedy, taken for a measurement of the fault. No reading size clears the
+   disc with the whole line.
+
+   So the box is inset to where the disc ends, on both sides, and the text
+   stays centred under a centred page. Below 354 px of window that line no
+   longer fits and wraps in two — six lines instead of five, at 320. Above
+   400 nothing is needed: the line is centred far enough right of the disc
+   of its own accord. */
+@media (max-width:400px){.credits{padding:0 62px}}
+
+/* AND THERE IS A WINDOW TOO SHORT FOR THEM. Three lines more than the
+   foot's own text is height taken out of a page that does not scroll, and
+   on a narrow one the three doors are stacked as well. MEASURED, with the
+   credits up: at 430 by 540 they reach to 15 px of the block, at 430 by
+   500 to 1, and at 320 by 560 — where the long line has wrapped and they
+   are six lines — to 2. They are dropped there, and the foot keeps its
+   usual line: the song plays all the same, and the credits are in the
+   page's source, in the README, and in the file's own tags. It is the rule
+   that already hides the whole foot below 430 px of height, one notch
+   earlier, and the second threshold is where the wrapping begins. */
+@media (max-height:540px) and (max-width:430px){
+  .credits{display:none}
+  body.song-on .foot-line{opacity:1}
+}
+@media (max-height:580px) and (max-width:355px){
+  .credits{display:none}
+  body.song-on .foot-line{opacity:1}
+}
 
 /* =====================================================================
    THE TWO CORNER DISCS
@@ -497,6 +627,11 @@ body{background:var(--paper);color:var(--ink);
   .sky{transition:none}
   .mark .star{transition:none}
   .door{transition:background .16s,color .16s}
+  /* The player appears and goes without ceremony. THE RING IS NOT TOUCHED:
+     it is not an ornament but the reading of where the song has got to,
+     and a reader who has asked for less movement has not asked for less
+     information. */
+  .player,.g-play,.g-pause,.foot-line,.credits{transition:none}
 }
 </style>
 </head>
@@ -536,6 +671,27 @@ body{background:var(--paper);color:var(--ink);
           <g class="o-group">
           <circle cx="1438.0" cy="350.0" r="372.8" fill="currentColor"/>
           <polygon class="star" points="1438.0,-22.8 1384.2,256.8 1276.6,256.8 1330.4,350.0 1115.1,536.4 1384.2,443.2 1438.0,536.4 1491.8,443.2 1760.8,536.4 1545.6,350.0 1599.4,256.8 1491.8,256.8" fill="var(--star,#fbfaf7)"/>
+          <!-- THE PLAYER, BEHIND EIGHT CLICKS. Drawn always, shown never,
+               until the eighth click inside five seconds; see the style
+               above for the numbers, and the script below for the count.
+
+               EVERYTHING HERE IS INSCRIBED IN THE DISC, and that is not a
+               nicety: the entrance rolls this group about the middle of
+               its own box, which is the disc's box only for as long as
+               nothing sticks out of the disc. The ring's geometry is a
+               circle of 313 — the stroke, which reaches 333, does not
+               count towards a fill box — and the two glyphs reach 206 at
+               their furthest corner, against the 372.8 of the rim. -->
+          <g class="player">
+            <circle class="song-track" cx="1438.0" cy="350.0" r="313"/>
+            <circle class="song-progress" id="song-ring" cx="1438.0" cy="350.0" r="313"
+                    transform="rotate(-90 1438 350)"/>
+            <polygon class="g-play" points="1348,194 1348,506 1618,350"/>
+            <g class="g-pause">
+              <rect x="1303" y="194" width="96" height="312"/>
+              <rect x="1477" y="194" width="96" height="312"/>
+            </g>
+          </g>
           </g>
         </svg>
       </button>
@@ -558,8 +714,20 @@ body{background:var(--paper);color:var(--ink);
   </div>
 
   <p class="foot">
-    Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
-    transskribita, lektebla e deskargebla.
+    <span class="foot-line">
+      Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
+      transskribita, lektebla e deskargebla.
+    </span>
+    <!-- The credits of the song behind the eight clicks. They stand in
+         the foot's place while it sounds, and they are in Ido, like
+         everything on this page a visitor can read. -->
+    <span class="credits">
+      Poemo &laquo;&#8239;La Vojo&#8239;&raquo; da L. L. Zamenhof<br>
+      Tradukuro &laquo;&#8239;La Skopo&#8239;&raquo; da L. de Beaufront<br>
+      Melodio da Ren&eacute; Deshays<br>
+      Akompano por koro da F&eacute;licien Menu de M&eacute;nil<br>
+      Enrejistruro da Lucas Costa, per SUNO
+    </span>
   </p>
 
   <!-- THE DOWNLOAD DISC. On the door page it occupies the place the back
@@ -597,6 +765,25 @@ body{background:var(--paper);color:var(--ink);
       </g>
     </svg>
   </a>
+
+  <!-- THE SONG, BEHIND THE EIGHT CLICKS.
+       "preload=none" is the whole of its politeness: 4.9 MB that nobody
+       who never finds the egg ever fetches, and that nobody who does
+       fetches before the eighth click.
+
+       THE "?v=" IS THE FILE'S SIZE IN BYTES, the site's convention for an
+       immutable address — the Tabeli's languages and plates carry it. Two
+       consequences here. The address changes if ever the recording does,
+       so no reader is served a stale copy; and the service worker, which
+       refetches everything it holds when the connection comes back, skips
+       any address bearing a "?v=" — without which every reconnection would
+       have cost this file again.
+
+       IT IS NOT IN THE OFFLINE PLAN either: the download disc fetches the
+       shell and the three books, and an easter egg is not worth 4.9 MB to
+       a reader who is taking the site on a train. Played once online, the
+       worker keeps it like any other asset; erased with the rest. -->
+  <audio id="song" preload="none" src="audio/la-skopo.mp3?v=4898576"></audio>
 </div>
 
 <script>
@@ -758,6 +945,10 @@ function sow(){
     el.style.setProperty('--del',(-rand()*40).toFixed(1)+'s');
     el.style.visibility='';
   }
+
+  /* A window resized mid-song sows the sky afresh, and these are new
+     elements: what was hushed for the credits has to be hushed again. */
+  if(document.body.classList.contains('song-on')) hush(true);
 }
 function overlaps(a,b,m){
   return a.x < b.x+b.w+m && a.x+a.w+m > b.x &&
@@ -935,11 +1126,145 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/* --- The star. A third of a turn: the figure comes back onto itself. */
-let degrees=0;
-document.getElementById('spin').addEventListener('click',()=>{
+/* =====================================================================
+   THE STAR, AND WHAT IS BEHIND IT
+   =====================================================================
+   A third of a turn: the figure comes back onto itself, and a click on the
+   mark shows it.
+
+   AND EIGHT CLICKS INSIDE FIVE SECONDS OPEN THE OTHER THING THE O CAN BE.
+   The count is a SLIDING WINDOW and not a run: a click older than five
+   seconds falls out of it, the ninth costs nothing, and no click has to be
+   "the first" — one cannot fail the gesture by having idly turned the star
+   a moment before.
+
+   AND NOTHING HAS TO BE UNDONE BEFORE THE STAR FOLDS AWAY. The step is a
+   third of a turn and the figure is invariant under it, so the star stands
+   in its canonical position after EVERY click — the eighth no more and no
+   less than the first. The rotation is left on it, and simply shrinks out
+   of sight; it is still there when the song ends and the star comes back,
+   which is why the star does not jump at either end.
+
+   The clock is "performance.now": a monotonic one, which a change of the
+   system clock cannot run backwards.
+   ===================================================================== */
+const mark=document.querySelector('.mark');
+const spin=document.getElementById('spin');
+const star=document.querySelector('.mark .star');
+const song=document.getElementById('song');
+const songRing=document.getElementById('song-ring');
+
+/* 2*pi*313 — the ring's circumference, and the unit of its dash offset. */
+const ROUND=1966.5;
+const CLICKS=8, WINDOW=5000;
+
+let degrees=0, taps=[], sweeping=0;
+
+/* The button says what it does. At rest it is the mark and is named for it;
+   open, it is a play button, then a pause button. In Ido, like the rest.
+
+   NOT CALLED "name". A function declaration at the top level of a classic
+   script writes to the global object, and "window.name" is already there —
+   it is the browsing context's own name, and it is a string. */
+function announce(){
+  spin.setAttribute('aria-label',
+    !mark.classList.contains('player-on') ? 'Ido' :
+    song.paused ? 'Sonigez la kanto « La Skopo »'
+                : 'Pauzez la kanto « La Skopo »');
+}
+
+/* THE RING IS DRAWN AT THE FRAME AND NOT AT "timeupdate", which fires four
+   times a second: a bar that advances in four steps a second reads as a
+   fault, not as a measure. It costs one style change per frame, and only
+   while the song sounds. */
+function sweep(){
+  const d=song.duration;
+  songRing.style.strokeDashoffset =
+    (d>0 ? ROUND*(1-song.currentTime/d) : ROUND).toFixed(2);
+  if(!song.paused) sweeping=requestAnimationFrame(sweep);
+}
+
+/* THE SKY STEPS ASIDE FOR THE CREDITS. They stand exactly where the sky is
+   sown, and the sowing knows nothing of them.
+
+   RESERVING THEIR ROOM FROM THE START WAS TRIED, AND PUT BACK. It is the
+   obvious answer — the credits are laid out from the first paint, hidden
+   but measurable — and it costs the RESTING page: the draw is sequential,
+   so one candidate rejected moves every word after it. MEASURED, at 1024
+   by 768: forty-four words became thirty-six. A page that a visitor may
+   never see behind eight clicks must not thin the page everyone sees.
+
+   So the words actually in the way are hushed, and only for as long as the
+   song lasts. Their rectangles are read LIVE, at the moment the player
+   opens, so the drift and the parallax are already IN them; the 22 is what
+   they can still travel afterwards — thirteen of drift and eight of
+   parallax, and one over. */
+function hush(on){
+  const c=document.querySelector('.credits').getBoundingClientRect();
+  for(const el of document.querySelectorAll('.word')){
+    if(!on){el.classList.remove('hushed');continue}
+    const r=el.getBoundingClientRect();
+    if(r.left<c.right+22&&r.right>c.left-22&&
+       r.top<c.bottom+22&&r.bottom>c.top-22) el.classList.add('hushed');
+  }
+}
+
+function openPlayer(){
+  taps=[];
+  songRing.style.strokeDashoffset=ROUND;
+  mark.classList.add('player-on');
+  document.body.classList.add('song-on');
+  hush(true);
+  announce();
+  /* The click that opened it IS the gesture the browser asks for before it
+     will let a page make a sound. If it refuses all the same, the O is a
+     play button and waits to be pressed — nothing is stuck. */
+  song.play().catch(()=>{});
+}
+
+function closePlayer(){
+  cancelAnimationFrame(sweeping);
+  song.pause();
+  song.currentTime=0;
+  songRing.style.strokeDashoffset=ROUND;
+  mark.classList.remove('player-on','singing');
+  document.body.classList.remove('song-on');
+  hush(false);
+  announce();
+}
+
+spin.addEventListener('click',()=>{
+  if(mark.classList.contains('player-on')){
+    song.paused ? song.play().catch(()=>{}) : song.pause();
+    return;
+  }
   degrees+=120;
-  document.querySelector('.mark .star').style.rotate=degrees+'deg';
+  star.style.rotate=degrees+'deg';
+
+  const now=performance.now();
+  taps.push(now);
+  taps=taps.filter(t=>now-t<WINDOW);
+  if(taps.length>=CLICKS) openPlayer();
+});
+
+/* "pause" fires on the natural end too, and BEFORE "ended" — the glyph is
+   therefore already back to the triangle when the player closes, which is
+   what one wants if the closing is ever interrupted. */
+song.addEventListener('play',()=>{mark.classList.add('singing');announce();sweep()});
+song.addEventListener('pause',()=>{
+  mark.classList.remove('singing'); announce(); cancelAnimationFrame(sweeping);
+});
+song.addEventListener('ended',closePlayer);
+/* A song that will not load must not leave the O as a button that does
+   nothing: the mark comes back, and the star turns again. */
+song.addEventListener('error',closePlayer);
+
+/* THE WAY OUT. Paused, the player would otherwise stay until the page is
+   reloaded — the eight clicks are spent, and the button now toggles the
+   song. Escape is what a reader already tries in order to dismiss a thing,
+   and it costs the page nothing to answer it. */
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&mark.classList.contains('player-on')) closePlayer();
 });
 </script>
 </body>
