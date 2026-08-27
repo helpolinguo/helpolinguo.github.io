@@ -37,6 +37,7 @@ opensearch.xml          }
 fonts/                  Jost* Bold and Medium, subset to this page
 audio/la-skopo.mp3      the song behind the easter egg — see below
 tools/                  the generators; nothing here is served
+tools/tap.html          taps out the reel's line times — see below
 docs/journal.md         why the page is built the way it is
 CNAME                   the domain, for GitHub Pages
 ```
@@ -98,6 +99,40 @@ the song itself, through the Media Session API, with `icon-1536.png` for
 artwork. Setting that metadata is all or nothing — an unset field is empty,
 not inherited — which is why the panel now reads *La Skopo* and its authors
 rather than the site's name.
+
+**The words follow, under the three doors.** The whole poem stands in the
+page, in order; the panel is a window on it, moved so the line being sung is
+at the middle while the rest blur and fade in proportion to their distance.
+The five credits ride at the end of the reel, the way a karaoke roll ends on
+them — so the foot keeps its own line while the poem is up, and takes the
+credits back only where the window has no room and stands down.
+
+The panel hangs below the block and is out of its flow, so the mark, the
+motto and the doors do not move by a pixel when the song starts, and the
+resting page is unchanged. Its height is measured, not declared: the room
+between the doors and the foot runs from 94 px at 320 × 568 to 359 px at
+820 × 1180, and the script subtracts rather than guessing at it with media
+queries — five lines where there is room, three where there is less, none
+below that.
+
+**The times are the weakest number on the page.** Each line carries a
+`data-t`, the second it begins at, and following the voice automatically does
+not work here — because the accompaniment is a *choir*, so the lead singer is
+neither the only harmonic thing in the mix nor the only thing in the centre
+of it. Centre extraction, harmonic salience, chroma self-similarity, a search
+for the four repeats, and forced alignment against the one offline acoustic
+model available were all tried; `docs/journal.md` § 15 keeps the ledger.
+
+What the recording does give up is a **beat of 0.864 s** and two texture
+boundaries, **26.6 s and 180.6 s** — the first sung note and the closing tag.
+The 32 lines are laid evenly between them. Which line falls where is still an
+assumption, and `tools/tap.html` settles it: serve the repository root, open
+it, and tap the space bar on each line as it begins. The right arrow skips a
+line and lets it be worked out from the taps either side, so four taps — one
+to a stanza — already put every line close. It prints the block of
+`<p class="line">` back with the times filled in, ready to replace the one in
+`index.html`, and reads the poem from `index.html` rather than keeping a copy,
+so it cannot go stale against it.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,
