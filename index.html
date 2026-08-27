@@ -1214,12 +1214,54 @@ function hush(on){
   }
 }
 
+/* THE LOCK SCREEN. iOS puts the song in its Now Playing panel of its own
+   accord — it is a real <audio> element, and nothing here asks it to — but
+   what it shows there is what it can find on its own: the page's title, and
+   the largest icon the manifest offers. MEASURED, from a screenshot of an
+   iPhone 16 Pro at 1206 x 2622: the panel draws its artwork 1111 px wide,
+   and icon-512.png was being blown up 2.17 times. The star's edges came out
+   stepped. icon-1536.png is the same drawing at a size that panel cannot
+   outgrow — see tools/icons.py, which makes it.
+
+   AND SETTING THE METADATA IS ALL OR NOTHING. "MediaMetadata" has no notion
+   of "leave that field as you found it": the object replaces what the
+   browser inferred, wholesale, and a title left unset is an EMPTY title,
+   not the page's. The artwork therefore cannot be corrected without also
+   naming the song — which is no loss: the panel now says what is playing
+   instead of what site it came from.
+
+   THE NAMES ARE THE FOOT'S CREDITS, IN THE FOOT'S ORDER, BY SURNAME. The
+   panel gives them one line and cuts what will not fit, from the end; the
+   order being the same as the foot's, what survives the cut is still read
+   as the beginning of that list, and the whole of it is a click away.
+
+   ONE ARTWORK IS OFFERED, AND NOT A CHOICE OF SIZES. The list is meant to
+   be one, and the browser takes from it whichever size suits the surface it
+   is drawing — which is exactly the mechanism that produced the blurred
+   star, the largest thing on offer having been too small. OBSERVED, with
+   512 and 1536 both listed: Chromium fetched the 512 for its own small
+   panel, and was right to. But a browser that judges 512 good enough for a
+   1111 px panel is the fault this is fixing, and there is nothing here to
+   be gained by leaving it the room to judge. Downscaling never looks bad;
+   the 34 kB of difference is paid once, and only by a reader who has found
+   the egg, in the same breath as 4.9 MB of song. */
+function nowPlaying(on){
+  if(!('mediaSession' in navigator)) return;
+  navigator.mediaSession.metadata = on ? new MediaMetadata({
+    title:'La Skopo',
+    artist:'Zamenhof · de Beaufront · Deshays · Menu de Ménil · Costa',
+    album:'Ido — helpolinguo internaciona',
+    artwork:[{src:'/icon-1536.png', sizes:'1536x1536', type:'image/png'}]
+  }) : null;
+}
+
 function openPlayer(){
   taps=[];
   songRing.style.strokeDashoffset=ROUND;
   mark.classList.add('player-on');
   document.body.classList.add('song-on');
   hush(true);
+  nowPlaying(true);
   announce();
   /* The click that opened it IS the gesture the browser asks for before it
      will let a page make a sound. If it refuses all the same, the O is a
@@ -1235,6 +1277,7 @@ function closePlayer(){
   mark.classList.remove('player-on','singing');
   document.body.classList.remove('song-on');
   hush(false);
+  nowPlaying(false);
   announce();
 }
 

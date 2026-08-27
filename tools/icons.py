@@ -8,6 +8,7 @@ Builds the home page's fixed images, from the same measurements as
   apple-touch-icon.png the same, 180 x 180, on an azure ground
   icon-192.png         }  the manifest's icons, azure ground
   icon-512.png         }
+  icon-1536.png        the same drawing again, for the lock screen — see below
   og-image.png         1200 x 630, the mark and the motto — for sharing
 
 In the PNGs the motto is converted to OUTLINES: the rasteriser does not
@@ -70,8 +71,23 @@ touch = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">'
 pymupdf.open(stream=touch.encode(), filetype='svg')[0]\
     .get_pixmap(dpi=72).save('apple-touch-icon.png')
 
-# The manifest's icons: 192 and 512, on an azure ground like the iOS one.
-for size in (192, 512):
+# The manifest's icons — 192 and 512, on an azure ground like the iOS one —
+# and 1536, WHICH IS NOT ONE OF THEM.
+#
+# 1536 IS FOR THE LOCK SCREEN. When the song behind the seven clicks plays,
+# iOS puts it in its Now Playing panel and looks for an artwork; without one
+# named it takes the largest icon the manifest offers, which was 512.
+# MEASURED, from a screenshot of an iPhone 16 Pro at 1206 x 2622: the panel
+# draws that artwork 1111 px wide. 512 was being blown up 2.17 times, and it
+# showed — the star's edges came out stepped. 1024 would still be an
+# upscale; 1536 is three times 512, covers 1111 with a third to spare, and
+# costs what a flat two-colour PNG costs.
+#
+# It is deliberately NOT in the manifest. Nothing installs from it: a
+# launcher offered a 1536 icon may fetch it in place of the 512 it wants,
+# and this file is meant to be fetched by the readers who find the egg, at
+# the moment they find it, and by nobody else.
+for size in (192, 512, 1536):
     r = size * 62 / 180
     icon = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {size} {size}">'
             f'<rect width="{size}" height="{size}" fill="{AZURE}"/>'
@@ -123,4 +139,5 @@ og = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {OUT[0]} {OUT[1]}"
 open('/tmp/og.svg', 'w').write(og)
 pymupdf.open(stream=og.encode(), filetype='svg')[0]\
     .get_pixmap(dpi=72).save('og-image.png')
-print('emblem.svg, apple-touch-icon.png, icon-192.png, icon-512.png, og-image.png')
+print('emblem.svg, apple-touch-icon.png, icon-192.png, icon-512.png,\n'
+      'icon-1536.png, og-image.png')
