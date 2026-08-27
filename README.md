@@ -123,23 +123,32 @@ of it. Centre extraction, harmonic salience, chroma self-similarity, a search
 for the four repeats, and forced alignment against the one offline acoustic
 model available were all tried; `docs/journal.md` § 15 keeps the ledger.
 
-What the recording does give up is three texture boundaries, each agreed on
-by two novelty kernels: **26.6 s** (the first sung note), **106.8 s** (the
-third stanza) and **180.6 s** (the closing tag). For a song of four stanzas
-with an interlude between them, those three numbers fix the model exactly —
-a cycle of 40.10 s, of which 33.70 s is sung and **6.40 s is the few bars
-that play between one stanza and the next**. That sung length lands 0.58 s
-from the 34.28 s the envelope's autocorrelation gives for the strophe, by two
-methods that share nothing.
+What the recording does give up is where the singing stops, once the right
+thing is measured. An instrumental passage here is not *quieter* — the choir
+sees to that — but it lacks the 3–8 Hz **wobble of syllables**. Measuring the
+modulation of the presence band (700–3200 Hz) about its own 0.9 s mean finds
+three quiet stretches, stable as the threshold moves from the 25th percentile
+to the 43rd:
 
-Eight equal lines to a stanza is still an assumption, and `tools/tap.html`
+| | |
+|---|---|
+| 0.0 – 27.1 s | the instrumental introduction |
+| 108.2 – 119.2 s | **one break, in the middle, 11.0 s** |
+| 200.5 – 216.4 s | the closing tag |
+
+So there is no interlude between the first stanza and the second, nor between
+the third and the fourth: the song runs two stanzas, breaks once, and runs two
+more. The reason to believe it is that the two halves this implies are
+**81.1 s and 81.3 s** long — 0.20 s apart in 81, sixteen lines each.
+
+Sixteen even lines to a half is still an assumption, and `tools/tap.html`
 settles it: serve the repository root, open it, and tap the space bar on each
 line as it begins. The right arrow skips a line and lets it be worked out
 from the taps either side, so **eight taps — the first and last line of each
-stanza — are enough**, the interludes falling outside the working-out. It
-prints the block of `<p class="line">` back with the times filled in, ready
-to replace the one in `index.html`, and reads the poem from `index.html`
-rather than keeping a copy, so it cannot go stale against it.
+stanza — are enough**, the break falling outside the working-out. It prints
+the block of `<p class="line">` back with the times filled in, ready to
+replace the one in `index.html`, and reads the poem from `index.html` rather
+than keeping a copy, so it cannot go stale against it.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,

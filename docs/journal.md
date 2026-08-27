@@ -1198,3 +1198,54 @@ worse than useless: each interlude is then spread back across the stanza
 before it, which is the very fault this section is about. It reads the poem
 out of `index.html` rather than keeping a copy, so it cannot go stale against
 the page, and it prints the block back ready to paste.
+
+
+## 16. The break is in the middle, and there is only one
+
+Two seedings before this one were wrong, and both for the same reason: **they
+were fitted, not measured.** The first laid all 32 lines evenly and had no
+break in it at all. The second put a 6.40 s interlude after every stanza,
+from a model in which three novelty boundaries happened to fix three
+unknowns. That one was reported out of sync in the middle, and it deserved
+to be: it had the whole second half running early, its last line at 176 s
+when the singing goes on to 200. **Arithmetic that closes is not evidence.**
+
+### What was being measured was the wrong quantity
+
+Every earlier attempt looked for a *quiet* passage, and an instrumental
+stretch in this arrangement is not quiet — the choir sees to that. What it
+lacks is not loudness but the **3–8 Hz wobble of syllables**. So: take the
+presence band, 700–3200 Hz, subtract its own 0.9 s running mean, rectify what
+is left, and smooth it over two seconds. That is a measure of *being sung at*
+rather than of being loud, and it separates at once what six other features
+could not:
+
+| stretch | |
+|---|---|
+| 0.0 – 27.1 s | the instrumental introduction |
+| 108.2 – 119.2 s | **one break, in the middle, 11.0 s** |
+| 200.5 – 216.4 s | the closing tag |
+
+Nothing else in the track goes quiet for as much as 2.5 s. The boundaries
+hold as the threshold is swept from the 25th percentile to the 43rd — the end
+of the singing sits between 199.9 and 203.0 across that whole sweep.
+
+### Why this reading and not another
+
+Because of what it implies about the two halves, which nothing in the
+detection forced. Stanzas 1 and 2 run 27.1 → 108.2, which is **81.1 s**;
+stanzas 3 and 4 run 119.2 → 200.5, which is **81.3 s**. Sixteen lines each,
+0.20 s apart in 81. A wrong reading of any of those three boundaries would
+not produce two halves that agree to a quarter of a percent, and the earlier
+model — the one with an interlude after every stanza — produces nothing of
+the kind.
+
+The lines are therefore 5.07 s apart in the first half and 5.08 s in the
+second, and the last line of the second stanza holds the focus across the
+whole 11 s of the break, which is what one hears.
+
+**And the old 180.6 s was a real boundary read for the wrong thing.** Foote
+novelty did find a texture change there, agreed on by both kernels, and it
+was taken for the end of the singing. It is not: it falls inside the fourth
+stanza, and is presumably a swell in the arrangement. The lesson is the same
+one as above — a boundary tells you the texture changed, not what changed.
