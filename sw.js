@@ -144,8 +144,16 @@ async function fromCache(req) {
                         { ignoreSearch: true });
     if (hit) return hit;
   }
+  /* 200, AND NOT MERELY "ok". THE CACHE REFUSES A PARTIAL RESPONSE:
+     Cache.put throws on a 206, and a media element asks for its ranges —
+     Safari always, Chromium as soon as one seeks. The song behind the
+     home page's eight clicks is the first file here fetched that way. The
+     rejection went nowhere and the response was served all the same, but
+     it was an error in the worker's console and the copy was never kept.
+     A partial response is now simply passed through, and a whole one —
+     which is what a first, unsought play gets — is cached as before. */
   const network = fetch(req)
-    .then(r => { if (r && r.ok) c.put(req, r.clone()); return r; })
+    .then(r => { if (r && r.status === 200) c.put(req, r.clone()); return r; })
     .catch(() => null);
   return hit || (await network) || Response.error();
 }

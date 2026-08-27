@@ -868,3 +868,119 @@ query parameter, which GitHub Pages cannot answer. Spotlight opens the page;
 the page's own search does the rest — and it is worth saying plainly that
 Spotlight will not show a definition inside its own window. Only a native
 application, through App Intents, can do that.
+
+
+## 13. The song in the O
+
+Eight clicks on the mark inside five seconds, and the O stops being a
+letter: the star folds away, a ring takes the rim, and the disc becomes the
+play and pause button of one song — *La Skopo*, Zamenhof's *La Vojo* in de
+Beaufront's Ido, sung to René Deshays's melody with Félicien Menu de
+Ménil's setting for choir, recorded by Lucas Costa with SUNO. The song
+done, the star comes back and turns again as it did before. Escape leaves
+early, which is the only way out once the song is paused: the eight clicks
+are spent, and the button now toggles the song.
+
+**The count is a sliding window, not a run.** A click older than five
+seconds falls out of it, the ninth costs nothing, and no click has to be
+"the first": one cannot fail the gesture by having idly turned the star a
+moment before. And nothing has to be undone before the star folds away —
+the step is a third of a turn and the figure is invariant under it, so the
+star stands in its canonical position after every click. The rotation is
+left on it and simply shrinks out of sight, which is why the star does not
+jump at either end.
+
+### What the drawing is, and what it costs the page
+
+Nothing new is painted. The ring and the two glyphs are the paper on the
+azure, which is what the star already is. The track under the ring is that
+same paper at a quarter of its weight — the relation `--rule` bears to
+`--ink` on the page's own ground.
+
+The ring's proportions came from the corner opposite: the download disc
+carries its ring at 91 hundredths of the disc's radius, in a stroke of 11.
+Transposed here that gave 339 and 40 on a disc of 372.8, and a
+circumference of 2130.00 — a satisfying number, and **the wrong drawing**.
+The corner disc can afford a ring that close to its edge because it is
+drawn on the paper: what lies outside the ring there is the page. Here the
+disc is filled azure, so what lies outside the ring is a BAND, and at 13.8
+units it read as a halo, an accident of rendering. The ring came in to 313,
+where the band is 39.8 against a stroke of 40: the band is now the ring's
+own weight, which is a rule and not a leftover. The circumference is
+1966.50, and that number is the unit of the dash offset, as 125.66 is on
+the corner disc.
+
+The ring turns about the DISC, and the disc is not the middle of the
+viewBox: the quarter turn backwards that starts the sweep at the top is
+written as an SVG attribute, `rotate(-90 1438 350)`, because
+`transform-origin:50% 50%` would resolve against the viewBox, whose middle
+falls five hundred units to the left. It is the same trap the star's own
+rotation origin fell into, and it is written beside it.
+
+The play triangle is centred on its CENTROID and not on its box:
+`(2×1348 + 1618) / 3 = 1438` exactly. It is equilateral to two tenths of a
+unit — 270 across for 312 of side — which is six hundredths of a pixel at
+the widest the mark is ever drawn.
+
+Everything is inscribed in the disc, and that is not a nicety: the entrance
+rolls the group about the middle of its own box, and that box is the disc's
+only for as long as nothing sticks out of it.
+
+### The credits, and what the sky had to give up
+
+The foot says two things, never both: the three books at rest, the song's
+credits while it sounds. The second is taken out of the flow and hung on
+the foot's own bottom edge, so it grows upwards and the resting layout does
+not move by a pixel.
+
+**Reserving their room in the sky was tried, and put back.** It is the
+obvious answer — the credits are laid out from the first paint, hidden but
+measurable, so the sowing can keep that rectangle free. It costs the
+RESTING page: the draw is sequential, and one candidate rejected moves
+every word after it. MEASURED, at 1024 by 768: forty-four words became
+thirty-six. A page that a visitor may never see behind eight clicks must
+not thin the page everyone sees. The words actually in the way are hushed
+instead, and only for as long as the song lasts; their rectangles are read
+live, so the drift and the parallax are already in them.
+
+Two things had to be measured rather than reasoned about.
+
+**The credits were sixteen pixels too wide on each side.** They were given
+no padding of their own, on the ground that an absolutely placed child is
+laid against the PADDING box of its containing block — which is true, and
+says the opposite of what was drawn from it: the padding box CONTAINS the
+padding, so `left:0` is the foot's outer edge. At 320 px of window the
+credits ran 46 to 274 where the foot's own line ran 62 to 258.
+
+**And the bottom-left corner is taken.** The download disc reaches 62 px in
+and paints above the foot. At 320 px the longest line — *Akompano por koro
+da Félicien Menu de Ménil* — begins at 54 and is on the disc. Smaller type
+was tried first and is not enough: the 198.6 px that had suggested it was
+the width of a line ALREADY WRAPPED by the narrower box it was measured in,
+a measurement of the remedy taken for a measurement of the fault. The whole
+line is 230 px, and no reading size clears the disc with it. The box is
+inset to where the disc ends instead, on both sides, so the text stays
+centred under a centred page; below 354 px that line wraps in two, and
+below the heights where six lines no longer clear the block the credits are
+dropped and the foot keeps its usual line.
+
+### The file, and the worker
+
+The recording is 4.9 MB for 3 min 36 s. `preload="none"` is the whole of
+its politeness: nobody who never finds the egg fetches it, and nobody who
+does fetches it before the eighth click. Its address carries the `?v=` that
+the Tabeli's languages and plates carry — the file's size in bytes — which
+is the site's mark of an immutable address, and which is what stops the
+worker fetching the file again at every reconnection. It is not in the
+offline plan either: an easter egg is not worth 4.9 MB to a reader taking
+the site on a train. Played once online, the worker keeps it like any other
+asset, and the erase button sweeps it with the rest.
+
+**And it found a latent fault in the worker.** `Cache.put` throws on a 206,
+and a media element asks for its ranges — Safari always, Chromium as soon
+as one seeks. The worker cached on `response.ok`, which a partial response
+satisfies: the rejection went nowhere and the response was served all the
+same, but it was an error in the worker's console and the copy was never
+kept. It now caches on 200 and passes a partial response through. No file
+the site served before this one was ever fetched by ranges, which is why
+nothing had shown it.

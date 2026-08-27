@@ -34,6 +34,7 @@ sitemap.xml             }  generated — see tools/machine_files.py
 llms.txt                }
 opensearch.xml          }
 fonts/                  Jost* Bold and Medium, subset to this page
+audio/la-skopo.mp3      the song behind the easter egg — see below
 tools/                  the generators; nothing here is served
 docs/journal.md         why the page is built the way it is
 CNAME                   the domain, for GitHub Pages
@@ -77,6 +78,33 @@ definition inside its own window — only a native application, through App
 Intents, can do that. And Safari has to have seen the site at least once:
 the list is built from visits, not from a registry. Safari on iOS ignores
 OpenSearch entirely.
+
+## The song in the O
+
+Eight clicks on the mark inside five seconds, and the **O becomes a
+player**: the star folds away, a ring takes the rim to measure the song,
+and the disc is the play and pause button of *La Skopo* — Zamenhof's
+*La Vojo* in de Beaufront's Ido. When the song ends the star comes back and
+turns again as before; Escape leaves early.
+
+The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
+`preload="none"`, so **nobody who never finds the egg ever fetches it**,
+and it is not in the offline plan the download button follows: played once
+online, the service worker keeps it like any other asset. The credits stand
+in the foot while it sounds, in Ido like the rest of the interface:
+
+| | |
+|---|---|
+| Poemo «&#8239;La Vojo&#8239;» | L. L. Zamenhof |
+| Tradukuro «&#8239;La Skopo&#8239;» | L. de Beaufront |
+| Melodio | René Deshays |
+| Akompano por koro | Félicien Menu de Ménil |
+| Enrejistruro | Lucas Costa, per SUNO |
+
+The recording was made by Lucas Costa with SUNO and contributed to this
+project; the poem, its Ido translation, the melody and the choral setting
+are the work of the four authors named above. The MIT licence at the foot
+of this file covers **the code**, not the recording.
 
 ## A note on language
 
