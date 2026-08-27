@@ -872,17 +872,17 @@ application, through App Intents, can do that.
 
 ## 13. The song in the O
 
-Eight clicks on the mark inside five seconds, and the O stops being a
+Seven clicks on the mark inside seven seconds, and the O stops being a
 letter: the star folds away, a ring takes the rim, and the disc becomes the
 play and pause button of one song — *La Skopo*, Zamenhof's *La Vojo* in de
 Beaufront's Ido, sung to René Deshays's melody with Félicien Menu de
 Ménil's setting for choir, recorded by Lucas Costa with SUNO. The song
 done, the star comes back and turns again as it did before. Escape leaves
-early, which is the only way out once the song is paused: the eight clicks
+early, which is the only way out once the song is paused: the seven clicks
 are spent, and the button now toggles the song.
 
-**The count is a sliding window, not a run.** A click older than five
-seconds falls out of it, the ninth costs nothing, and no click has to be
+**The count is a sliding window, not a run.** A click older than seven
+seconds falls out of it, the eighth costs nothing, and no click has to be
 "the first": one cannot fail the gesture by having idly turned the star a
 moment before. And nothing has to be undone before the star folds away —
 the step is a third of a turn and the figure is invariant under it, so the
@@ -938,7 +938,7 @@ obvious answer — the credits are laid out from the first paint, hidden but
 measurable, so the sowing can keep that rectangle free. It costs the
 RESTING page: the draw is sequential, and one candidate rejected moves
 every word after it. MEASURED, at 1024 by 768: forty-four words became
-thirty-six. A page that a visitor may never see behind eight clicks must
+thirty-six. A page that a visitor may never see behind seven clicks must
 not thin the page everyone sees. The words actually in the way are hushed
 instead, and only for as long as the song lasts; their rectangles are read
 live, so the drift and the parallax are already in them.
@@ -968,7 +968,7 @@ dropped and the foot keeps its usual line.
 
 The recording is 4.9 MB for 3 min 36 s. `preload="none"` is the whole of
 its politeness: nobody who never finds the egg fetches it, and nobody who
-does fetches it before the eighth click. Its address carries the `?v=` that
+does fetches it before the seventh click. Its address carries the `?v=` that
 the Tabeli's languages and plates carry — the file's size in bytes — which
 is the site's mark of an immutable address, and which is what stops the
 worker fetching the file again at every reconnection. It is not in the
@@ -984,3 +984,21 @@ same, but it was an error in the worker's console and the copy was never
 kept. It now caches on 200 and passes a partial response through. No file
 the site served before this one was ever fetched by ranges, which is why
 nothing had shown it.
+
+
+### The count was eight inside five, and is seven inside seven
+
+Both numbers moved, and both in the same direction: one click fewer to
+find, and two seconds more to find them in. Eight inside five is one click
+every 625 ms **sustained**, which is not a gesture so much as a drum roll —
+a trackpad, a slow hand, or a click the browser swallows and the count has
+to start over. Seven inside seven is a click a second with room to spare,
+and it is still nothing anybody arrives at by accident: the ordinary use of
+the mark is one click, to watch the star come back onto itself.
+
+Nothing else moved. **The step is what makes the count free to change**:
+120 degrees, under which the figure is invariant, so the star stands in its
+canonical position after every click and there is nothing to correct before
+it folds away — at seven as at eight. And the window is a sliding one, so
+no click has to be "the first": the change is two constants,
+`CLICKS` and `WINDOW`, and the prose around them.

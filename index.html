@@ -241,8 +241,8 @@ body{background:var(--paper);color:var(--ink);
 .mark button:focus-visible{outline:2px solid var(--azure);outline-offset:6px;
  border-radius:4px}
 
-/* --- THE O AS A PLAYER, BEHIND EIGHT CLICKS --------------------------
-   Eight clicks on the mark inside five seconds and the O stops being a
+/* --- THE O AS A PLAYER, BEHIND SEVEN CLICKS --------------------------
+   Seven clicks on the mark inside seven seconds and the O stops being a
    letter: the star folds away, a ring takes the rim, and the disc becomes
    the play-and-pause button of one song — "La Skopo", Zamenhof's "La Vojo"
    in de Beaufront's Ido. The song done, the star comes back and turns
@@ -671,8 +671,8 @@ body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
           <g class="o-group">
           <circle cx="1438.0" cy="350.0" r="372.8" fill="currentColor"/>
           <polygon class="star" points="1438.0,-22.8 1384.2,256.8 1276.6,256.8 1330.4,350.0 1115.1,536.4 1384.2,443.2 1438.0,536.4 1491.8,443.2 1760.8,536.4 1545.6,350.0 1599.4,256.8 1491.8,256.8" fill="var(--star,#fbfaf7)"/>
-          <!-- THE PLAYER, BEHIND EIGHT CLICKS. Drawn always, shown never,
-               until the eighth click inside five seconds; see the style
+          <!-- THE PLAYER, BEHIND SEVEN CLICKS. Drawn always, shown never,
+               until the seventh click inside seven seconds; see the style
                above for the numbers, and the script below for the count.
 
                EVERYTHING HERE IS INSCRIBED IN THE DISC, and that is not a
@@ -718,7 +718,7 @@ body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
       Tri libri en la publika domeno &mdash; 1925, 1926, 1934/1964 &mdash;
       transskribita, lektebla e deskargebla.
     </span>
-    <!-- The credits of the song behind the eight clicks. They stand in
+    <!-- The credits of the song behind the seven clicks. They stand in
          the foot's place while it sounds, and they are in Ido, like
          everything on this page a visitor can read. -->
     <span class="credits">
@@ -766,10 +766,10 @@ body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
     </svg>
   </a>
 
-  <!-- THE SONG, BEHIND THE EIGHT CLICKS.
+  <!-- THE SONG, BEHIND THE SEVEN CLICKS.
        "preload=none" is the whole of its politeness: 4.9 MB that nobody
        who never finds the egg ever fetches, and that nobody who does
-       fetches before the eighth click.
+       fetches before the seventh click.
 
        THE "?v=" IS THE FILE'S SIZE IN BYTES, the site's convention for an
        immutable address — the Tabeli's languages and plates carry it. Two
@@ -1132,15 +1132,20 @@ if ('serviceWorker' in navigator) {
    A third of a turn: the figure comes back onto itself, and a click on the
    mark shows it.
 
-   AND EIGHT CLICKS INSIDE FIVE SECONDS OPEN THE OTHER THING THE O CAN BE.
-   The count is a SLIDING WINDOW and not a run: a click older than five
-   seconds falls out of it, the ninth costs nothing, and no click has to be
+   AND SEVEN CLICKS INSIDE SEVEN SECONDS OPEN THE OTHER THING THE O CAN BE.
+   The count is a SLIDING WINDOW and not a run: a click older than seven
+   seconds falls out of it, the eighth costs nothing, and no click has to be
    "the first" — one cannot fail the gesture by having idly turned the star
    a moment before.
 
+   IT WAS EIGHT INSIDE FIVE, AND IS EASIER NOW ON BOTH COUNTS: one click
+   fewer, and two seconds more to find them in. A gesture behind an easter
+   egg has to be deliberate, not athletic — eight in five is one click
+   every 625 ms sustained, which a trackpad and a slow hand can miss.
+
    AND NOTHING HAS TO BE UNDONE BEFORE THE STAR FOLDS AWAY. The step is a
    third of a turn and the figure is invariant under it, so the star stands
-   in its canonical position after EVERY click — the eighth no more and no
+   in its canonical position after EVERY click — the seventh no more and no
    less than the first. The rotation is left on it, and simply shrinks out
    of sight; it is still there when the song ends and the star comes back,
    which is why the star does not jump at either end.
@@ -1156,7 +1161,7 @@ const songRing=document.getElementById('song-ring');
 
 /* 2*pi*313 — the ring's circumference, and the unit of its dash offset. */
 const ROUND=1966.5;
-const CLICKS=8, WINDOW=5000;
+const CLICKS=7, WINDOW=7000;
 
 let degrees=0, taps=[], sweeping=0;
 
@@ -1192,7 +1197,7 @@ function sweep(){
    but measurable — and it costs the RESTING page: the draw is sequential,
    so one candidate rejected moves every word after it. MEASURED, at 1024
    by 768: forty-four words became thirty-six. A page that a visitor may
-   never see behind eight clicks must not thin the page everyone sees.
+   never see behind seven clicks must not thin the page everyone sees.
 
    So the words actually in the way are hushed, and only for as long as the
    song lasts. Their rectangles are read LIVE, at the moment the player
@@ -1260,7 +1265,7 @@ song.addEventListener('ended',closePlayer);
 song.addEventListener('error',closePlayer);
 
 /* THE WAY OUT. Paused, the player would otherwise stay until the page is
-   reloaded — the eight clicks are spent, and the button now toggles the
+   reloaded — the seven clicks are spent, and the button now toggles the
    song. Escape is what a reader already tries in order to dismiss a thing,
    and it costs the page nothing to answer it. */
 addEventListener('keydown',e=>{
