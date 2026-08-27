@@ -81,7 +81,7 @@ OpenSearch entirely.
 
 ## The song in the O
 
-Eight clicks on the mark inside five seconds, and the **O becomes a
+Seven clicks on the mark inside seven seconds, and the **O becomes a
 player**: the star folds away, a ring takes the rim to measure the song,
 and the disc is the play and pause button of *La Skopo* — Zamenhof's
 *La Vojo* in de Beaufront's Ido. When the song ends the star comes back and
