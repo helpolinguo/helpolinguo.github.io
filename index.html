@@ -331,6 +331,60 @@ body{background:var(--paper);color:var(--ink);
 }
 
 /* =====================================================================
+   3b. THE WORDS, WHILE THEY ARE SUNG
+   =====================================================================
+   A window under the doors, and a reel of the whole poem behind it. The
+   line being sung is at the middle, in the ink and in bold; the rest fall
+   away from it — blurred and faded in proportion to their distance, which
+   is what "--d" carries, set on each line by the script.
+
+   THE PANEL IS OUT OF THE BLOCK'S FLOW. "position:absolute; top:100%" hangs
+   it under the doors without adding a pixel to the block's height, so the
+   mark stays exactly where it was and the page does not lurch when the song
+   starts. The sky takes its reserve from the block's rectangle, which an
+   absolutely placed child does not enter — the resting page is untouched.
+
+   ITS HEIGHT IS MEASURED, NOT DECLARED. The room between the doors and the
+   foot is 94 px at 320 by 568 and 359 px at 820 by 1180, and no pair of
+   media queries recovers that from width and height: it is a subtraction,
+   and the script does it. Below three lines' worth the panel stands down
+   altogether and the credits go back to the foot, where they were. */
+.lyrics{
+  position:absolute; top:100%; left:0; right:0;
+  height:var(--reel-h,0px); margin-top:var(--reel-gap,14px);
+  overflow:hidden; pointer-events:none;
+  opacity:0; transition:opacity .5s;
+  /* The reel does not stop at an edge, it dissolves at one. */
+  -webkit-mask-image:linear-gradient(transparent,#000 26%,#000 74%,transparent);
+          mask-image:linear-gradient(transparent,#000 26%,#000 74%,transparent);
+}
+body.song-on .lyrics{opacity:1}
+.reel{position:absolute; left:0; right:0; top:0;
+  transition:transform .55s cubic-bezier(.3,.8,.3,1)}
+
+/* THE LINE'S OWN DISTANCE FROM THE ONE BEING SUNG, and everything else
+   follows from it in a calc: the blur grows by eight tenths of a pixel a
+   step and stops at four, the opacity falls as 1/(1 + 1.7 d). A curve, and
+   not a ladder of classes — one number changes per line. */
+.line{
+  margin:0; text-align:center; text-wrap:balance;
+  font-size:var(--reel-fs,14px); line-height:1.6;
+  color:var(--muted);
+  filter:blur(calc(min(var(--d,3),4) * .8px));
+  opacity:calc(1 / (1 + var(--d,3) * 1.7));
+  transition:filter .45s, opacity .45s, color .45s;
+}
+/* BOLD MUST NOT RELAY THE LINE OUT. A line that wraps in two when it is set
+   bold would push everything under it down by a line, and the reel would
+   jump under a reader's eye at the very moment it is being read. Every line
+   is therefore measured BOLD once — see the script — and keeps that height
+   for good, in a "min-height" it never gives back. */
+.reel.measuring .line{font-weight:700}
+.line.now{color:var(--ink); font-weight:700; filter:none; opacity:1}
+.line.stanza{margin-top:.8em}
+.line.credit{font-size:.88em; font-style:italic}
+
+/* =====================================================================
    4. THE FOOT
    ===================================================================== */
 .foot{position:absolute;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));
@@ -361,8 +415,13 @@ body{background:var(--paper);color:var(--ink);
 .credits{position:absolute;left:0;right:0;bottom:0;padding:0 16px;
  opacity:0;visibility:hidden;transition:opacity .45s,visibility 0s .45s}
 .foot-line{transition:opacity .45s}
-body.song-on .foot-line{opacity:0}
-body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
+/* "no-reel" AND NOT MERELY "song-on". The credits ride at the end of the
+   reel now, the way a karaoke roll ends on them, and the foot keeps its
+   own line while the poem is on screen. They come back to the foot only
+   where the reel stood down for want of room — the script sets the class —
+   so a small window loses the poem but never the attribution. */
+body.song-on.no-reel .foot-line{opacity:0}
+body.song-on.no-reel .credits{opacity:1;visibility:visible;transition:opacity .45s}
 /* AND THE BOTTOM-LEFT CORNER IS TAKEN. The download disc sits 24 px from
    the left edge and is 38 px across below 560 px of width: it reaches 62
    px in, and it paints ABOVE the foot — z-index 12 against 2. MEASURED at
@@ -632,6 +691,10 @@ body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
      and a reader who has asked for less movement has not asked for less
      information. */
   .player,.g-play,.g-pause,.foot-line,.credits{transition:none}
+  /* The reel still follows the song — WHERE THE WORDS ARE IS NOT AN
+     ORNAMENT — but it arrives instead of travelling, and the focus changes
+     without a fade. */
+  .lyrics,.reel,.line{transition:none}
 }
 </style>
 </head>
@@ -711,6 +774,68 @@ body.song-on .credits{opacity:1;visibility:visible;transition:opacity .45s}
       <a class="door" href="/dicionario/">Dicionario</a>
       <a class="door" href="/gramatiko/">Gramatiko</a>
     </nav>
+
+    <!-- THE WORDS, WHILE THEY ARE SUNG. The whole poem stands in the page,
+         in order, and the panel is a WINDOW ON IT: the reel is moved so the
+         line being sung sits at the middle, and the rest are put out of
+         focus in proportion to their distance from it. Nothing is written
+         or removed as the song runs, and there is no live region — a reader
+         who cannot see the focus, or does not want it, has the poem here
+         all the same, which is why this is real text and carries no
+         "aria-hidden".
+
+         "data-t" IS THE SECOND AT WHICH EACH LINE BEGINS, and it is the one
+         thing on this page not measured from the thing it describes. See
+         tools/tap.html, which taps the times out in one listen and prints
+         this block back. The reel reads them from the attributes, so a line
+         and its moment are edited in the same place.
+
+         THE PANEL HANGS BELOW THE BLOCK AND IS OUT OF ITS FLOW —
+         "position:absolute; top:100%" — so the mark, the motto and the
+         doors do not move by a pixel when the song starts, and the sky,
+         which reserves its room from the block's rectangle, does not see it
+         at all. -->
+    <div class="lyrics" id="lyrics">
+      <div class="reel" id="reel">
+        <p class="line" data-t="12.0">Tra densa tenebro, lumizas nin stelo</p>
+        <p class="line" data-t="16.29">Ad olqua konstante ni fidas.</p>
+        <p class="line" data-t="20.57">Per lua brilado en nigra cielo,</p>
+        <p class="line" data-t="24.86">La skopon montrata ni vidas.</p>
+        <p class="line" data-t="29.14">E nule ni timas la nokto-fantomi,</p>
+        <p class="line" data-t="33.42">La stroki dil fato, la moki dil homi,</p>
+        <p class="line" data-t="37.71">Nam rekta, sentrompa, justege trasita,</p>
+        <p class="line" data-t="42.0">La voyo da ni selektita.</p>
+        <p class="line stanza" data-t="46.28">Ni semas obstine, nultempe tedesas,</p>
+        <p class="line" data-t="50.56">Al tempi futura pensante,</p>
+        <p class="line" data-t="54.85">Mil grani perisas, dek mili perdesas;</p>
+        <p class="line" data-t="59.14">Ni plugas e semas konstante.</p>
+        <p class="line" data-t="63.42">&laquo;&#8239;Ha finez!&#8239;&raquo; klamachas la homi kun moko</p>
+        <p class="line" data-t="67.7">&laquo;&#8239;No, durez, avancez!&#8239;&raquo; adjuras nin voko;</p>
+        <p class="line" data-t="71.99">La nevi per benedikado vi pagos,</p>
+        <p class="line" data-t="76.28">Se kun persevero vi agos.</p>
+        <p class="line stanza" data-t="80.56">Dum longa sukusi dil vintro-tempesti,</p>
+        <p class="line" data-t="84.84">Ul branchi frapita ruptesas.</p>
+        <p class="line" data-t="89.13">L&rsquo;arboro ne mortis, e balde nov testi</p>
+        <p class="line" data-t="93.42">Pri lua vigoro trovesas.</p>
+        <p class="line" data-t="97.7">Certege permanos la brav idistaro:</p>
+        <p class="line" data-t="101.98">Lun ya ne faligos mult enemikaro.</p>
+        <p class="line" data-t="106.27">Plenfide lu marchas, ardore flamoza,</p>
+        <p class="line" data-t="110.56">Al skopo brilante lumoza.</p>
+        <p class="line stanza" data-t="114.84">Kuraje, persiste, ne deviacante,</p>
+        <p class="line" data-t="119.12">Ni sequez la voyo montrita!</p>
+        <p class="line" data-t="123.41">Mem singla guteti, sencese falante,</p>
+        <p class="line" data-t="127.7">Perforas la petro granita.</p>
+        <p class="line" data-t="131.98">L&rsquo;espero, l&rsquo;obstino e la konstanteso,</p>
+        <p class="line" data-t="136.27">Yen bela tri forci, di qui l&rsquo;efikado,</p>
+        <p class="line" data-t="140.55">Tra multa labori e persekuteso,</p>
+        <p class="line" data-t="144.84">Nin duktos a la triumfado.</p>
+        <p class="line credit" data-t="152.62">Poemo &laquo;&#8239;La Vojo&#8239;&raquo; da L. L. Zamenhof</p>
+        <p class="line credit" data-t="155.22">Tradukuro &laquo;&#8239;La Skopo&#8239;&raquo; da L. de Beaufront</p>
+        <p class="line credit" data-t="157.82">Melodio da Ren&eacute; Deshays</p>
+        <p class="line credit" data-t="160.42">Akompano por koro da F&eacute;licien Menu de M&eacute;nil</p>
+        <p class="line credit" data-t="163.02">Enrejistruro da Lucas Costa, per SUNO</p>
+      </div>
+    </div>
   </div>
 
   <p class="foot">
@@ -961,7 +1086,12 @@ sow();
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(sow);
 
 let sowTimer;
-addEventListener('resize',()=>{clearTimeout(sowTimer);sowTimer=setTimeout(sow,160)});
+addEventListener('resize',()=>{clearTimeout(sowTimer);sowTimer=setTimeout(()=>{
+  /* The reel first: it decides whether the credits are in the foot or at
+     the end of the reel, and the sowing keeps room for whichever it is. */
+  if(document.body.classList.contains('song-on')){fitReel();follow(song.currentTime)}
+  sow();
+},160)});
 addEventListener('orientationchange',()=>setTimeout(sow,260));
 
 /* --- The parallax. A few pixels, and only under a real pointer. */
@@ -1163,7 +1293,13 @@ const songRing=document.getElementById('song-ring');
 const ROUND=1966.5;
 const CLICKS=7, WINDOW=7000;
 
+const lyrics=document.getElementById('lyrics');
+const reel=document.getElementById('reel');
+const LINES=[...reel.querySelectorAll('.line')];
+const CUES=LINES.map(el=>parseFloat(el.dataset.t));
+
 let degrees=0, taps=[], sweeping=0;
+let lineTops=[], lineH=[], reelLines=0, shown=-2;
 
 /* The button says what it does. At rest it is the mark and is named for it;
    open, it is a play button, then a pause button. In Ido, like the rest.
@@ -1183,9 +1319,12 @@ function announce(){
    fault, not as a measure. It costs one style change per frame, and only
    while the song sounds. */
 function sweep(){
-  const d=song.duration;
-  songRing.style.strokeDashoffset =
-    (d>0 ? ROUND*(1-song.currentTime/d) : ROUND).toFixed(2);
+  const d=song.duration, t=song.currentTime;
+  songRing.style.strokeDashoffset = (d>0 ? ROUND*(1-t/d) : ROUND).toFixed(2);
+  /* The reel rides the same frame. It costs nothing on most of them: the
+     line only changes every four seconds or so, and "follow" returns at
+     once when the answer is the one it gave last. */
+  if(reelLines) follow(t);
   if(!song.paused) sweeping=requestAnimationFrame(sweep);
 }
 
@@ -1205,12 +1344,17 @@ function sweep(){
    they can still travel afterwards — thirteen of drift and eight of
    parallax, and one over. */
 function hush(on){
-  const c=document.querySelector('.credits').getBoundingClientRect();
+  /* Two rectangles now, and only the ones that are actually up: the reel
+     where it has room, the foot's credits where it has not. */
+  const boxes=[];
+  if(reelLines) boxes.push(lyrics.getBoundingClientRect());
+  else boxes.push(document.querySelector('.credits').getBoundingClientRect());
   for(const el of document.querySelectorAll('.word')){
     if(!on){el.classList.remove('hushed');continue}
     const r=el.getBoundingClientRect();
-    if(r.left<c.right+22&&r.right>c.left-22&&
-       r.top<c.bottom+22&&r.bottom>c.top-22) el.classList.add('hushed');
+    if(boxes.some(c=>r.left<c.right+22&&r.right>c.left-22&&
+                     r.top<c.bottom+22&&r.bottom>c.top-22))
+      el.classList.add('hushed');
   }
 }
 
@@ -1255,11 +1399,80 @@ function nowPlaying(on){
   }) : null;
 }
 
+/* --- THE REEL --------------------------------------------------------
+   Sized from the room that is actually there, and from nothing else. The
+   gap between the doors and the foot is a subtraction — 94 px at 320 by
+   568, 359 px at 820 by 1180 — and the number of lines the window can hold
+   falls out of it. Five where there is room, three where there is less,
+   and NONE below that: the panel stands down and the credits go back to
+   the foot, which is what "no-reel" says.
+
+   EVERY LINE IS MEASURED BOLD AND KEEPS THAT HEIGHT. A line that wraps in
+   two when it is set bold would push everything under it down by a line,
+   and the reel would jump under the eye at the moment the line is read —
+   so the whole reel is set bold for one measurement, and each line is then
+   given that height as a floor it never gives back. On a phone the lines
+   DO wrap: this is not a way of preventing that, it is a way of making the
+   wrapping the same in both weights.
+
+   Called on opening and on resize; the tops are cached, because reading
+   them back on every frame would be a layout on every frame. */
+function fitReel(){
+  const foot=document.querySelector('.foot').getBoundingClientRect();
+  const doors=document.querySelector('.doors').getBoundingClientRect();
+  const floor=foot.height ? foot.top : innerHeight - 10;
+  const GAP=14, CLEAR=12;
+  const room=floor - doors.bottom - GAP - CLEAR;
+
+  reel.classList.add('measuring');
+  const em=parseFloat(getComputedStyle(LINES[0]).fontSize) * 1.6;
+  reelLines = room >= em*5 ? 5 : room >= em*3 ? 3 : 0;
+  document.body.classList.toggle('no-reel', reelLines===0);
+  lyrics.style.setProperty('--reel-h', (reelLines*em).toFixed(1)+'px');
+  lyrics.style.setProperty('--reel-gap', GAP+'px');
+
+  /* Bold, and still bold: the heights are read here and kept. */
+  LINES.forEach(el=>{el.style.minHeight=''});
+  const h=LINES.map(el=>el.getBoundingClientRect().height);
+  LINES.forEach((el,i)=>{el.style.minHeight=h[i].toFixed(2)+'px'});
+  reel.classList.remove('measuring');
+
+  lineH=h;
+  lineTops=LINES.map(el=>el.offsetTop);
+  shown=-2;                       /* force the next frame to place the reel */
+}
+
+/* Which line is being sung, and where the reel has to stand for it to be at
+   the middle. Before the first cue the reel waits on the first line, with
+   nothing in the ink: the song has an introduction, and the panel should
+   not claim a line is being sung during it. */
+function follow(t){
+  let i=-1;
+  while(i+1<CUES.length && CUES[i+1]<=t) i++;
+  if(i===shown) return;
+  shown=i;
+  const at=Math.max(i,0);
+  LINES.forEach((el,k)=>{
+    el.style.setProperty('--d', Math.abs(k-at));
+    el.classList.toggle('now', k===i);
+  });
+  /* The middle of the panel as it actually stands, not as it was worked
+     out: the height is set from a calculation, and reading it back is one
+     number that cannot drift from it. */
+  const mid=lyrics.clientHeight/2;
+  reel.style.transform=
+    'translateY('+(mid - lineTops[at] - lineH[at]/2).toFixed(1)+'px)';
+}
+
 function openPlayer(){
   taps=[];
   songRing.style.strokeDashoffset=ROUND;
   mark.classList.add('player-on');
   document.body.classList.add('song-on');
+  /* THE ORDER MATTERS. "fitReel" decides whether there is a reel at all,
+     and "hush" asks that question to know which rectangle to clear. */
+  fitReel();
+  follow(0);
   hush(true);
   nowPlaying(true);
   announce();
@@ -1275,8 +1488,10 @@ function closePlayer(){
   song.currentTime=0;
   songRing.style.strokeDashoffset=ROUND;
   mark.classList.remove('player-on','singing');
-  document.body.classList.remove('song-on');
   hush(false);
+  document.body.classList.remove('song-on','no-reel');
+  shown=-2;
+  LINES.forEach(el=>{el.classList.remove('now'); el.style.removeProperty('--d')});
   nowPlaying(false);
   announce();
 }

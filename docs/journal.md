@@ -20,6 +20,7 @@ og-image.png            1200 × 630, the sharing image
 fonts/                  Jost* Bold and Medium, subset to this page
 tools/emblem.py         reconstructs the logotype
 tools/icons.py          rebuilds the images above, and icon-1536.png (§ 14)
+tools/tap.html          taps out the reel's line times (§ 15)
 tools/machine_files.py  robots.txt, sitemap.xml, llms.txt (§ 10)
 CNAME                   the domain, for GitHub Pages
 ```
@@ -1050,3 +1051,73 @@ been too small. There is nothing to be gained here by leaving it the room to
 judge again. Downscaling never looks bad; the 34 kB of difference is paid
 once, by a reader who has found the egg, in the same breath as 4.9 MB of
 song.
+
+
+## 15. The words, while they are sung
+
+Under the three doors, a window on the poem: the line being sung sits at the
+middle, in the ink and in bold, and the rest fall away from it — blurred and
+faded in proportion to their distance. The five credits ride at the end of
+the reel, the way a karaoke roll ends on them.
+
+**The whole poem is in the page, in order, and nothing is written or removed
+as the song runs.** The panel is a window and the reel moves behind it; there
+is no live region and no `aria-hidden`. A reader who cannot see the focus, or
+does not want it, has the text all the same.
+
+### What the panel costs the page: nothing
+
+`position:absolute; top:100%` hangs it under the doors without adding a pixel
+to the block's height, so the mark does not move when the song starts. The
+sky takes its reserve from the block's rectangle, and an absolutely placed
+child does not enter one — MEASURED: the resting page is pixel for pixel what
+it was, at 1440 × 900 and 390 × 844 in both themes, and the sky's 44 words at
+1024 × 768 land at identical coordinates.
+
+**Its height is measured, not declared.** The room between the doors and the
+foot is 94 px at 320 × 568 and 359 px at 820 × 1180, and no pair of media
+queries recovers that from width and height: it is a subtraction, and the
+script does it. Five lines where there is room, three where there is less,
+and none below that — the panel stands down, `no-reel` goes on the body, and
+the credits go back to the foot where they were. A small window loses the
+poem but never the attribution.
+
+### Bold must not relay the line out
+
+A line that wraps in two when it is set bold pushes everything under it down
+by a line, and the reel would jump under the eye at the very moment that line
+is being read. On a phone the lines do wrap — the block is 289 px wide at
+390 — so preventing the wrap was never on offer. What is on offer is making
+the wrap the same in both weights: the whole reel is set bold for one
+measurement, every line is given that height as a floor it never gives back,
+and the switch to bold then costs no layout at all.
+
+### The distance is one number
+
+`--d` is set on each line — how many lines it is from the one being sung —
+and the blur and the opacity are calcs on it: eight tenths of a pixel a step
+to a stop at four, and `1 / (1 + 1.7 d)`. A curve rather than a ladder of
+classes, and one property written per line when the line changes. The reel
+rides the frame the ring already runs on, and returns at once when the answer
+is the one it gave last.
+
+### The times, which are not measured
+
+Every other number on this page comes from the thing it describes. **These do
+not, and it is worth saying exactly why.** Three things were tried on the
+recording itself:
+
+* the **RMS envelope**, at 20 ms, over the whole 216.4 s — a continuous
+  crescendo, with no phrase gaps anywhere to anchor a line on;
+* a **brightness proxy** (mean absolute first difference over RMS, which
+  rises when a voice enters) — too noisy to give a vocal entry;
+* **autocorrelation of the detrended envelope**, which gives one clean
+  answer, a single sharp peak at **34.28 s**. That is the strophe. But a
+  strophe is not a line, and it does not say where the singing begins.
+
+Real per-line timing wants forced alignment, and there is no aligner here —
+still less one that knows Ido. So the times shipped are a placeholder built
+from that 34.28 s, and `tools/tap.html` replaces them in one listen: play the
+song, tap the space bar on each line, copy the block it prints back over the
+one in `index.html`. It reads the poem out of `index.html` rather than keeping
+a copy of it, so the tool cannot go stale against the page.
