@@ -123,16 +123,23 @@ of it. Centre extraction, harmonic salience, chroma self-similarity, a search
 for the four repeats, and forced alignment against the one offline acoustic
 model available were all tried; `docs/journal.md` § 15 keeps the ledger.
 
-What the recording does give up is a **beat of 0.864 s** and two texture
-boundaries, **26.6 s and 180.6 s** — the first sung note and the closing tag.
-The 32 lines are laid evenly between them. Which line falls where is still an
-assumption, and `tools/tap.html` settles it: serve the repository root, open
-it, and tap the space bar on each line as it begins. The right arrow skips a
-line and lets it be worked out from the taps either side, so four taps — one
-to a stanza — already put every line close. It prints the block of
-`<p class="line">` back with the times filled in, ready to replace the one in
-`index.html`, and reads the poem from `index.html` rather than keeping a copy,
-so it cannot go stale against it.
+What the recording does give up is three texture boundaries, each agreed on
+by two novelty kernels: **26.6 s** (the first sung note), **106.8 s** (the
+third stanza) and **180.6 s** (the closing tag). For a song of four stanzas
+with an interlude between them, those three numbers fix the model exactly —
+a cycle of 40.10 s, of which 33.70 s is sung and **6.40 s is the few bars
+that play between one stanza and the next**. That sung length lands 0.58 s
+from the 34.28 s the envelope's autocorrelation gives for the strophe, by two
+methods that share nothing.
+
+Eight equal lines to a stanza is still an assumption, and `tools/tap.html`
+settles it: serve the repository root, open it, and tap the space bar on each
+line as it begins. The right arrow skips a line and lets it be worked out
+from the taps either side, so **eight taps — the first and last line of each
+stanza — are enough**, the interludes falling outside the working-out. It
+prints the block of `<p class="line">` back with the times filled in, ready
+to replace the one in `index.html`, and reads the poem from `index.html`
+rather than keeping a copy, so it cannot go stale against it.
 
 The recording is `audio/la-skopo.mp3`, 4.9 MB for 3 min 36 s. It carries
 `preload="none"`, so **nobody who never finds the egg ever fetches it**,
