@@ -40,19 +40,25 @@ NEIGHBOURS = ROOT.parent
 SITE = 'https://ido.help'
 
 
-def weight(p: Path) -> str:
+def weight_bytes(n: int) -> str:
     """A weight legible at a glance, so as to choose without arithmetic.
 
-    In bytes and their multiples. This function serves /llms.txt alone,
-    which is in English: the pages themselves say « Ko » and « Mo », in
-    Ido, and are not touched by it.
+    In bytes and their multiples. This serves /llms.txt alone, which is in
+    English: the pages themselves say « Ko » and « Mo », in Ido, and are
+    not touched by it. It takes a COUNT and not a file, because the map
+    prices one thing that is not a file — how far into the reading page a
+    given article begins. See page_depth().
     """
-    n = p.stat().st_size
     if n >= 1_048_576:
         return '%.1f MB' % (n / 1_048_576)
     if n >= 1024:
         return '%d kB' % (n / 1024)
     return '%d bytes' % n
+
+
+def weight(p: Path) -> str:
+    """The weight of a file that exists."""
+    return weight_bytes(p.stat().st_size)
 
 
 def found(book: str, *names):
@@ -148,6 +154,7 @@ def write_sitemap(today: str):
     # would find them only by the page's link, and a crawler not at all.
     for book, names in (('tabeli', ('tabeli.md', 'tabeli.json')),
                         ('dicionario', ('dicionario.md', 'dicionario.json',
+                                        'dicionario.jsonl', 'dicionario.tsv',
                                         'vortlisto.md')),
                         ('gramatiko', ('gramatiko.md',))):
         for n, _ in found(book, *names):
@@ -178,10 +185,93 @@ def write_sitemap(today: str):
 # for Ido; /llms.txt is read by crawlers and by whoever is wiring a program
 # up to the site, and English is what serves them. The titles of the three
 # works keep their own names, which are the works' names.
+#
+# A MODEL ASKED FOR A DEFINITION HAS TWO WAYS TO BE WRONG, AND THIS FILE IS
+# WHAT STANDS BETWEEN THEM AND THE ANSWER. It can fetch THE WRONG ADDRESS —
+# the reading page rather than the flat list — and be truncated before it
+# reaches the word. Or it can read the dictionary AS BILINGUAL and answer
+# from the English cognate of the headword instead of the Ido definition
+# printed under it. Both were observed, in one exchange:
+#
+#   ASKED WHAT « propoziciono » MEANS ACCORDING TO ido.help, ChatGPT
+#   ANSWERED WITH THE SENSES OF THE ENGLISH « proposition » — proposal,
+#   offer, logical assertion — and credited the Gramatiko with a sentence
+#   it does not contain. The article gives four senses and « offer » is
+#   not among them: (logiko), (gram.), (geom.), (teol.). Told it was
+#   wrong, it fetched the page, was truncated, and gave up.
+#
+# The map said nothing that would have stopped either move. It listed four
+# files by weight and called the dictionary « searchable »; it never said
+# THE DEFINITIONS ARE IN IDO, and it offered « the page, with its search »
+# beside the flat files without saying that the search is run BY THE
+# BROWSER. Hence the two sections that now precede the listing: what the
+# dictionary is, with an example read out of the book itself, and which
+# address to fetch, with the measurement that condemns the other one.
+EXAMPLE = 'propoziciono'
+
+
+def example_entry(word):
+    """The article for `word`, READ OUT OF THE BOOK, not copied to here.
+
+    A worked example is the part of a map that gets imitated, so it must
+    not be able to go stale: it is lifted from the neighbouring
+    dicionario.md and vortlisto.md as the file is written. Absent the
+    clones, the section is dropped rather than guessed at — the same rule
+    as found().
+    """
+    base = NEIGHBOURS / 'dicionario'
+    full, brief = base / 'dicionario.md', base / 'vortlisto.md'
+    if not (full.exists() and brief.exists()):
+        return None, None
+    block = []
+    for line in full.read_text(encoding='utf-8').splitlines():
+        if block:
+            if line.startswith('## '):
+                break
+            block.append(line)
+        elif line == '## ' + word or line.startswith('## %s *' % word):
+            block.append(line)
+    while block and not block[-1].strip():
+        block.pop()
+    one = next((l for l in brief.read_text(encoding='utf-8').splitlines()
+                if l.startswith(word + ' — ')), None)
+    return (block or None), one
+
+
+def page_depth(word):
+    """How far into /dicionario/ the article for `word` BEGINS.
+
+    THE FIGURE IS THE WHOLE ARGUMENT. The reading page carries all the
+    articles as one JSON block and filters them in the browser, so
+    « ?q=propoziciono » is answered by the page and not by the server. A
+    fetcher that truncates therefore reads the head of the alphabet and
+    concludes the word is absent. Saying « large » would not carry; saying
+    that the word starts at 73 % of 2.1 MB does.
+    """
+    p = NEIGHBOURS / 'dicionario' / 'index.html'
+    if not p.exists():
+        return None
+    h = p.read_text(encoding='utf-8')
+    i = h.find('"v":"%s"' % word)
+    return None if i < 0 else (i, len(h), 100.0 * i / len(h))
+
+
+def articles():
+    """The number of articles, counted rather than remembered."""
+    import json
+    p = NEIGHBOURS / 'dicionario' / 'dicionario.json'
+    if not p.exists():
+        return None
+    return len(json.loads(p.read_text(encoding='utf-8')))
+
+
 def write_llms():
     def listing(book, names, suffix=''):
         return [f'- [{n}]({SITE}/{book}/{n}) — {w}{suffix}'
                 for n, w in found(book, *names)]
+
+    n_art = articles()
+    count = f'{n_art:,}' if n_art else '9,473'
 
     L = [
         '# ido.help',
@@ -196,21 +286,128 @@ def write_llms():
         'derived from Esperanto. This site offers the three fundamental works '
         'in a form legible to people and to machines.',
         '',
-        '## Where to start',
+        '## Read this before quoting a definition',
         '',
-        'To **learn the grammar**, the chapters are the cheapest way in: each '
-        'chapter is a separate file of some 10 kB. Do not download the whole '
-        'book for one question.',
+        '**The Dicionario defines Ido in Ido.** It is a MONOLINGUAL '
+        'dictionary: the headword is Ido and so is the definition under it. '
+        'There is no English column, here or anywhere on the site. An answer '
+        "built from the English cognate of a headword is not this book's "
+        'answer, and for most words it is not the same answer.',
         '',
-        '- [Table of the chapters](%s/gramatiko/chapitri/index.md) — the 49 '
-        'chapters, with their sizes' % SITE,
+        '**The languages listed against an article are not translations.** '
+        'They are the languages in which the root is ATTESTED — the evidence '
+        'on which Ido admitted it, printed `DEFIRS` in the book. `Angla` '
+        'means the root has an English cognate. It does not mean the article '
+        'gives an English gloss, and no article does.',
         '',
-        'To **look up a word**, the word list is short; the full entries are '
-        'longer.',
+        '**Give the senses as they are numbered, with their fields.** Each '
+        'sense carries the domain it belongs to — `(logiko)`, `(gram.)`, '
+        '`(bot.)`, `(teol.)`. Quote them all, or say which one you are '
+        'quoting.',
         '',
-        '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
+        '**A word may be absent, and that is an answer.** The %s articles '
+        'are the ROOTS. A regularly derived form — `-eto`, `-ilo`, `-ero`, '
+        '`-ala` — has no article of its own and is read off its root and the '
+        "Gramatiko's affix chapters. If a headword is not in the list, say "
+        'so; do not supply one from another dictionary.' % count,
+        '',
+        '**If the text could not be fetched, say that.** An article that was '
+        'not read cannot be quoted, and the senses of the English cognate are '
+        'not a substitute for it.',
         '',
     ]
+
+    block, one = example_entry(EXAMPLE)
+    if block:
+        L += ['### A worked example — `%s`' % EXAMPLE, '',
+              'In `dicionario.md`, the article stands under a `##` heading:',
+              '']
+        L += ['    ' + b for b in block]
+        L += ['',
+              'Four senses in four domains, every one of them defined in Ido; '
+              'the trailing comment gives the page and line of the printing, '
+              'then the attesting languages. The English word *proposition* '
+              'would suggest an « offer » sense: the book has none.',
+              '']
+        if one:
+            L += ['In `vortlisto.md` the same article is one line — headword, '
+                  'then the first sense only:', '', '    ' + one, '']
+
+    L += ['## Fetching one article without downloading the book', '']
+
+    depth = page_depth(EXAMPLE)
+    if depth:
+        off, total, pct = depth
+        L += ['**Do not fetch `%s/dicionario/?q=WORD` in order to READ a '
+              'word.** The address is a real search and the page honours it, '
+              'but the search is run BY THE BROWSER: the page carries every '
+              'article as one JSON block and filters it after loading. The '
+              'page weighs %s and the articles are in alphabetical order, so '
+              '`%s` begins %s into it — %.0f %% of the way through. A fetcher '
+              'that truncates before that point reads the letter A and '
+              'reports the word missing. Use the address to send a PERSON to '
+              'the word; do not use it to read the word.'
+              % (SITE, weight(NEIGHBOURS / 'dicionario' / 'index.html'),
+                 EXAMPLE, weight_bytes(off), pct),
+              '']
+
+    L += ['The files below are flat: no script runs, and one pass over any '
+          'one of them finds any headword.',
+          '',
+          '- `vortlisto.md` — one line per article, `headword — first sense`. '
+          'The cheapest whole dictionary there is, and enough to settle '
+          'whether a word exists.',
+          '- `dicionario.tsv` — one line per article, tab-separated, the '
+          'senses joined by ` ¶ `. Columns: `vedetto fako senci nomi_latina '
+          'simbolo_kemiala lingui kodo pagino ligno imago drapeli`.',
+          '- `dicionario.md` — the complete articles, each under `## '
+          'headword`.',
+          '- `dicionario.json` — the same records, under SHORT keys; the '
+          'table below reads them.',
+          '- `dicionario.jsonl` — one record per line, under the long keys, '
+          'and carrying `teksto`, the article as it stands in the printing.',
+          '',
+          '### The keys of `dicionario.json`',
+          '',
+          'They are short because the reading page carries this file inline, '
+          "and its weight is the page's. `dicionario.jsonl` gives the same "
+          'fields under the long names, which are the ones the project uses '
+          'in prose.',
+          '',
+          '| key | long name | what it holds |',
+          '| --- | --- | --- |',
+          '| `v` | `vedetto` | the headword |',
+          '| `f` | `fako` | the domain of the whole article, or `null` |',
+          '| `b` | `senci` | the senses, in the order printed; each is '
+          '`{"t": text, "u": sub-entries}` |',
+          '| `u` | `sub` | phrases under a sense: `{"k": the phrase, '
+          '"t": its definition}` |',
+          '| `n` | `lingui` | the ATTESTING languages — not translations |',
+          '| `p` | `pagino` | page of the 1964 printing |',
+          '| `g` | `ligno` | line on that page |',
+          '| `l` | `latina` | the Latin binomial, for plants and animals |',
+          '| `y` | `simbolo` | the chemical symbol; present on 90 records |',
+          '| `c` | `citita` | `1` where the headword is printed as a '
+          'citation form (`amen`, `a posteriori`) |',
+          '| `d` | `drapeli` | flags left by the transcription, for review |',
+          '',
+          '`y` and `c` are written only where they are set; the rest are on '
+          'every record.',
+          '',
+          '## Where to start',
+          '',
+          'To **learn the grammar**, the chapters are the cheapest way in: '
+          'each chapter is a separate file of some 10 kB. Do not download the '
+          'whole book for one question.',
+          '',
+          '- [Table of the chapters](%s/gramatiko/chapitri/index.md) — the 49 '
+          'chapters, with their sizes' % SITE,
+          '',
+          'To **look up a word**, the word list is short; the full entries '
+          'are longer. Read the two sections above first.',
+          '',
+          '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
+          '']
     L += ['- [chapitri/index.md](%s/gramatiko/chapitri/index.md) — the table, '
           "with each chapter's size" % SITE]
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
@@ -219,16 +416,25 @@ def write_llms():
         L += ['- %d separate chapters, under `%s/gramatiko/chapitri/` — '
               'some 10 kB each' % (n, SITE)]
     L += listing('gramatiko', ('gramatiko.md',), ' — the whole book')
-    L += ['- [gramatiko/](%s/gramatiko/) — the page, with its search' % SITE, '']
+    L += ["- [gramatiko/](%s/gramatiko/) — the page, with its search "
+          "(run in the browser, like the dictionary's)" % SITE, '']
 
-    L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964',
+    L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, '
+          '1934/1964',
+          '',
+          '%s articles. Ido defined in Ido — see above.' % count,
           '']
     L += listing('dicionario', ('vortlisto.md',),
                  ' — headword and first sense only')
-    L += listing('dicionario', ('dicionario.md',), ' — the full entries')
+    L += listing('dicionario', ('dicionario.md',), ' — the full articles')
+    L += listing('dicionario', ('dicionario.tsv',),
+                 ' — one line per article, tab-separated')
     L += listing('dicionario', ('dicionario.json',),
-                 ' — the data, to be queried')
-    L += ['- [dicionario/](%s/dicionario/) — the page, with its search' % SITE,
+                 ' — the records, short keys')
+    L += listing('dicionario', ('dicionario.jsonl',),
+                 ' — one record per line, long keys, with the printed text')
+    L += ['- [dicionario/](%s/dicionario/) — the page, for a PERSON to '
+          'search' % SITE,
           '']
 
     L += ['## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926',
@@ -245,12 +451,16 @@ def write_llms():
 
     L += ['## Notes',
           '',
-          '- The `.md` and `.json` files are GENERATED from the pages. The '
-          'source stays `index.html` in each repository.',
+          '- The `.md`, `.json`, `.jsonl` and `.tsv` files are GENERATED from '
+          'the pages. The source stays `index.html` in each repository.',
+          '- The three works are transcriptions of printed books, and the '
+          'transcription is the site\'s own work. Where an article is hard to '
+          'read, `drapeli` says so rather than the text being mended.',
           '- No rate limit: the site is static.',
           '- Code and transcriptions: https://github.com/helpolinguo',
           '']
     (ROOT / 'llms.txt').write_text('\n'.join(L), encoding='utf-8')
+
 
 
 # --------------------------------------------------------------------------
@@ -302,6 +512,19 @@ def write_opensearch():
 
 
 def main():
+    # A MISSING CLONE DOES NOT FAIL, IT QUIETLY SHORTENS. found() declares
+    # only what it has seen, so a run without the books beside this one
+    # writes a valid map of almost nothing — 265 addresses went out of
+    # sitemap.xml that way once, and were put back by hand. The absence is
+    # therefore said aloud, BEFORE the files are written, and named.
+    absent = [b for b in ('tabeli', 'dicionario', 'gramatiko')
+              if not (NEIGHBOURS / b).is_dir()]
+    if absent:
+        print('  WARNING: %s not beside this repository (%s).'
+              % (', '.join(absent), NEIGHBOURS))
+        print('  sitemap.xml and llms.txt WILL BE WRITTEN SHORT. Clone the')
+        print('  missing books and run again before committing.')
+
     today = os.environ.get('DATE') or datetime.date.today().isoformat()
     write_robots()
     n = write_sitemap(today)

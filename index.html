@@ -43,7 +43,18 @@
 
      The JSON-LD block says what the site IS and what it holds: three books,
      their authors, their dates. An engine that understands it no longer has
-     to guess from the prose.
+     to guess from the prose. It carries two further things. THE FLAT FILES
+     ARE DECLARED AS A DATASET, with the form of each: that is how a crawler
+     finds the cheap versions without having read /llms.txt, and the
+     description says in one line the thing models get wrong — the book is
+     MONOLINGUAL, Ido defined in Ido. And a SearchAction gives the search in
+     the form an engine reads; opensearch.xml, below, says the same to Safari
+     alone, and the two name one address.
+
+     THE WEIGHTS ARE NOT REPEATED HERE. This file is written by hand, and a
+     figure written by hand goes stale the next time a book is rebuilt.
+     /llms.txt is generated and measures them at every run, so the dataset
+     points at it rather than restating it.
 
      The link to /opensearch.xml says THAT THE DOMAIN HAS A SEARCH, and at
      what address — /dicionario/?q=. Safari reads it on the first visit and
@@ -78,6 +89,7 @@
     "name": "J. Guignon"
    },
    "datePublished": "1926",
+   "inLanguage": "io",
    "url": "https://ido.help/tabeli/"
   },
   {
@@ -88,6 +100,7 @@
     "name": "Marcelo Persiko (Marcel Pesch)"
    },
    "datePublished": "1934",
+   "inLanguage": "io",
    "url": "https://ido.help/dicionario/"
   },
   {
@@ -98,9 +111,65 @@
     "name": "L. de Beaufront"
    },
    "datePublished": "1925",
+   "inLanguage": "io",
    "url": "https://ido.help/gramatiko/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Dicionario de la 10.000 radiki — machine-readable edition",
+   "description": "The 9,473 articles as flat files. The dictionary is MONOLINGUAL: the headwords are Ido and so are the definitions. The languages named on an article are those the root is attested in, not translations of it.",
+   "inLanguage": "io",
+   "isAccessibleForFree": true,
+   "license": "https://opensource.org/licenses/MIT",
+   "url": "https://ido.help/llms.txt",
+   "creator": {
+    "@type": "Person",
+    "name": "Marcelo Persiko (Marcel Pesch)"
+   },
+   "distribution": [
+    {
+     "@type": "DataDownload",
+     "name": "vortlisto.md — headword and first sense, one line per article",
+     "encodingFormat": "text/markdown",
+     "contentUrl": "https://ido.help/dicionario/vortlisto.md"
+    },
+    {
+     "@type": "DataDownload",
+     "name": "dicionario.md — the complete articles",
+     "encodingFormat": "text/markdown",
+     "contentUrl": "https://ido.help/dicionario/dicionario.md"
+    },
+    {
+     "@type": "DataDownload",
+     "name": "dicionario.tsv — one line per article, tab-separated",
+     "encodingFormat": "text/tab-separated-values",
+     "contentUrl": "https://ido.help/dicionario/dicionario.tsv"
+    },
+    {
+     "@type": "DataDownload",
+     "name": "dicionario.json — the records, short keys",
+     "encodingFormat": "application/json",
+     "contentUrl": "https://ido.help/dicionario/dicionario.json"
+    },
+    {
+     "@type": "DataDownload",
+     "name": "dicionario.jsonl — one record per line, long keys",
+     "encodingFormat": "application/x-ndjson",
+     "contentUrl": "https://ido.help/dicionario/dicionario.jsonl"
+    }
+   ]
   }
- ]
+ ],
+ "license": "https://opensource.org/licenses/MIT",
+ "isAccessibleForFree": true,
+ "potentialAction": {
+  "@type": "SearchAction",
+  "target": {
+   "@type": "EntryPoint",
+   "urlTemplate": "https://ido.help/dicionario/?q={search_term_string}"
+  },
+  "query-input": "required name=search_term_string"
+ }
 }
 </script>
 <meta name="twitter:card" content="summary_large_image">
