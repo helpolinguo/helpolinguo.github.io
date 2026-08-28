@@ -35,9 +35,34 @@ In `vortlisto.md` the same article is one line — headword, then the first sens
 
 ## Fetching one article without downloading the book
 
+**One word is one file, and you can WORK OUT its address** — nothing to search, and no index to fetch first:
+
+    https://ido.help/dicionario/vorti/propoziciono.md
+
+That is 574 bytes. The rule is four steps: lower case, fold the accent, a space becomes a hyphen, drop anything else. Ido is written in plain ASCII, so it changes almost nothing.
+
+| headword | address |
+| --- | --- |
+| `propoziciono` | `https://ido.help/dicionario/vorti/propoziciono.md` |
+| `-a` | `https://ido.help/dicionario/vorti/-a.md` |
+| `a(d)` | `https://ido.help/dicionario/vorti/ad.md` |
+| `a posteriori` | `https://ido.help/dicionario/vorti/a-posteriori.md` |
+| `*golfo` | `https://ido.help/dicionario/vorti/golfo.md` |
+| `ah!` | `https://ido.help/dicionario/vorti/ah.md` |
+| `ampère` | `https://ido.help/dicionario/vorti/ampere.md` |
+| `«brokoli»-kaulo` | `https://ido.help/dicionario/vorti/brokoli-kaulo.md` |
+
+The four marks dropped there carry sense in the book and none of them survives a URL: the asterisk of the word NOT OFFICIAL, the exclamation of the interjections, the parentheses of `a(d)`, the guillemets of `«brokoli»-kaulo`. They are gone from the ADDRESS only — each file prints its headword as the book sets it.
+
+9,473 articles sit at 9,461 addresses. Twelve addresses hold two articles apiece, and serve both, so the rule never needs a suffix. **A 404 means the word is not a headword** — most often because it is a regular derivation, which this book leaves to its root.
+
+- [vorti/index.md](https://ido.help/dicionario/vorti/index.md) — 228 kB — every address, for a crawler. A reader who knows the word does not need it.
+
 **Do not fetch `https://ido.help/dicionario/?q=WORD` in order to READ a word.** The address is a real search and the page honours it, but the search is run BY THE BROWSER: the page carries every article as one JSON block and filters it after loading. The page weighs 2.1 MB and the articles are in alphabetical order, so `propoziciono` begins 1.5 MB into it — 73 % of the way through. A fetcher that truncates before that point reads the letter A and reports the word missing. Use the address to send a PERSON to the word; do not use it to read the word.
 
-The files below are flat: no script runs, and one pass over any one of them finds any headword.
+### The whole book, when one word is not what is wanted
+
+These are flat: no script runs, and one pass over any one of them finds any headword.
 
 - `vortlisto.md` — one line per article, `headword — first sense`. The cheapest whole dictionary there is, and enough to settle whether a word exists.
 - `dicionario.tsv` — one line per article, tab-separated, the senses joined by ` ¶ `. Columns: `vedetto fako senci nomi_latina simbolo_kemiala lingui kodo pagino ligno imago drapeli`.
@@ -71,7 +96,7 @@ To **learn the grammar**, the chapters are the cheapest way in: each chapter is 
 
 - [Table of the chapters](https://ido.help/gramatiko/chapitri/index.md) — the 49 chapters, with their sizes
 
-To **look up a word**, the word list is short; the full entries are longer. Read the two sections above first.
+To **look up a word**, fetch it on its own — `https://ido.help/dicionario/vorti/WORD.md`, some 600 bytes. Read the two sections above first: the address rule is four steps, and the definitions are in Ido.
 
 ## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925
 
@@ -84,6 +109,7 @@ To **look up a word**, the word list is short; the full entries are longer. Read
 
 9,473 articles. Ido defined in Ido — see above.
 
+- [vorti/WORD.md](https://ido.help/dicionario/vorti/propoziciono.md) — ~600 bytes — ONE FILE PER WORD; the address is the headword
 - [vortlisto.md](https://ido.help/dicionario/vortlisto.md) — 923 kB — headword and first sense only
 - [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 MB — the full articles
 - [dicionario.tsv](https://ido.help/dicionario/dicionario.tsv) — 1.5 MB — one line per article, tab-separated

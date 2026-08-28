@@ -33,6 +33,7 @@ says so.
 
 import datetime
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -160,6 +161,12 @@ def write_sitemap(today: str):
         for n, _ in found(book, *names):
             urls.append((f'{SITE}/{book}/{n}', '0.6'))
 
+    # vorti/ is 9461 files. The INDEX goes in and the articles do not: a
+    # crawler reaches them by its links, and an engine that wanted them
+    # enumerated would want a sitemap of 1.2 MB to do it.
+    if (NEIGHBOURS / 'dicionario' / 'vorti' / 'index.md').exists():
+        urls.append((f'{SITE}/dicionario/vorti/index.md', '0.6'))
+
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
     if (chapters / 'index.md').exists():
         urls.append((f'{SITE}/gramatiko/chapitri/index.md', '0.6'))
@@ -207,6 +214,41 @@ def write_sitemap(today: str):
 # BROWSER. Hence the two sections that now precede the listing: what the
 # dictionary is, with an example read out of the book itself, and which
 # address to fetch, with the measurement that condemns the other one.
+
+# The examples are the rule. Naming the operations would want words that are
+# not in the book — see the note in dicionario's machine_readable.py — and a
+# headword beside its real address says the same thing in no language at all.
+# Every pair is CHECKED AGAINST THE DIRECTORY before it is printed.
+SHOWN = ('propoziciono', '-a', 'a(d)', 'a posteriori', '*golfo', 'ah!',
+         'ampère', '«brokoli»-kaulo')
+
+
+def per_word():
+    """vorti/ — how many files, how big, and a few real addresses.
+
+    Returns None when the directory is not there, so the section is left out
+    rather than promised: an address announced and not served is worse than
+    one not announced.
+    """
+    import unicodedata
+    out = NEIGHBOURS / 'dicionario' / 'vorti'
+    if not (out / 'index.md').exists():
+        return None
+
+    def slug(v):
+        t = unicodedata.normalize('NFD', v.lower())
+        t = ''.join(c for c in t if unicodedata.category(c) != 'Mn')
+        t = re.sub(r'[^a-z0-9-]', '', t.replace(' ', '-'))
+        return re.sub(r'-{2,}', '-', t)
+
+    files = [f for f in out.glob('*.md') if f.name != 'index.md']
+    if not files:
+        return None
+    rows = [(v, slug(v)) for v in SHOWN if (out / (slug(v) + '.md')).exists()]
+    total = sum(f.stat().st_size for f in files)
+    return len(files), total // len(files), rows, weight(out / 'index.md')
+
+
 EXAMPLE = 'propoziciono'
 
 
@@ -335,6 +377,43 @@ def write_llms():
 
     L += ['## Fetching one article without downloading the book', '']
 
+    pw = per_word()
+    if pw:
+        n_files, avg, rows, idx_w = pw
+        L += ['**One word is one file, and you can WORK OUT its address** — '
+              'nothing to search, and no index to fetch first:',
+              '',
+              '    %s/dicionario/vorti/%s.md' % (SITE, EXAMPLE),
+              '',
+              'That is %d bytes. The rule is four steps: lower case, fold the '
+              'accent, a space becomes a hyphen, drop anything else. Ido is '
+              'written in plain ASCII, so it changes almost nothing.'
+              % avg,
+              '']
+        if rows:
+            L += ['| headword | address |', '| --- | --- |']
+            L += ['| `%s` | `%s/dicionario/vorti/%s.md` |' % (v, SITE, sl)
+                  for v, sl in rows]
+            L += ['']
+        L += ['The four marks dropped there carry sense in the book and none '
+              'of them survives a URL: the asterisk of the word NOT OFFICIAL, '
+              'the exclamation of the interjections, the parentheses of '
+              '`a(d)`, the guillemets of `«brokoli»-kaulo`. They are gone from '
+              'the ADDRESS only — each file prints its headword as the book '
+              'sets it.',
+              '',
+              '%s articles sit at %s addresses. Twelve addresses hold two '
+              'articles apiece, and serve both, so the rule never needs a '
+              'suffix. **A 404 means the word is not a headword** — most '
+              'often because it is a regular derivation, which this book '
+              'leaves to its root.'
+              % (count, f'{n_files:,}'),
+              '',
+              '- [vorti/index.md](%s/dicionario/vorti/index.md) — %s — every '
+              'address, for a crawler. A reader who knows the word does not '
+              'need it.' % (SITE, idx_w),
+              '']
+
     depth = page_depth(EXAMPLE)
     if depth:
         off, total, pct = depth
@@ -351,8 +430,10 @@ def write_llms():
                  EXAMPLE, weight_bytes(off), pct),
               '']
 
-    L += ['The files below are flat: no script runs, and one pass over any '
-          'one of them finds any headword.',
+    L += ['### The whole book, when one word is not what is wanted',
+          '',
+          'These are flat: no script runs, and one pass over any one of them '
+          'finds any headword.',
           '',
           '- `vortlisto.md` — one line per article, `headword — first sense`. '
           'The cheapest whole dictionary there is, and enough to settle '
@@ -403,8 +484,12 @@ def write_llms():
           '- [Table of the chapters](%s/gramatiko/chapitri/index.md) — the 49 '
           'chapters, with their sizes' % SITE,
           '',
-          'To **look up a word**, the word list is short; the full entries '
-          'are longer. Read the two sections above first.',
+          ('To **look up a word**, fetch it on its own — '
+           '`%s/dicionario/vorti/WORD.md`, some 600 bytes. Read the two '
+           'sections above first: the address rule is four steps, and the '
+           'definitions are in Ido.' % SITE) if per_word() else
+          ('To **look up a word**, the word list is short; the full entries '
+           'are longer. Read the two sections above first.'),
           '',
           '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
           '']
@@ -424,6 +509,10 @@ def write_llms():
           '',
           '%s articles. Ido defined in Ido — see above.' % count,
           '']
+    if per_word():
+        L += ['- [vorti/WORD.md](%s/dicionario/vorti/%s.md) — ~600 bytes — '
+              'ONE FILE PER WORD; the address is the headword'
+              % (SITE, EXAMPLE)]
     L += listing('dicionario', ('vortlisto.md',),
                  ' — headword and first sense only')
     L += listing('dicionario', ('dicionario.md',), ' — the full articles')
