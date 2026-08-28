@@ -71,6 +71,56 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://ido.help/gramatiko/temi/index.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/akuzativo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/imperativo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/infinitivo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/komplemento.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/kondicionalo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/negado.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/participo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/pasivo.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/gramatiko/temi/subjekto.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://ido.help/gramatiko/chapitri/index.md</loc>
     <lastmod>2026-08-28</lastmod>
     <priority>0.6</priority>

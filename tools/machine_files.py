@@ -205,6 +205,15 @@ def write_sitemap(today: str):
     if (vorti / 'index.md').exists():
         urls.append((f'{SITE}/dicionario/vorti/index.md', '0.6'))
 
+    # temi/ is ten files, not 9461: they go in beside the pages rather
+    # than into a child of their own.
+    temi = NEIGHBOURS / 'gramatiko' / 'temi'
+    if (temi / 'index.md').exists():
+        urls.append((f'{SITE}/gramatiko/temi/index.md', '0.6'))
+        for f in sorted(temi.glob('*.md')):
+            if f.name != 'index.md':
+                urls.append((f'{SITE}/gramatiko/temi/{f.name}', '0.5'))
+
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
     if (chapters / 'index.md').exists():
         urls.append((f'{SITE}/gramatiko/chapitri/index.md', '0.6'))
@@ -337,6 +346,29 @@ def example_entry(word):
     one = next((l for l in brief.read_text(encoding='utf-8').splitlines()
                 if l.startswith(word + ' — ')), None)
     return (block or None), one
+
+
+
+def per_topic():
+    """temi/ — the topics that cross the chapters, with their weights.
+
+    Same rule as per_word(): None when the directory is not beside this
+    repository, so the section falls out rather than promising an address
+    nothing serves. The titles are READ OUT OF temi/index.md and never
+    listed here, so a topic added or renamed there needs no edit in this
+    file.
+    """
+    out = NEIGHBOURS / 'gramatiko' / 'temi'
+    idx = out / 'index.md'
+    if not idx.exists():
+        return None
+    rows = re.findall(r'^\| (.+?) \| +(\d+) \| \[([^\]]+)\]',
+                      idx.read_text(encoding='utf-8'), re.M)
+    files = [f for f in out.glob('*.md') if f.name != 'index.md']
+    if not (rows and files):
+        return None
+    return rows, len(files), weight(idx), weight_bytes(
+        sum(f.stat().st_size for f in files))
 
 
 def page_depth(word):
@@ -538,7 +570,10 @@ def write_llms():
           '',
           'To **learn the grammar**, the chapters are the cheapest way in: '
           'each chapter is a separate file of some 10 kB. Do not download the '
-          'whole book for one question.',
+          'whole book for one question.'
+          + (' For a rule that no chapter is about — the `-n` ending, the '
+             'participle, the passive — fetch its topic file under '
+             '`%s/gramatiko/temi/` instead.' % SITE if per_topic() else ''),
           '',
           '- [Table of the chapters](%s/gramatiko/chapitri/index.md) — the 49 '
           'chapters, with their sizes' % SITE,
@@ -559,10 +594,45 @@ def write_llms():
         n = len([f for f in chapters.glob('*.md') if f.name != 'index.md'])
         L += ['- %d separate chapters, under `%s/gramatiko/chapitri/` — '
               'some 10 kB each' % (n, SITE)]
+    pt = per_topic()
+    if pt:
+        rows, n_files, idx_w, total_w = pt
+        L += ['- [temi/index.md](%s/gramatiko/temi/index.md) — %s — %d TOPICS '
+              'THAT CROSS THE CHAPTERS, %s in all'
+              % (SITE, idx_w, n_files, total_w)]
     L += listing('gramatiko', ('gramatiko.md',), ' — the whole book')
     L += ["- [gramatiko/](%s/gramatiko/) — the page, with its search "
           "(run in the browser, like the dictionary's)" % SITE, '']
 
+    if pt:
+        rows, n_files, idx_w, total_w = pt
+        L += ['### A rule that has no chapter', '',
+              'The book is split by chapter, which answers *how is the plural '
+              'formed* — there is a chapter called LA PLURALO EN IDO. It does '
+              'not answer *what does this grammar say about the `-n` ending*, '
+              'because no chapter is about it: that discussion is spread over '
+              'SINTAXO, VORTORDINO, ADVERBI and four more. `temi/` collects '
+              'each such topic into one file.',
+              '',
+              '| topic | blocks | address |', '| --- | ---: | --- |']
+        L += ['| %s | %s | `%s/gramatiko/temi/%s` |' % (t, n, SITE, f)
+              for t, n, f in rows]
+        L += ['',
+              '**Each file is the book quoted, not grammar rewritten.** Every '
+              'block in it is lifted verbatim from the chapters; the one '
+              'editorial act is the choice of search terms, and each file '
+              'prints the terms that built it. Nothing there is a rule '
+              'composed by this site.',
+              '',
+              '**Citations use the numbers the book prints** — `§ 126` — but '
+              'BEAUFRONT NUMBERED LESS THAN HALF HIS OWN BOOK: 138 paragraphs '
+              'carry a number and 723 blocks carry none, 27 of the 49 '
+              'chapters having no number anywhere. A block in an unnumbered '
+              'chapter is therefore cited by its chapter and its rank. Three '
+              'numbers also misbehave — § 28 does not exist, § 32 cannot be '
+              'found by number, § 55 is used twice — and `temi/index.md` says '
+              'so, because a citation by number needs it.',
+              '']
     L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, '
           '1934/1964',
           '',
