@@ -108,6 +108,8 @@ To **write a word the dictionary does not hold** — `kovrilo`, `skribilo`, `dom
 
 To go **from English to Ido**, `https://ido.help/tabeli/glosaro/en-GB.md` is the only direct answer on this site, and it is a modest one: 1897 pairs of concrete vocabulary, lifted from a parallel text. Neither the Dicionario nor the Gramatiko can be asked this question — both are in Ido throughout.
 
+To **use a verb correctly**, take its mark from `https://ido.help/dicionario/verbi.md`: whether it takes a direct object, and which preposition it governs. Both are printed in the article and nowhere else, and 31 verbs answer DIFFERENTLY FOR DIFFERENT SENSES — so read the mark on the sense you are using.
+
 ## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925
 
 - [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — the table, with each chapter's size
@@ -229,6 +231,29 @@ Fetch one as `https://ido.help/gramatiko/afixi/AFFIX.md` — the address is the 
 - [dicionario.json](https://ido.help/dicionario/dicionario.json) — 2.1 MB — the records, short keys
 - [dicionario.jsonl](https://ido.help/dicionario/dicionario.jsonl) — 8.6 MB — one record per line, long keys, with the printed text
 - [dicionario/](https://ido.help/dicionario/) — the page, for a PERSON to search
+
+### The grammar the articles carry
+
+**Before the first sense the book prints a bracketed group, and it holds the two things a WRITER needs.** Neither is stated anywhere else on this site.
+
+**Whether a verb takes a direct object.** 2,020 verbs are marked: 1,387 transitive, 587 intransitive, 15 both, and 31 that CHANGE WITH THE SENSE. In Ido this decides whether `-ig-` or `-es-` is the right derivation, so a verb used without it is a guess.
+
+**The preposition it governs.** 396 verbs name it, in 100 distinct forms — `adaptar ad`, `admirar pri, pro`, `admisar aden`, `acensar sur`.
+
+```
+finar — transitiva (senco 1), netransitiva (senco 2)
+fugar — netransitiva (senco 1), transitiva (senco 2)
+```
+
+**A VERB WHOSE ANSWER IS « IT DEPENDS ON THE SENSE » IS THE ONE MOST WORTH ASKING ABOUT.** 40 verbs are marked on the sense and not on the article — `fugar`, `finar`, `komencar`, `kombatar`, `embarkar` among them — and they are marked there precisely because they go both ways. Take the mark from the sense you are using, not from the headword.
+
+- [verbi.md](https://ido.help/dicionario/verbi.md) — 78 kB — every marked verb, its kind and its preposition, then an index BY preposition
+- [verbi.json](https://ido.help/dicionario/verbi.json) — 104 kB — the same, keyed
+
+**The subject field.** 953 distinct parentheticals, 88 of them naming five words or more — `bot.` 616, `zool.` 454, `anat.` 275, `patol.` 248. Use it to gather the vocabulary of one subject; `metaf.` marks the figurative sense and stands on no article at all, only on senses.
+
+- [faki.md](https://ido.help/dicionario/faki.md) — 75 kB — the fields and their words
+- [faki.json](https://ido.help/dicionario/faki.json) — 73 kB — the same, keyed
 
 ## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926
 
