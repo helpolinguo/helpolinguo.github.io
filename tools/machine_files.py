@@ -209,6 +209,11 @@ def write_sitemap(today: str):
     # than into a child of their own.
     # The 55 language files are the Tabeli's other half, and the map named
     # only their index.
+    clean = NEIGHBOURS / 'tabeli' / 'teksti'
+    if (clean / 'index.json').exists():
+        for f in sorted(clean.glob('*.json')):
+            urls.append((f'{SITE}/tabeli/teksti/{f.name}', '0.5'))
+
     lingui = NEIGHBOURS / 'tabeli' / 'lingui'
     if (lingui / 'index.json').exists():
         for f in sorted(lingui.glob('*.json')):
@@ -460,6 +465,26 @@ def parallel():
     # THE TWO SIDES ARE NOT IN THE SAME FORMAT, and a reader told to join
     # them has to be told that too: tabeli.json is Markdown, the language
     # files are the page's own HTML, furniture included.
+    # helpolinguo/tabeli#15 added teksti/: the same 55 languages through the
+    # same cleaner that makes tabeli.json. lingui/ stays what it always was,
+    # the browser's payload — so the map must now send a READER to teksti/
+    # and stop telling them to strip tags they need never see.
+    clean = base / 'teksti'
+    cl = sorted(f.name[:-5] for f in clean.glob('*.json')
+                if f.name != 'index.json') if clean.is_dir() else []
+    cl_pair, cl_weight, cl_aligned = None, None, 0
+    if cl:
+        for c in cl:
+            d = json.loads((clean / (c + '.json')).read_text(encoding='utf-8'))
+            if set(d) == set(t):
+                cl_aligned += 1
+        f = clean / 'en-GB.json'
+        if f.exists():
+            k = json.loads(f.read_text(encoding='utf-8'))
+            cl_weight = weight(f)
+            if PARALLEL_EXAMPLE in k and PARALLEL_EXAMPLE in t:
+                cl_pair = (t[PARALLEL_EXAMPLE]['io'], k[PARALLEL_EXAMPLE])
+
     md = sum(v['io'].count('**') for v in t.values())
     tags = butt = 0
     if en.exists():
@@ -469,6 +494,8 @@ def parallel():
     return {'segments': len(t), 'codes': codes, 'aligned': aligned,
             'shapes': sorted('/'.join(x) for x in shapes), 'pair': pair,
             'md': md, 'tags': tags, 'buttons': butt,
+            'clean': cl, 'clean_pair': cl_pair, 'clean_weight': cl_weight,
+            'clean_aligned': cl_aligned,
             'weight': weight(en) if en.exists() else None}
 
 
@@ -800,35 +827,58 @@ def write_llms():
     L += listing('tabeli', ('tabeli.json',), ' — the keys and the two languages')
     L += listing('tabeli', ('lingui/index.json',),
                  ' — the 55 other languages offered')
+    if pl and pl['clean']:
+        L += ['- `%s/tabeli/teksti/<code>.json` — one per language, %s each — '
+              '`{key: text}`, CLEAN: the same Markdown as `tabeli.json`, '
+              'nothing to strip' % (SITE, pl['clean_weight'] or '~140 kB')]
     if pl:
-        L += ['- `%s/tabeli/lingui/<code>.json` — one per language, %s each — '
-              '`{"k": {key: text}, "noto": {key: text}}`'
+        L += ['- `%s/tabeli/lingui/<code>.json` — the same languages as the '
+              "PAGE eats them, %s each — HTML with the reading page's "
+              'furniture in it. Not for text.'
               % (SITE, pl['weight'] or '~450 kB')]
     L += ['- [tabeli/](%s/tabeli/) — the page, with its search' % SITE, '']
     if pl:
         L += ['Codes: %s.' % ', '.join('`%s`' % c for c in pl['codes']),
               '', '### Joining two languages', '']
-        if pl['pair']:
-            def clip(t, n=140):
-                return t if len(t) <= n else t[:t.rfind(' ', 0, n)] + ' …'
-            io, en = (clip(t) for t in pl['pair'])
-            L += ['    tabeli.json        %s  io  %s' % (PARALLEL_EXAMPLE, io),
-                  '    lingui/en-GB.json  k → %s  %s' % (PARALLEL_EXAMPLE, en),
+        def clip(t, n=140):
+            return t if len(t) <= n else t[:t.rfind(' ', 0, n)] + ' …'
+        pair = pl['clean_pair'] or pl['pair']
+        src = 'teksti' if pl['clean_pair'] else 'lingui'
+        if pair:
+            io, en = (clip(t) for t in pair)
+            left = '%s/en-GB.json' % src
+            w = max(len('tabeli.json'), len(left))
+            L += ['    %-*s  %s  io  %s' % (w, 'tabeli.json',
+                                            PARALLEL_EXAMPLE, io),
+                  '    %-*s  %s      %s' % (w, left, PARALLEL_EXAMPLE, en),
                   '']
-        L += ['MEASURED: all %d language files carry EXACTLY the %s keys of '
-              '`tabeli.json`, and all have the same shape (%s). A join on the '
-              'key cannot miss.'
-              % (pl['aligned'], f"{pl['segments']:,}",
-                 ', '.join(pl['shapes'])),
+        L += [('MEASURED: all %d files under `teksti/` carry EXACTLY the %s '
+               'keys of `tabeli.json`, and so do all %d under `lingui/`. A '
+               'join on the key cannot miss.'
+               % (pl['clean_aligned'], f"{pl['segments']:,}", pl['aligned'])
+               if pl['clean'] else
+               'MEASURED: all %d language files carry EXACTLY the %s keys of '
+               '`tabeli.json`, and all have the same shape (%s). A join on '
+               'the key cannot miss.'
+               % (pl['aligned'], f"{pl['segments']:,}",
+                  ', '.join(pl['shapes']))),
               '',
-              '**THE TWO SIDES ARE NOT IN THE SAME FORMAT.** `tabeli.json` is '
-              'Markdown — %s `**` marks in the Ido and no HTML at all. The '
-              "language files are the reading page's own HTML: %s tags in "
-              '`en-GB`, of which %s are `<button>` — the magnifier, not text. '
-              'STRIP THE TAGS BEFORE QUOTING, or a sentence will arrive with a '
-              'button in the middle of it. All %d language files carry them.'
-              % (f"{pl['md']:,}", f"{pl['tags']:,}", f"{pl['buttons']:,}",
-                 pl['aligned']),
+              ('**TWO DIRECTORIES, AND ONLY ONE OF THEM IS TEXT.** '
+               '`teksti/` is the clean half: the same Markdown as '
+               '`tabeli.json` — %s `**` marks in the Ido, and nothing to '
+               'strip on either side. `lingui/` is what the PAGE eats, and '
+               'carries its furniture: %s tags in `en-GB`, of which %s are '
+               '`<button>` — the magnifier that reveals a plate reference, '
+               'not text. Use `teksti/` for reading and quoting; `lingui/` '
+               'only if you are rebuilding the page.'
+               % (f"{pl['md']:,}", f"{pl['tags']:,}", f"{pl['buttons']:,}")
+               if pl['clean'] else
+               '**THE TWO SIDES ARE NOT IN THE SAME FORMAT.** `tabeli.json` '
+               'is Markdown — %s `**` marks in the Ido and no HTML at all. '
+               "The language files are the reading page's own HTML: %s tags "
+               'in `en-GB`, of which %s are `<button>`. STRIP THE TAGS '
+               'BEFORE QUOTING.'
+               % (f"{pl['md']:,}", f"{pl['tags']:,}", f"{pl['buttons']:,}")),
               '',
               '**What it is and is not.** %s segments of concrete vocabulary — '
               'a schoolroom, a house, trades, games — in whole sentences, '

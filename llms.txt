@@ -151,7 +151,8 @@ The book is split by chapter, which answers *how is the plural formed* — there
 - [tabeli.md](https://ido.help/tabeli/tabeli.md) — 283 kB — Ido and French side by side
 - [tabeli.json](https://ido.help/tabeli/tabeli.json) — 288 kB — the keys and the two languages
 - [lingui/index.json](https://ido.help/tabeli/lingui/index.json) — 2 kB — the 55 other languages offered
-- `https://ido.help/tabeli/lingui/<code>.json` — one per language, 447 kB each — `{"k": {key: text}, "noto": {key: text}}`
+- `https://ido.help/tabeli/teksti/<code>.json` — one per language, 137 kB each — `{key: text}`, CLEAN: the same Markdown as `tabeli.json`, nothing to strip
+- `https://ido.help/tabeli/lingui/<code>.json` — the same languages as the PAGE eats them, 447 kB each — HTML with the reading page's furniture in it. Not for text.
 - [tabeli/](https://ido.help/tabeli/) — the page, with its search
 
 Codes: `af`, `apc`, `ar`, `arz`, `bho`, `bn`, `ca`, `cs`, `de-AT`, `de-DE`, `en-GB`, `en-US`, `eo`, `es-419`, `es-ES`, `et`, `eu`, `fa`, `fi`, `fr-CA`, `ga`, `gl`, `gu`, `ha`, `hi`, `ia`, `id`, `it`, `ja`, `jv`, `ko`, `lb`, `lt`, `mr`, `nl-BE`, `nl-NL`, `oc`, `pa`, `pl`, `pnb`, `pt-BR`, `pt-PT`, `rm`, `ro`, `ru`, `sv`, `ta`, `te`, `tr`, `uk`, `ur`, `vi`, `yue`, `zh-Hans`, `zh-Hant`.
@@ -159,11 +160,11 @@ Codes: `af`, `apc`, `ar`, `arz`, `bho`, `bn`, `ca`, `cs`, `de-AT`, `de-DE`, `en-
 ### Joining two languages
 
     tabeli.json        t01-01-1  io  1. — Ica tabelo reprezentas **docochambro** en **liceo.** En ica docochambro esas ok **tabli** (18) ed ok **benki** (32) . Sur singla benko …
-    lingui/en-GB.json  k → t01-01-1  1. — This chart shows a <b>classroom</b> in a <b>secondary school</b>. In this classroom there are eight <b>tables</b> <button class="lupo" …
+    teksti/en-GB.json  t01-01-1      1. — This chart shows a **classroom** in a **secondary school**. In this classroom there are eight **tables** (18) and eight **benches** …
 
-MEASURED: all 55 language files carry EXACTLY the 672 keys of `tabeli.json`, and all have the same shape (k/noto). A join on the key cannot miss.
+MEASURED: all 55 files under `teksti/` carry EXACTLY the 672 keys of `tabeli.json`, and so do all 55 under `lingui/`. A join on the key cannot miss.
 
-**THE TWO SIDES ARE NOT IN THE SAME FORMAT.** `tabeli.json` is Markdown — 4,640 `**` marks in the Ido and no HTML at all. The language files are the reading page's own HTML: 6,027 tags in `en-GB`, of which 1,742 are `<button>` — the magnifier, not text. STRIP THE TAGS BEFORE QUOTING, or a sentence will arrive with a button in the middle of it. All 55 language files carry them.
+**TWO DIRECTORIES, AND ONLY ONE OF THEM IS TEXT.** `teksti/` is the clean half: the same Markdown as `tabeli.json` — 4,640 `**` marks in the Ido, and nothing to strip on either side. `lingui/` is what the PAGE eats, and carries its furniture: 6,027 tags in `en-GB`, of which 1,742 are `<button>` — the magnifier that reveals a plate reference, not text. Use `teksti/` for reading and quoting; `lingui/` only if you are rebuilding the page.
 
 **What it is and is not.** 672 segments of concrete vocabulary — a schoolroom, a house, trades, games — in whole sentences, which is what makes it usable for WRITING Ido and not only for reading it. It is one book and one register: no abstract vocabulary, and not a dictionary. For a word, the Dicionario; for a rule, the Gramatiko.
 
