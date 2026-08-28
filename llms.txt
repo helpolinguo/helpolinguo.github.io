@@ -92,7 +92,7 @@ They are short because the reading page carries this file inline, and its weight
 
 ## Where to start
 
-To **learn the grammar**, the chapters are the cheapest way in: each chapter is a separate file of some 10 kB. Do not download the whole book for one question.
+To **learn the grammar**, the chapters are the cheapest way in: each chapter is a separate file of some 10 kB. Do not download the whole book for one question. For a rule that no chapter is about — the `-n` ending, the participle, the passive — fetch its topic file under `https://ido.help/gramatiko/temi/` instead.
 
 - [Table of the chapters](https://ido.help/gramatiko/chapitri/index.md) — the 49 chapters, with their sizes
 
@@ -102,8 +102,29 @@ To **look up a word**, fetch it on its own — `https://ido.help/dicionario/vort
 
 - [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — the table, with each chapter's size
 - 49 separate chapters, under `https://ido.help/gramatiko/chapitri/` — some 10 kB each
+- [temi/index.md](https://ido.help/gramatiko/temi/index.md) — 6 kB — 9 TOPICS THAT CROSS THE CHAPTERS, 160 kB in all
 - [gramatiko.md](https://ido.help/gramatiko/gramatiko.md) — 480 kB — the whole book
 - [gramatiko/](https://ido.help/gramatiko/) — the page, with its search (run in the browser, like the dictionary's)
+
+### A rule that has no chapter
+
+The book is split by chapter, which answers *how is the plural formed* — there is a chapter called LA PLURALO EN IDO. It does not answer *what does this grammar say about the `-n` ending*, because no chapter is about it: that discussion is spread over SINTAXO, VORTORDINO, ADVERBI and four more. `temi/` collects each such topic into one file.
+
+| topic | blocks | address |
+| --- | ---: | --- |
+| Akuzativo — la finalo « -n » | 47 | `https://ido.help/gramatiko/temi/akuzativo.md` |
+| Subjekto | 41 | `https://ido.help/gramatiko/temi/subjekto.md` |
+| Komplemento | 53 | `https://ido.help/gramatiko/temi/komplemento.md` |
+| Participo | 47 | `https://ido.help/gramatiko/temi/participo.md` |
+| Infinitivo | 35 | `https://ido.help/gramatiko/temi/infinitivo.md` |
+| Pasivo | 41 | `https://ido.help/gramatiko/temi/pasivo.md` |
+| Kondicionalo | 20 | `https://ido.help/gramatiko/temi/kondicionalo.md` |
+| Imperativo | 10 | `https://ido.help/gramatiko/temi/imperativo.md` |
+| Negado | 10 | `https://ido.help/gramatiko/temi/negado.md` |
+
+**Each file is the book quoted, not grammar rewritten.** Every block in it is lifted verbatim from the chapters; the one editorial act is the choice of search terms, and each file prints the terms that built it. Nothing there is a rule composed by this site.
+
+**Citations use the numbers the book prints** — `§ 126` — but BEAUFRONT NUMBERED LESS THAN HALF HIS OWN BOOK: 138 paragraphs carry a number and 723 blocks carry none, 27 of the 49 chapters having no number anywhere. A block in an unnumbered chapter is therefore cited by its chapter and its rank. Three numbers also misbehave — § 28 does not exist, § 32 cannot be found by number, § 55 is used twice — and `temi/index.md` says so, because a citation by number needs it.
 
 ## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964
 
