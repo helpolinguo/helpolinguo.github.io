@@ -46,6 +46,16 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://ido.help/dicionario/dicionario.jsonl</loc>
+    <lastmod>2026-08-25</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/dicionario/dicionario.tsv</loc>
+    <lastmod>2026-08-25</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://ido.help/dicionario/vortlisto.md</loc>
     <lastmod>2026-08-25</lastmod>
     <priority>0.6</priority>

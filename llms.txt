@@ -4,27 +4,92 @@
 
 Ido is an international auxiliary language, published in 1907 and derived from Esperanto. This site offers the three fundamental works in a form legible to people and to machines.
 
+## Read this before quoting a definition
+
+**The Dicionario defines Ido in Ido.** It is a MONOLINGUAL dictionary: the headword is Ido and so is the definition under it. There is no English column, here or anywhere on the site. An answer built from the English cognate of a headword is not this book's answer, and for most words it is not the same answer.
+
+**The languages listed against an article are not translations.** They are the languages in which the root is ATTESTED — the evidence on which Ido admitted it, printed `DEFIRS` in the book. `Angla` means the root has an English cognate. It does not mean the article gives an English gloss, and no article does.
+
+**Give the senses as they are numbered, with their fields.** Each sense carries the domain it belongs to — `(logiko)`, `(gram.)`, `(bot.)`, `(teol.)`. Quote them all, or say which one you are quoting.
+
+**A word may be absent, and that is an answer.** The 9,473 articles are the ROOTS. A regularly derived form — `-eto`, `-ilo`, `-ero`, `-ala` — has no article of its own and is read off its root and the Gramatiko's affix chapters. If a headword is not in the list, say so; do not supply one from another dictionary.
+
+**If the text could not be fetched, say that.** An article that was not read cannot be quoted, and the senses of the English cognate are not a substitute for it.
+
+### A worked example — `propoziciono`
+
+In `dicionario.md`, the article stands under a `##` heading:
+
+    ## propoziciono
+    1. (logiko) Enunco di judiko
+    2. (gram.) Asembluro ek objekto, verbo ed atributo
+    3. (geom.) Enunco di teoremo demonstrenda
+    4. (teol.) Afirmo dogmatala
+    <!-- p. 465, l. 47 | Germana, Angla, Franca, Italiana, Rusa, Hispana -->
+
+Four senses in four domains, every one of them defined in Ido; the trailing comment gives the page and line of the printing, then the attesting languages. The English word *proposition* would suggest an « offer » sense: the book has none.
+
+In `vortlisto.md` the same article is one line — headword, then the first sense only:
+
+    propoziciono — (logiko) Enunco di judiko
+
+## Fetching one article without downloading the book
+
+**Do not fetch `https://ido.help/dicionario/?q=WORD` in order to READ a word.** The address is a real search and the page honours it, but the search is run BY THE BROWSER: the page carries every article as one JSON block and filters it after loading. The page weighs 2.1 MB and the articles are in alphabetical order, so `propoziciono` begins 1.5 MB into it — 73 % of the way through. A fetcher that truncates before that point reads the letter A and reports the word missing. Use the address to send a PERSON to the word; do not use it to read the word.
+
+The files below are flat: no script runs, and one pass over any one of them finds any headword.
+
+- `vortlisto.md` — one line per article, `headword — first sense`. The cheapest whole dictionary there is, and enough to settle whether a word exists.
+- `dicionario.tsv` — one line per article, tab-separated, the senses joined by ` ¶ `. Columns: `vedetto fako senci nomi_latina simbolo_kemiala lingui kodo pagino ligno imago drapeli`.
+- `dicionario.md` — the complete articles, each under `## headword`.
+- `dicionario.json` — the same records, under SHORT keys; the table below reads them.
+- `dicionario.jsonl` — one record per line, under the long keys, and carrying `teksto`, the article as it stands in the printing.
+
+### The keys of `dicionario.json`
+
+They are short because the reading page carries this file inline, and its weight is the page's. `dicionario.jsonl` gives the same fields under the long names, which are the ones the project uses in prose.
+
+| key | long name | what it holds |
+| --- | --- | --- |
+| `v` | `vedetto` | the headword |
+| `f` | `fako` | the domain of the whole article, or `null` |
+| `b` | `senci` | the senses, in the order printed; each is `{"t": text, "u": sub-entries}` |
+| `u` | `sub` | phrases under a sense: `{"k": the phrase, "t": its definition}` |
+| `n` | `lingui` | the ATTESTING languages — not translations |
+| `p` | `pagino` | page of the 1964 printing |
+| `g` | `ligno` | line on that page |
+| `l` | `latina` | the Latin binomial, for plants and animals |
+| `y` | `simbolo` | the chemical symbol; present on 90 records |
+| `c` | `citita` | `1` where the headword is printed as a citation form (`amen`, `a posteriori`) |
+| `d` | `drapeli` | flags left by the transcription, for review |
+
+`y` and `c` are written only where they are set; the rest are on every record.
+
 ## Where to start
 
 To **learn the grammar**, the chapters are the cheapest way in: each chapter is a separate file of some 10 kB. Do not download the whole book for one question.
 
 - [Table of the chapters](https://ido.help/gramatiko/chapitri/index.md) — the 49 chapters, with their sizes
 
-To **look up a word**, the word list is short; the full entries are longer.
+To **look up a word**, the word list is short; the full entries are longer. Read the two sections above first.
 
 ## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925
 
 - [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — the table, with each chapter's size
 - 49 separate chapters, under `https://ido.help/gramatiko/chapitri/` — some 10 kB each
 - [gramatiko.md](https://ido.help/gramatiko/gramatiko.md) — 480 kB — the whole book
-- [gramatiko/](https://ido.help/gramatiko/) — the page, with its search
+- [gramatiko/](https://ido.help/gramatiko/) — the page, with its search (run in the browser, like the dictionary's)
 
 ## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964
 
+9,473 articles. Ido defined in Ido — see above.
+
 - [vortlisto.md](https://ido.help/dicionario/vortlisto.md) — 923 kB — headword and first sense only
-- [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 MB — the full entries
-- [dicionario.json](https://ido.help/dicionario/dicionario.json) — 2.1 MB — the data, to be queried
-- [dicionario/](https://ido.help/dicionario/) — the page, with its search
+- [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 MB — the full articles
+- [dicionario.tsv](https://ido.help/dicionario/dicionario.tsv) — 1.5 MB — one line per article, tab-separated
+- [dicionario.json](https://ido.help/dicionario/dicionario.json) — 2.1 MB — the records, short keys
+- [dicionario.jsonl](https://ido.help/dicionario/dicionario.jsonl) — 8.6 MB — one record per line, long keys, with the printed text
+- [dicionario/](https://ido.help/dicionario/) — the page, for a PERSON to search
 
 ## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926
 
@@ -37,6 +102,7 @@ A table comparing **57 languages**. The keys of `tabeli.json` are those of `ling
 
 ## Notes
 
-- The `.md` and `.json` files are GENERATED from the pages. The source stays `index.html` in each repository.
+- The `.md`, `.json`, `.jsonl` and `.tsv` files are GENERATED from the pages. The source stays `index.html` in each repository.
+- The three works are transcriptions of printed books, and the transcription is the site's own work. Where an article is hard to read, `drapeli` says so rather than the text being mended.
 - No rate limit: the site is static.
 - Code and transcriptions: https://github.com/helpolinguo
