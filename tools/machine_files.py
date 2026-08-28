@@ -207,6 +207,14 @@ def write_sitemap(today: str):
 
     # temi/ is ten files, not 9461: they go in beside the pages rather
     # than into a child of their own.
+    # The 55 language files are the Tabeli's other half, and the map named
+    # only their index.
+    lingui = NEIGHBOURS / 'tabeli' / 'lingui'
+    if (lingui / 'index.json').exists():
+        for f in sorted(lingui.glob('*.json')):
+            if f.name != 'index.json':
+                urls.append((f'{SITE}/tabeli/lingui/{f.name}', '0.5'))
+
     temi = NEIGHBOURS / 'gramatiko' / 'temi'
     if (temi / 'index.md').exists():
         urls.append((f'{SITE}/gramatiko/temi/index.md', '0.6'))
@@ -403,6 +411,67 @@ def numbering(idx: str):
             'quirks': quirks}
 
 
+
+# THE ONE PLACE ON THIS SITE WHERE IDO STANDS BESIDE ANOTHER LANGUAGE. The
+# Dicionario defines Ido in Ido and the Gramatiko is in Ido throughout, so a
+# reader who wants « what is the Ido for X » has, in those two, nothing to
+# go on. The Tabeli has: 672 segments, aligned on one key, in 57 languages,
+# English among them. The map said « 57 languages » and « join them on the
+# key » and named not one of them, so nothing in it revealed that an
+# attested Ido–English pair was there to be had.
+PARALLEL_EXAMPLE = 't01-01-1'
+
+
+def parallel():
+    """The Tabeli as a parallel text: how many segments, which languages,
+    and one real pair.
+
+    The alignment is CHECKED here, not asserted: every language file must
+    carry exactly the keys tabeli.json carries, or the claim that a join
+    cannot miss is not made. None when the book is not beside us.
+    """
+    import json
+    base = NEIGHBOURS / 'tabeli'
+    main, idx = base / 'tabeli.json', base / 'lingui' / 'index.json'
+    if not (main.exists() and idx.exists()):
+        return None
+    t = json.loads(main.read_text(encoding='utf-8'))
+    codes = [l['kodexo'] for l in
+             json.loads(idx.read_text(encoding='utf-8'))['lingui']]
+
+    aligned, shapes = 0, set()
+    for c in codes:
+        f = base / 'lingui' / (c + '.json')
+        if not f.exists():
+            continue
+        d = json.loads(f.read_text(encoding='utf-8'))
+        shapes.add(tuple(sorted(d)))
+        if set(d.get('k', {})) == set(t):
+            aligned += 1
+    if not aligned:
+        return None
+
+    pair = None
+    en = base / 'lingui' / 'en-GB.json'
+    if en.exists() and PARALLEL_EXAMPLE in t:
+        k = json.loads(en.read_text(encoding='utf-8')).get('k', {})
+        if PARALLEL_EXAMPLE in k:
+            pair = (t[PARALLEL_EXAMPLE]['io'], k[PARALLEL_EXAMPLE])
+    # THE TWO SIDES ARE NOT IN THE SAME FORMAT, and a reader told to join
+    # them has to be told that too: tabeli.json is Markdown, the language
+    # files are the page's own HTML, furniture included.
+    md = sum(v['io'].count('**') for v in t.values())
+    tags = butt = 0
+    if en.exists():
+        k = json.loads(en.read_text(encoding='utf-8')).get('k', {})
+        tags = sum(len(re.findall(r'<[a-z][^>]*>', v)) for v in k.values())
+        butt = sum(len(re.findall(r'<button', v)) for v in k.values())
+    return {'segments': len(t), 'codes': codes, 'aligned': aligned,
+            'shapes': sorted('/'.join(x) for x in shapes), 'pair': pair,
+            'md': md, 'tags': tags, 'buttons': butt,
+            'weight': weight(en) if en.exists() else None}
+
+
 def page_depth(word):
     """How far into /dicionario/ the article for `word` BEGINS.
 
@@ -479,6 +548,14 @@ def write_llms():
         '**If the text could not be fetched, say that.** An article that was '
         'not read cannot be quoted, and the senses of the English cognate are '
         'not a substitute for it.',
+        '',
+        '**To go the other way — from a meaning to an Ido word — search the '
+        'DEFINITIONS.** The book has no index in any other language, but its '
+        'definitions are text: `fugar` is reached by looking through '
+        '`vortlisto.md` for « forirar » or « evitar », not by looking up '
+        '*flee*. And for a concrete word there is the Tabeli below, which is '
+        'a parallel text in 57 languages and the one place on this site where '
+        'Ido stands beside English.',
         '',
     ]
 
@@ -701,16 +778,65 @@ def write_llms():
           '']
 
     L += ['## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926',
-          '',
-          'A table comparing **57 languages**. The keys of `tabeli.json` are '
-          'those of `lingui/*.json`: to obtain any pair of languages, join '
-          'them on the key.',
           '']
+    pl = parallel()
+    if pl:
+        L += ['**A PARALLEL TEXT IN 57 LANGUAGES.** %s segments, each aligned '
+              'on one key, in Ido, French and %d more — `en-GB` and `en-US` '
+              'among them.' % (f"{pl['segments']:,}", len(pl['codes'])),
+              '',
+              '**THIS IS THE ONLY PLACE ON THE SITE WHERE IDO STANDS BESIDE '
+              'ANOTHER LANGUAGE.** The Dicionario defines Ido in Ido and the '
+              'Gramatiko is in Ido throughout, so neither can answer *what is '
+              'the Ido for X*. This can, from an attested text rather than '
+              'from invention.',
+              '']
+    else:
+        L += ['A table comparing **57 languages**. The keys of `tabeli.json` '
+              'are those of `lingui/*.json`: to obtain any pair of languages, '
+              'join them on the key.',
+              '']
     L += listing('tabeli', ('tabeli.md',), ' — Ido and French side by side')
     L += listing('tabeli', ('tabeli.json',), ' — the keys and the two languages')
     L += listing('tabeli', ('lingui/index.json',),
                  ' — the 55 other languages offered')
+    if pl:
+        L += ['- `%s/tabeli/lingui/<code>.json` — one per language, %s each — '
+              '`{"k": {key: text}, "noto": {key: text}}`'
+              % (SITE, pl['weight'] or '~450 kB')]
     L += ['- [tabeli/](%s/tabeli/) — the page, with its search' % SITE, '']
+    if pl:
+        L += ['Codes: %s.' % ', '.join('`%s`' % c for c in pl['codes']),
+              '', '### Joining two languages', '']
+        if pl['pair']:
+            def clip(t, n=140):
+                return t if len(t) <= n else t[:t.rfind(' ', 0, n)] + ' …'
+            io, en = (clip(t) for t in pl['pair'])
+            L += ['    tabeli.json        %s  io  %s' % (PARALLEL_EXAMPLE, io),
+                  '    lingui/en-GB.json  k → %s  %s' % (PARALLEL_EXAMPLE, en),
+                  '']
+        L += ['MEASURED: all %d language files carry EXACTLY the %s keys of '
+              '`tabeli.json`, and all have the same shape (%s). A join on the '
+              'key cannot miss.'
+              % (pl['aligned'], f"{pl['segments']:,}",
+                 ', '.join(pl['shapes'])),
+              '',
+              '**THE TWO SIDES ARE NOT IN THE SAME FORMAT.** `tabeli.json` is '
+              'Markdown — %s `**` marks in the Ido and no HTML at all. The '
+              "language files are the reading page's own HTML: %s tags in "
+              '`en-GB`, of which %s are `<button>` — the magnifier, not text. '
+              'STRIP THE TAGS BEFORE QUOTING, or a sentence will arrive with a '
+              'button in the middle of it. All %d language files carry them.'
+              % (f"{pl['md']:,}", f"{pl['tags']:,}", f"{pl['buttons']:,}",
+                 pl['aligned']),
+              '',
+              '**What it is and is not.** %s segments of concrete vocabulary — '
+              'a schoolroom, a house, trades, games — in whole sentences, '
+              'which is what makes it usable for WRITING Ido and not only for '
+              'reading it. It is one book and one register: no abstract '
+              'vocabulary, and not a dictionary. For a word, the Dicionario; '
+              'for a rule, the Gramatiko.' % f"{pl['segments']:,}",
+              '']
 
     L += ['## Notes',
           '',
