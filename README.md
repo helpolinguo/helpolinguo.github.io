@@ -85,6 +85,31 @@ Intents, can do that. And Safari has to have seen the site at least once:
 the list is built from visits, not from a registry. Safari on iOS ignores
 OpenSearch entirely.
 
+## What a machine is told, and where it is sent
+
+`llms.txt` is the map, and it grew two paths that were missing — the two a
+model asked to **write** Ido needs, as against one asked to read it.
+
+**Deriving a word.** The Dicionario carries the roots, so `kovrilo`,
+`skribilo`, `dometo`, `hundino` are none of them headwords and no number of
+articles will yield one. `gramatiko/afixi/` gives each of the **65 affixes**
+its own file of about 2 kB, and the map now carries the whole inventory
+inline, with the first example the book prints under each — so a reader of
+`llms.txt` alone already holds the derivational system.
+
+**Going from a meaning to an Ido word.** `tabeli/glosaro/` pairs the
+Tabeli's bold terms with their equivalents in 56 languages — **1,897 pairs
+in `en-GB`** — and is the only place the site answers *what is the Ido for
+X*. The map said, until now, that no such index existed; it says instead
+where it is, and that it is small and concrete, so that a model reaching
+for an abstract word is sent back to the definitions rather than left to
+invent one.
+
+Both are read out of the neighbouring repositories, like everything else in
+`machine_files.py`, and both **degrade silently**: run without those
+directories, the map is 14 kB and mentions neither, and the sitemap drops
+back from 364 addresses to 185.
+
 ## The song in the O
 
 Seven clicks on the mark inside seven seconds, and the **O becomes a

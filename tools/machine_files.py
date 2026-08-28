@@ -227,6 +227,27 @@ def write_sitemap(today: str):
             if f.name != 'index.md':
                 urls.append((f'{SITE}/gramatiko/temi/{f.name}', '0.5'))
 
+    # afixi/ is 66 files. They earn a place beside the chapters because
+    # every DERIVED word in the language is read off one of them, and the
+    # Dicionario carries only the roots.
+    afixi = NEIGHBOURS / 'gramatiko' / 'afixi'
+    if (afixi / 'index.md').exists():
+        urls.append((f'{SITE}/gramatiko/afixi/index.md', '0.6'))
+        for f in sorted(afixi.glob('*.md')):
+            if f.name != 'index.md':
+                urls.append((f'{SITE}/gramatiko/afixi/{f.name}', '0.4'))
+
+    # glosaro/ is the one place the site answers « what is the Ido for X ».
+    glosaro = NEIGHBOURS / 'tabeli' / 'glosaro'
+    if (glosaro / 'index.md').exists():
+        urls.append((f'{SITE}/tabeli/glosaro/index.md', '0.6'))
+        for f in sorted(glosaro.glob('*.md')):
+            if f.name != 'index.md':
+                urls.append((f'{SITE}/tabeli/glosaro/{f.name}', '0.5'))
+        for f in sorted(glosaro.glob('*.json')):
+            if f.name != 'index.json':
+                urls.append((f'{SITE}/tabeli/glosaro/{f.name}', '0.4'))
+
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
     if (chapters / 'index.md').exists():
         urls.append((f'{SITE}/gramatiko/chapitri/index.md', '0.6'))
@@ -360,6 +381,42 @@ def example_entry(word):
                 if l.startswith(word + ' — ')), None)
     return (block or None), one
 
+
+
+def affixes():
+    """afixi/ — one file per affix, with the example the book prints.
+
+    Read out of afixi/index.md rather than counted here: that file is
+    generated from the chapters at every build, so it cannot go stale
+    against them, and a figure written twice is a figure that will be
+    wrong in one of the two places.
+    """
+    idx = NEIGHBOURS / 'gramatiko' / 'afixi' / 'index.md'
+    if not idx.exists():
+        return []
+    rows = []
+    for line in idx.read_text(encoding='utf-8').splitlines():
+        m = re.match(r'\| \[([^\]]+)\]\([^)]+\) \| ([^|]+) \| ([^|]*) \|',
+                     line)
+        if m:
+            rows.append((m.group(1), m.group(2).strip(), m.group(3).strip()))
+    return rows
+
+
+def glossary():
+    """glosaro/ — the paired terms, and what each language file weighs."""
+    import json
+    idx = NEIGHBOURS / 'tabeli' / 'glosaro' / 'index.json'
+    if not idx.exists():
+        return None
+    d = json.loads(idx.read_text(encoding='utf-8'))
+    rows = d.get('lingui', [])
+    if not rows:
+        return None
+    best = max(rows, key=lambda r: r['pari'])
+    en = next((r for r in rows if r['kodexo'] == 'en-GB'), best)
+    return {'lingui': len(rows), 'termini': d.get('termini grasa en Ido'),
+            'en': en, 'best': best}
 
 
 def per_topic():
@@ -576,13 +633,28 @@ def write_llms():
         'not read cannot be quoted, and the senses of the English cognate are '
         'not a substitute for it.',
         '',
-        '**To go the other way — from a meaning to an Ido word — search the '
-        'DEFINITIONS.** The book has no index in any other language, but its '
-        'definitions are text: `fugar` is reached by looking through '
-        '`vortlisto.md` for « forirar » or « evitar », not by looking up '
-        '*flee*. And for a concrete word there is the Tabeli below, which is '
-        'a parallel text in 57 languages and the one place on this site where '
-        'Ido stands beside English.',
+        # THIS PARAGRAPH SAID « the book has no index in any other
+        # language » AND STOPPED THERE. That was true of the Dicionario and
+        # is still true of it, but it was the whole answer only while the
+        # Tabeli's bold went unpaired. glosaro/ now answers the concrete
+        # half directly, so the search through the definitions is the
+        # FALLBACK and no longer the first move.
+        ('**To go the other way — from a meaning to an Ido word — start at '
+         'the GLOSSARY, and fall back on the DEFINITIONS.** For a concrete '
+         "word, `%s/tabeli/glosaro/en-GB.md` answers outright: it is the "
+         "Tabeli's bold terms set against their equivalents, and it carries "
+         'both directions. It is one book of concrete vocabulary and will '
+         'not hold an abstract word.' % SITE) if glossary() else
+        ('**To go the other way — from a meaning to an Ido word — search the '
+         'DEFINITIONS.** The site has no index in any other language.'),
+        '',
+        ('Where it does not, the Dicionario has no index in any other '
+         'language, but its definitions are text: `fugar` is reached by '
+         'looking through `vortlisto.md` for « forirar » or « evitar », not '
+         'by looking up *flee*.') if glossary() else
+        ('The definitions are text, though: `fugar` is reached by looking '
+         'through `vortlisto.md` for « forirar » or « evitar », not by '
+         'looking up *flee*.'),
         '',
     ]
 
@@ -721,6 +793,32 @@ def write_llms():
           ('To **look up a word**, the word list is short; the full entries '
            'are longer. Read the two sections above first.'),
           '',
+          # THE TWO PATHS THAT WERE MISSING, AND THEY ARE THE TWO A MODEL
+          # ASKED TO WRITE IDO NEEDS. Reading the language is served by the
+          # chapters and the articles; WRITING it is not, because the word
+          # wanted is usually derived (and so in no article) and the meaning
+          # wanted is usually English (and so in no index).
+          ] + ([
+              'To **write a word the dictionary does not hold** — `kovrilo`, '
+              '`skribilo`, `dometo`, `hundino` are none of them headwords — '
+              'take the root from the Dicionario and the affix from '
+              '`%s/gramatiko/afixi/`, one small file each. The 9,473 '
+              'articles are the ROOTS, and derivation is where the rest of '
+              'the language is.' % SITE,
+              '',
+              '- [Table of the affixes](%s/gramatiko/afixi/index.md) — the '
+              '%d of them, each with the example the book prints'
+              % (SITE, len(affixes())),
+              '',
+          ] if affixes() else []) + ([
+              'To go **from English to Ido**, `%s/tabeli/glosaro/en-GB.md` '
+              'is the only direct answer on this site, and it is a modest '
+              'one: %d pairs of concrete vocabulary, lifted from a parallel '
+              'text. Neither the Dicionario nor the Gramatiko can be asked '
+              'this question — both are in Ido throughout.'
+              % (SITE, glossary()['en']['pari']),
+              '',
+          ] if glossary() else []) + [
           '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
           '']
     L += ['- [chapitri/index.md](%s/gramatiko/chapitri/index.md) — the table, '
@@ -781,6 +879,40 @@ def write_llms():
                      'does' if len(num['quirks']) == 1 else 'do',
                      ', '.join('§ ' + q for q in num['quirks'])),
                   '']
+    af = affixes()
+    if af:
+        kinds = {}
+        for _, kind, _ in af:
+            kinds[kind] = kinds.get(kind, 0) + 1
+        L += ['### Deriving a word the dictionary does not hold', '',
+              '**The Dicionario carries the ROOTS.** `kovrilo`, `skribilo`, '
+              '`dometo`, `hundino` are none of them headwords, and no number '
+              'of articles will yield one: they are the root plus an affix, '
+              'and the affix is here. Each of the %d has its own file of '
+              'about 2 kB, holding the book\'s own paragraphs on it.'
+              % len(af),
+              '',
+              '- [afixi/index.md](%s/gramatiko/afixi/index.md) — the table: '
+              '%s' % (SITE, ', '.join('%d %s' % (n, k)
+                                      for k, n in kinds.items())),
+              '',
+              'The whole inventory, with the first example the book prints '
+              'under each. **The example is the book\'s, not this site\'s.**',
+              '',
+              '| affix | kind | the book\'s example |',
+              '| --- | --- | --- |']
+        L += ['| `%s` | %s | %s |' % (a, k, e or '—') for a, k, e in af]
+        L += ['',
+              'Fetch one as `%s/gramatiko/afixi/AFFIX.md` — the address is '
+              'the affix as it stands in the table, hyphens included: '
+              '`-il-.md`, `-ebl-.md`, `des-.md`, `mono-.md`.' % SITE,
+              '',
+              '`sen-` has no file of its own: the book gives it no section '
+              'and discusses it under `ne-`. And `auto` is the one affix '
+              'whose file carries no example — its examples stand in the '
+              "chapter's opening footnote rather than in its own section.",
+              '']
+
     L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, '
           '1934/1964',
           '',
@@ -886,6 +1018,46 @@ def write_llms():
               'reading it. It is one book and one register: no abstract '
               'vocabulary, and not a dictionary. For a word, the Dicionario; '
               'for a rule, the Gramatiko.' % f"{pl['segments']:,}",
+              '']
+
+    gl = glossary()
+    if gl:
+        L += ['### From a meaning to an Ido word — the glossary', '',
+              '**THE ONLY PLACE THE SITE ANSWERS « what is the Ido for X ».** '
+              'The two booklets set the same thing in bold — the vocabulary '
+              'word the plate illustrates — so the n-th bold run of a segment '
+              'answers the n-th of that segment in any language, and the '
+              'pairs fall out BY POSITION. Nothing is translated here: every '
+              'pair is two passages of a printed parallel text.',
+              '',
+              '- `%s/tabeli/glosaro/<code>.md` — **both directions, flat**, '
+              'about %d kB. The cheapest complete form, and the one to fetch.'
+              % (SITE, gl['en']['okteti-md'] // 1024),
+              '- `%s/tabeli/glosaro/<code>.json` — the same, about %d kB, '
+              'with the segment keys, so any pair can be carried back to the '
+              'printing and checked.' % (SITE, gl['en']['okteti'] // 1024),
+              '- [glosaro/index.md](%s/tabeli/glosaro/index.md) — the %d '
+              'languages, with what each holds' % (SITE, gl['lingui']),
+              '',
+              '```',
+              'glosaro/en-GB.md    katedro — desk',
+              '                    desk — katedro',
+              '```',
+              '',
+              '**IT IS SMALL, AND IT IS ONE REGISTER.** %s bold terms in the '
+              'Ido give %s pairs in `en-GB` and %s in `%s`, which is the '
+              'fullest of the %d. The vocabulary is concrete — a schoolroom, '
+              'a house, trades, games — so an abstract word will not be '
+              'there. When it is not, look through the Dicionario\'s '
+              'definitions instead, as the section on quoting says.'
+              % (f"{gl['termini']:,}", f"{gl['en']['pari']:,}",
+                 f"{gl['best']['pari']:,}", gl['best']['kodexo'],
+                 gl['lingui']),
+              '',
+              '**What is missing is missing on purpose.** Where a segment\'s '
+              'bold counts do not answer between the two languages, the whole '
+              'segment is dropped rather than guessed at: five bold in Ido '
+              'against four in the target says one is missing, and not which.',
               '']
 
     L += ['## Notes',
