@@ -367,8 +367,40 @@ def per_topic():
     files = [f for f in out.glob('*.md') if f.name != 'index.md']
     if not (rows and files):
         return None
-    return rows, len(files), weight(idx), weight_bytes(
-        sum(f.stat().st_size for f in files))
+    return (rows, len(files), weight(idx),
+            weight_bytes(sum(f.stat().st_size for f in files)),
+            numbering(idx.read_text(encoding='utf-8')))
+
+
+# THE FIGURES ARE READ, NOT RESTATED. They were written out here by hand
+# once — « 138 paragraphs carry a number », « § 32 cannot be found by
+# number » — and helpolinguo/gramatiko#14 falsified both in one commit: it
+# repaired § 32, which the site then went on asserting was unreachable.
+# temi/index.md is generated from the chapters at every build, so it is the
+# one place the numbers can be true, and it is where they are now taken
+# from. A figure this file cannot read, it does not print.
+NUMBERING = re.compile(
+    r'numerizas (\d+) paragrafi, de § (\d+) a § (\d+).*?'
+    r'([\d\u202f,]+) bloki, ([\d\u202f,]+) okteti, ne portas numero, '
+    r'e (\d+) chapitri', re.S)
+
+
+def numbering(idx: str):
+    """How the book numbers itself, out of temi/index.md.
+
+    Returns None when the shape of that file has moved under us — better a
+    section that says less than a section that says something false, which
+    is the whole reason this function exists.
+    """
+    m = NUMBERING.search(idx)
+    if not m:
+        return None
+    n = lambda t: int(re.sub(r'[^0-9]', '', t))
+    quirks = re.findall(r'^- \*\*§ (\d+)', idx, re.M)
+    return {'numbered': n(m.group(1)), 'first': n(m.group(2)),
+            'last': n(m.group(3)), 'blocks_un': n(m.group(4)),
+            'bytes_un': n(m.group(5)), 'chapters_un': n(m.group(6)),
+            'quirks': quirks}
 
 
 def page_depth(word):
@@ -596,7 +628,7 @@ def write_llms():
               'some 10 kB each' % (n, SITE)]
     pt = per_topic()
     if pt:
-        rows, n_files, idx_w, total_w = pt
+        rows, n_files, idx_w, total_w, num = pt
         L += ['- [temi/index.md](%s/gramatiko/temi/index.md) — %s — %d TOPICS '
               'THAT CROSS THE CHAPTERS, %s in all'
               % (SITE, idx_w, n_files, total_w)]
@@ -605,7 +637,7 @@ def write_llms():
           "(run in the browser, like the dictionary's)" % SITE, '']
 
     if pt:
-        rows, n_files, idx_w, total_w = pt
+        rows, n_files, idx_w, total_w, num = pt
         L += ['### A rule that has no chapter', '',
               'The book is split by chapter, which answers *how is the plural '
               'formed* — there is a chapter called LA PLURALO EN IDO. It does '
@@ -624,15 +656,27 @@ def write_llms():
               'prints the terms that built it. Nothing there is a rule '
               'composed by this site.',
               '',
-              '**Citations use the numbers the book prints** — `§ 126` — but '
-              'BEAUFRONT NUMBERED LESS THAN HALF HIS OWN BOOK: 138 paragraphs '
-              'carry a number and 723 blocks carry none, 27 of the 49 '
-              'chapters having no number anywhere. A block in an unnumbered '
-              'chapter is therefore cited by its chapter and its rank. Three '
-              'numbers also misbehave — § 28 does not exist, § 32 cannot be '
-              'found by number, § 55 is used twice — and `temi/index.md` says '
-              'so, because a citation by number needs it.',
+              ('**Citations use the numbers the book prints** — `§ 126` — '
+               'but BEAUFRONT NUMBERED LESS THAN HALF HIS OWN BOOK: %d '
+               'paragraphs carry a number, § %d to § %d, and %s blocks carry '
+               'none, %d of the 49 chapters having no number anywhere. A '
+               'block in an unnumbered chapter is therefore cited by its '
+               'chapter and its rank.'
+               % (num['numbered'], num['first'], num['last'],
+                  f"{num['blocks_un']:,}", num['chapters_un'])
+               if num else
+               '**Citations use the numbers the book prints** — `§ 126` — '
+               'but the book does not number all of itself: a block in an '
+               'unnumbered chapter is cited by its chapter and its rank.'),
               '']
+        if num and num['quirks']:
+            L += ['%s also %s not behave — %s — and `temi/index.md` says how, '
+                  'because a citation by number needs it.'
+                  % ('One number' if len(num['quirks']) == 1
+                     else '%d numbers' % len(num['quirks']),
+                     'does' if len(num['quirks']) == 1 else 'do',
+                     ', '.join('§ ' + q for q in num['quirks'])),
+                  '']
     L += ['## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, '
           '1934/1964',
           '',
