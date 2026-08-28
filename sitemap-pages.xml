@@ -676,6 +676,26 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://ido.help/dicionario/verbi.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/dicionario/verbi.json</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/dicionario/faki.md</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ido.help/dicionario/faki.json</loc>
+    <lastmod>2026-08-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://ido.help/gramatiko/afixi/index.md</loc>
     <lastmod>2026-08-28</lastmod>
     <priority>0.6</priority>

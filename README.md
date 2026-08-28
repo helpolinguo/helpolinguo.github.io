@@ -105,10 +105,19 @@ where it is, and that it is small and concrete, so that a model reaching
 for an abstract word is sent back to the definitions rather than left to
 invent one.
 
-Both are read out of the neighbouring repositories, like everything else in
-`machine_files.py`, and both **degrade silently**: run without those
-directories, the map is 14 kB and mentions neither, and the sitemap drops
-back from 364 addresses to 185.
+**Using a verb correctly.** The Dicionario prints, before the first sense, a
+bracketed group holding the two things a writer needs and a reader does not:
+whether a verb takes a direct object — **2,020 verbs marked, and 31 that
+answer differently for different senses** — and the preposition it governs,
+`adaptar ad`, `admirar pri, pro`. Both are in `dicionario/verbi.*`, and the
+map says to read the mark on **the sense being used**, not on the headword,
+because `fugar` and `finar` go both ways. `dicionario/faki.*` carries the
+subject fields beside them.
+
+All three are read out of the neighbouring repositories, like everything else
+in `machine_files.py`, and all **degrade silently**: run without them, the map
+is 14 kB and mentions none of them, and the sitemap drops back from 368
+addresses to 185.
 
 ## The song in the O
 

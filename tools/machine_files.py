@@ -227,6 +227,12 @@ def write_sitemap(today: str):
             if f.name != 'index.md':
                 urls.append((f'{SITE}/gramatiko/temi/{f.name}', '0.5'))
 
+    # verbi.* and faki.* are the grammar the Dicionario's articles carry:
+    # transitivity, the governed preposition, the subject field.
+    for n, _ in found('dicionario', 'verbi.md', 'verbi.json',
+                      'faki.md', 'faki.json'):
+        urls.append((f'{SITE}/dicionario/{n}', '0.6'))
+
     # afixi/ is 66 files. They earn a place beside the chapters because
     # every DERIVED word in the language is read off one of them, and the
     # Dicionario carries only the roots.
@@ -401,6 +407,39 @@ def affixes():
         if m:
             rows.append((m.group(1), m.group(2).strip(), m.group(3).strip()))
     return rows
+
+
+def government():
+    """verbi.json — what the Dicionario's parentheticals say about a verb.
+
+    Read out of the file the book's own tool writes, never recounted here:
+    a figure written twice is a figure that will be wrong in one of the
+    two places.
+    """
+    import json
+    f = NEIGHBOURS / 'dicionario' / 'verbi.json'
+    if not f.exists():
+        return None
+    d = json.loads(f.read_text(encoding='utf-8'))
+    n = d.get('nombri') or {}
+    if not n:
+        return None
+    return {'nombri': n, 'verbi': len(d.get('verbi') or {}),
+            'prepozicioni': len(d.get('per prepoziciono') or {})}
+
+
+def fields():
+    """faki.json — the subject fields and the words each marks."""
+    import json
+    f = NEIGHBOURS / 'dicionario' / 'faki.json'
+    if not f.exists():
+        return None
+    faki = json.loads(f.read_text(encoding='utf-8')).get('faki') or {}
+    if not faki:
+        return None
+    big = {k: v for k, v in faki.items() if len(v) >= 5}
+    return {'omna': len(faki), 'granda': len(big),
+            'supra': sorted(big.items(), key=lambda x: -len(x[1]))[:4]}
 
 
 def glossary():
@@ -818,7 +857,15 @@ def write_llms():
               'this question — both are in Ido throughout.'
               % (SITE, glossary()['en']['pari']),
               '',
-          ] if glossary() else []) + [
+          ] if glossary() else []) + ([
+              'To **use a verb correctly**, take its mark from '
+              '`%s/dicionario/verbi.md`: whether it takes a direct object, '
+              'and which preposition it governs. Both are printed in the '
+              'article and nowhere else, and 31 verbs answer DIFFERENTLY '
+              'FOR DIFFERENT SENSES — so read the mark on the sense you '
+              'are using.' % SITE,
+              '',
+          ] if government() else []) + [
           '## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925',
           '']
     L += ['- [chapitri/index.md](%s/gramatiko/chapitri/index.md) — the table, '
@@ -935,6 +982,63 @@ def write_llms():
     L += ['- [dicionario/](%s/dicionario/) — the page, for a PERSON to '
           'search' % SITE,
           '']
+
+    # THE GRAMMAR THE ARTICLES CARRY. A model can look a word up and still
+    # not be able to USE it: the mark that says whether a verb takes a
+    # direct object, and the preposition it governs, are what turn a
+    # headword into a sentence.
+    gov = government()
+    if gov:
+        n = gov['nombri']
+        L += ['### The grammar the articles carry', '',
+              '**Before the first sense the book prints a bracketed group, '
+              'and it holds the two things a WRITER needs.** Neither is '
+              'stated anywhere else on this site.',
+              '',
+              '**Whether a verb takes a direct object.** %s verbs are '
+              'marked: %s transitive, %s intransitive, %s both, and %s that '
+              'CHANGE WITH THE SENSE. In Ido this decides whether `-ig-` or '
+              '`-es-` is the right derivation, so a verb used without it is '
+              'a guess.'
+              % (f"{gov['verbi']:,}", f"{n.get('transitiva', 0):,}",
+                 f"{n.get('netransitiva', 0):,}", n.get('amba', 0),
+                 n.get('segun la senco', 0)),
+              '',
+              '**The preposition it governs.** %s verbs name it, in %s '
+              'distinct forms — `adaptar ad`, `admirar pri, pro`, '
+              '`admisar aden`, `acensar sur`.'
+              % (n.get('kun prepoziciono', 0), gov['prepozicioni']),
+              '',
+              '```',
+              'finar — transitiva (senco 1), netransitiva (senco 2)',
+              'fugar — netransitiva (senco 1), transitiva (senco 2)',
+              '```',
+              '',
+              '**A VERB WHOSE ANSWER IS « IT DEPENDS ON THE SENSE » IS THE '
+              'ONE MOST WORTH ASKING ABOUT.** 40 verbs are marked on the '
+              'sense and not on the article — `fugar`, `finar`, `komencar`, '
+              '`kombatar`, `embarkar` among them — and they are marked '
+              'there precisely because they go both ways. Take the mark '
+              'from the sense you are using, not from the headword.',
+              '']
+        L += listing('dicionario', ('verbi.md',),
+                     ' — every marked verb, its kind and its preposition, '
+                     'then an index BY preposition')
+        L += listing('dicionario', ('verbi.json',), ' — the same, keyed')
+        L += ['']
+
+    fld = fields()
+    if fld:
+        L += ['**The subject field.** %s distinct parentheticals, %s of '
+              'them naming five words or more — %s. Use it to gather the '
+              'vocabulary of one subject; `metaf.` marks the figurative '
+              'sense and stands on no article at all, only on senses.'
+              % (f"{fld['omna']:,}", fld['granda'],
+                 ', '.join('`%s` %d' % (k, len(v)) for k, v in fld['supra'])),
+              '']
+        L += listing('dicionario', ('faki.md',), ' — the fields and their words')
+        L += listing('dicionario', ('faki.json',), ' — the same, keyed')
+        L += ['']
 
     L += ['## Tabeli — *Expliko-Libreto di la Delmas-Tabeli*, J. Guignon, 1926',
           '']
