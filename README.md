@@ -32,6 +32,8 @@ icon-1536.png           the same drawing, for the lock screen — see below
 og-image.png            1200 × 630, the sharing image
 robots.txt              }
 sitemap.xml             }  generated — see tools/machine_files.py
+sitemap-pages.xml       }  the pages; sitemap.xml indexes it
+sitemap-vorti.xml       }  the 9461 articles, one address each
 llms.txt                }
 opensearch.xml          }
 fonts/                  Jost* Bold and Medium, subset to this page
@@ -50,7 +52,8 @@ statically. Three scripts regenerate what is not written by hand.
 ```sh
 python3 tools/emblem.py         # the logotype, to be copied into index.html
 python3 tools/icons.py          # emblem.svg, the icons, og-image.png
-python3 tools/machine_files.py  # robots.txt, sitemap.xml, llms.txt, opensearch.xml
+python3 tools/machine_files.py  # robots.txt, the three sitemaps, llms.txt,
+                                # opensearch.xml
 ```
 
 The first two need `fonttools` and `pymupdf`, and read the Jost\* TTFs from
@@ -58,8 +61,9 @@ the `dicionario` repository. The third reads the three book repositories, and
 so expects their clones beside this one; re-run it whenever a book changes.
 
 Files under `tools/` are **generators, not sources**: `robots.txt`,
-`sitemap.xml`, `llms.txt` and `opensearch.xml` are overwritten wholesale, so
-anything that must change is changed in `tools/machine_files.py`.
+`sitemap.xml` and its two children, `llms.txt` and `opensearch.xml` are
+overwritten wholesale, so anything that must change is changed in
+`tools/machine_files.py`.
 
 ## Searching the site from outside it
 

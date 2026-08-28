@@ -5,15 +5,20 @@ search.
 WHY AT THE ROOT. The four sites share one origin — the home page is the
 user site, the three books are project sites. But "/robots.txt" and
 "/sitemap.xml" are only read at the ROOT of a domain: a robots.txt dropped
-into /tabeli/ would be read by nobody. These four files can therefore only
-live here, and they speak for all four sites.
+into /tabeli/ would be read by nobody. These files can therefore only live
+here, and they speak for all four sites.
 
 WHAT EACH ONE DOES
 
   robots.txt      says yes to everyone, by name — including the language
                   models' crawlers, which many sites block and which, for
                   want of a mention, sometimes abstain of their own accord.
-  sitemap.xml     lists the pages for search engines.
+  sitemap.xml     a <sitemapindex> over the two below. robots.txt points
+                  at this one address, and it does not move.
+  sitemap-pages   the site's pages and the whole-book files — 9 kB.
+  sitemap-vorti   one address per article, 9461 of them — 1.3 MB. Kept
+                  apart so an engine re-reading the pages does not pay
+                  for the dictionary every time.
   llms.txt        the map, for the use of models: what the site holds, in
                   what form, AND AT WHAT PRICE. It is the stated weight
                   that counts: it allows a choice to be made BEFORE
@@ -144,6 +149,41 @@ def write_robots():
 # --------------------------------------------------------------------------
 # sitemap.xml
 # --------------------------------------------------------------------------
+# A SITEMAP HOLDS 50 000 ADDRESSES AND 50 MB, AND ONE FILE PER WORD WOULD
+# NOT BREACH EITHER — 9461 articles come to 1.2 MB. It would still be the
+# wrong shape. The pages of this site and the articles of one book change on
+# different days and for different reasons, and a crawler re-reading a single
+# 1.2 MB map to learn that the home page moved is paying for the book every
+# time. An INDEX lets it fetch the 9 kB half and leave the rest alone.
+#
+# So /sitemap.xml is now a <sitemapindex> naming two children, and it is the
+# index that robots.txt points at — one address, unchanged, which is what
+# every engine already has on file.
+def xml_(t: str) -> str:
+    """An address, safe to put between XML tags.
+
+    The slugs under vorti/ are [a-z0-9-] and the chapters' are no wider, so
+    today this changes nothing and is verified to. It is here because a
+    generator that emits XML without escaping is one odd filename away from
+    emitting a broken map, and the map is the thing nobody reads until it
+    has already failed.
+    """
+    return (t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+             .replace('"', '&quot;').replace("'", '&apos;'))
+
+
+def urlset(urls, today: str) -> str:
+    """One <urlset>: the addresses, each with the day and its priority."""
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u, priority in urls:
+        lines += ['  <url>', f'    <loc>{xml_(u)}</loc>',
+                  f'    <lastmod>{today}</lastmod>',
+                  f'    <priority>{priority}</priority>', '  </url>']
+    lines.append('</urlset>')
+    return '\n'.join(lines) + '\n'
+
+
 def write_sitemap(today: str):
     urls = [(f'{SITE}/', '1.0'),
             (f'{SITE}/tabeli/', '0.9'),
@@ -161,10 +201,8 @@ def write_sitemap(today: str):
         for n, _ in found(book, *names):
             urls.append((f'{SITE}/{book}/{n}', '0.6'))
 
-    # vorti/ is 9461 files. The INDEX goes in and the articles do not: a
-    # crawler reaches them by its links, and an engine that wanted them
-    # enumerated would want a sitemap of 1.2 MB to do it.
-    if (NEIGHBOURS / 'dicionario' / 'vorti' / 'index.md').exists():
+    vorti = NEIGHBOURS / 'dicionario' / 'vorti'
+    if (vorti / 'index.md').exists():
         urls.append((f'{SITE}/dicionario/vorti/index.md', '0.6'))
 
     chapters = NEIGHBOURS / 'gramatiko' / 'chapitri'
@@ -174,14 +212,35 @@ def write_sitemap(today: str):
             if f.name != 'index.md':
                 urls.append((f'{SITE}/gramatiko/chapitri/{f.name}', '0.4'))
 
+    (ROOT / 'sitemap-pages.xml').write_text(urlset(urls, today),
+                                            encoding='utf-8')
+
+    # THE ARTICLES, one address each. They are sorted so the file is stable
+    # between runs: a map that reshuffles itself is a diff nobody can read.
+    articles = sorted(f.name[:-3] for f in vorti.glob('*.md')
+                      if f.name != 'index.md') if vorti.is_dir() else []
+    child = ROOT / 'sitemap-vorti.xml'
+    if articles:
+        child.write_text(
+            urlset([(f'{SITE}/dicionario/vorti/{a}.md', '0.3')
+                    for a in articles], today), encoding='utf-8')
+    elif child.exists():
+        # A CHILD LEFT BEHIND IS A MAP OF FILES THAT MAY NO LONGER BE THERE,
+        # and it would go on being served and crawled. vorti/ is emptied at
+        # every run in the other repository for the same reason.
+        child.unlink()
+
+    children = ['sitemap-pages.xml'] + (['sitemap-vorti.xml'] if articles
+                                        else [])
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for u, priority in urls:
-        lines += ['  <url>', f'    <loc>{u}</loc>', f'    <lastmod>{today}</lastmod>',
-                  f'    <priority>{priority}</priority>', '  </url>']
-    lines.append('</urlset>')
+             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for c in children:
+        lines += ['  <sitemap>', f'    <loc>{SITE}/{c}</loc>',
+                  f'    <lastmod>{today}</lastmod>', '  </sitemap>']
+    lines.append('</sitemapindex>')
     (ROOT / 'sitemap.xml').write_text('\n'.join(lines) + '\n', encoding='utf-8')
-    return len(urls)
+    return len(urls), len(articles)
+
 
 
 # --------------------------------------------------------------------------
@@ -617,12 +676,15 @@ def main():
 
     today = os.environ.get('DATE') or datetime.date.today().isoformat()
     write_robots()
-    n = write_sitemap(today)
+    n, n_vorti = write_sitemap(today)
     write_llms()
     write_opensearch()
-    for f in ('robots.txt', 'sitemap.xml', 'llms.txt', 'opensearch.xml'):
-        print('  %-14s %8s' % (f, weight(ROOT / f)))
-    print('  %d addresses in the sitemap' % n)
+    for f in ('robots.txt', 'sitemap.xml', 'sitemap-pages.xml',
+              'sitemap-vorti.xml', 'llms.txt', 'opensearch.xml'):
+        if (ROOT / f).exists():
+            print('  %-18s %8s' % (f, weight(ROOT / f)))
+    print('  %d addresses in sitemap-pages, %d in sitemap-vorti'
+          % (n, n_vorti))
     print('  (re-run when a book changes: the script reads the neighbouring repositories)')
 
 
