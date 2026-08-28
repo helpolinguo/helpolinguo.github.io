@@ -16,7 +16,9 @@ Ido is an international auxiliary language, published in 1907 and derived from E
 
 **If the text could not be fetched, say that.** An article that was not read cannot be quoted, and the senses of the English cognate are not a substitute for it.
 
-**To go the other way — from a meaning to an Ido word — search the DEFINITIONS.** The book has no index in any other language, but its definitions are text: `fugar` is reached by looking through `vortlisto.md` for « forirar » or « evitar », not by looking up *flee*. And for a concrete word there is the Tabeli below, which is a parallel text in 57 languages and the one place on this site where Ido stands beside English.
+**To go the other way — from a meaning to an Ido word — start at the GLOSSARY, and fall back on the DEFINITIONS.** For a concrete word, `https://ido.help/tabeli/glosaro/en-GB.md` answers outright: it is the Tabeli's bold terms set against their equivalents, and it carries both directions. It is one book of concrete vocabulary and will not hold an abstract word.
+
+Where it does not, the Dicionario has no index in any other language, but its definitions are text: `fugar` is reached by looking through `vortlisto.md` for « forirar » or « evitar », not by looking up *flee*.
 
 ### A worked example — `propoziciono`
 
@@ -100,6 +102,12 @@ To **learn the grammar**, the chapters are the cheapest way in: each chapter is 
 
 To **look up a word**, fetch it on its own — `https://ido.help/dicionario/vorti/WORD.md`, some 600 bytes. Read the two sections above first: the address rule is four steps, and the definitions are in Ido.
 
+To **write a word the dictionary does not hold** — `kovrilo`, `skribilo`, `dometo`, `hundino` are none of them headwords — take the root from the Dicionario and the affix from `https://ido.help/gramatiko/afixi/`, one small file each. The 9,473 articles are the ROOTS, and derivation is where the rest of the language is.
+
+- [Table of the affixes](https://ido.help/gramatiko/afixi/index.md) — the 65 of them, each with the example the book prints
+
+To go **from English to Ido**, `https://ido.help/tabeli/glosaro/en-GB.md` is the only direct answer on this site, and it is a modest one: 1897 pairs of concrete vocabulary, lifted from a parallel text. Neither the Dicionario nor the Gramatiko can be asked this question — both are in Ido throughout.
+
 ## Gramatiko — *Kompleta Gramatiko Detaloza*, L. de Beaufront, 1925
 
 - [chapitri/index.md](https://ido.help/gramatiko/chapitri/index.md) — the table, with each chapter's size
@@ -120,7 +128,7 @@ The book is split by chapter, which answers *how is the plural formed* — there
 | Participo | 47 | `https://ido.help/gramatiko/temi/participo.md` |
 | Infinitivo | 35 | `https://ido.help/gramatiko/temi/infinitivo.md` |
 | Pasivo | 41 | `https://ido.help/gramatiko/temi/pasivo.md` |
-| Kondicionalo | 20 | `https://ido.help/gramatiko/temi/kondicionalo.md` |
+| Kondicionalo | 21 | `https://ido.help/gramatiko/temi/kondicionalo.md` |
 | Imperativo | 10 | `https://ido.help/gramatiko/temi/imperativo.md` |
 | Negado | 10 | `https://ido.help/gramatiko/temi/negado.md` |
 
@@ -129,6 +137,86 @@ The book is split by chapter, which answers *how is the plural formed* — there
 **Citations use the numbers the book prints** — `§ 126` — but BEAUFRONT NUMBERED LESS THAN HALF HIS OWN BOOK: 139 paragraphs carry a number, § 1 to § 140, and 723 blocks carry none, 27 of the 49 chapters having no number anywhere. A block in an unnumbered chapter is therefore cited by its chapter and its rank.
 
 2 numbers also do not behave — § 28, § 55 — and `temi/index.md` says how, because a citation by number needs it.
+
+### Deriving a word the dictionary does not hold
+
+**The Dicionario carries the ROOTS.** `kovrilo`, `skribilo`, `dometo`, `hundino` are none of them headwords, and no number of articles will yield one: they are the root plus an affix, and the affix is here. Each of the 65 has its own file of about 2 kB, holding the book's own paragraphs on it.
+
+- [afixi/index.md](https://ido.help/gramatiko/afixi/index.md) — the table: 43 sufixo, 19 prefixo, 3 prefixo teknikala
+
+The whole inventory, with the first example the book prints under each. **The example is the book's, not this site's.**
+
+| affix | kind | the book's example |
+| --- | --- | --- |
+| `-ab-` | sufixo | amabis |
+| `-ach-` | sufixo | kavalacho |
+| `-ad-` | sufixo | Parolado |
+| `-ag-` | sufixo | crucagar |
+| `-aj-` | sufixo | amikalajo |
+| `-al-` | sufixo | avanbrakiala |
+| `-an-` | sufixo | urbano |
+| `-ar-` | sufixo | formularo |
+| `-ari-` | sufixo | depozario |
+| `-atr-` | sufixo | sponjatra |
+| `-e-` | sufixo | rozea |
+| `-ebl-` | sufixo | dicebla |
+| `-ed-` | sufixo | bokedo |
+| `-eg-` | sufixo | kruelega |
+| `-em-` | sufixo | agema |
+| `-end-` | sufixo | facenda |
+| `-er-` | sufixo | iracera |
+| `-eri-` | sufixo | drinkerio |
+| `-es-` | sufixo | videsar |
+| `-esk-` | sufixo | paleskar |
+| `-estr-` | sufixo | urbestro |
+| `-et-` | sufixo | dometo |
+| `-ey-` | sufixo | kavaleyo |
+| `-i-` | sufixo | baronio |
+| `-id-` | sufixo | Izraelido |
+| `-ier-` | sufixo | kandeliero |
+| `-if-` | sufixo | florifar |
+| `-ig-` | sufixo | fortigar |
+| `-ik-` | sufixo | kolerika |
+| `-il-` | sufixo | pektilo |
+| `-in-` | sufixo | rejino |
+| `-ind-` | sufixo | aminda |
+| `-ism-` | sufixo | socialismo |
+| `-ist-` | sufixo | socialisto |
+| `-iv-` | sufixo | instruktiva |
+| `-iz-` | sufixo | armizar |
+| `-oz-` | sufixo | kurajoza |
+| `-ul-` | sufixo | avulo |
+| `-um-` | sufixo | kolumo |
+| `-un-` | sufixo | sabluno |
+| `-ur-` | sufixo | konstrukturo |
+| `-uy-` | sufixo | inkuyo |
+| `-yun-` | sufixo | bovyuno |
+| `anti` | prefixo | antipodo |
+| `arki` | prefixo | arkianjelo |
+| `auto` | prefixo | — |
+| `bi` | prefixo | biciklo |
+| `bo-` | prefixo | bopatrulo |
+| `des-` | prefixo | desafabla |
+| `dis-` | prefixo | disdonar |
+| `ex-` | prefixo | exoficiro |
+| `ge-` | prefixo | gepatri |
+| `mi-` | prefixo | miapertita |
+| `mis-` | prefixo | misaudar |
+| `ne-` | prefixo | neposibla |
+| `par-` | prefixo | parlernar |
+| `para-` | prefixo | parafalo |
+| `pre-` | prefixo | preiris |
+| `pseudo-` | prefixo | pseudo-profeto |
+| `quadri-` | prefixo | quadripedo |
+| `retro-` | prefixo | retrovenis |
+| `ri-` | prefixo | Rihavar |
+| `equi-` | prefixo teknikala | equiangula |
+| `ko-` | prefixo teknikala | kosinuso |
+| `mono-` | prefixo teknikala | monosilabo |
+
+Fetch one as `https://ido.help/gramatiko/afixi/AFFIX.md` — the address is the affix as it stands in the table, hyphens included: `-il-.md`, `-ebl-.md`, `des-.md`, `mono-.md`.
+
+`sen-` has no file of its own: the book gives it no section and discusses it under `ne-`. And `auto` is the one affix whose file carries no example — its examples stand in the chapter's opening footnote rather than in its own section.
 
 ## Dicionario — *Dicionario de la 10.000 radiki*, M. Pesch, 1934/1964
 
@@ -167,6 +255,23 @@ MEASURED: all 55 files under `teksti/` carry EXACTLY the 672 keys of `tabeli.jso
 **TWO DIRECTORIES, AND ONLY ONE OF THEM IS TEXT.** `teksti/` is the clean half: the same Markdown as `tabeli.json` — 4,640 `**` marks in the Ido, and nothing to strip on either side. `lingui/` is what the PAGE eats, and carries its furniture: 6,027 tags in `en-GB`, of which 1,742 are `<button>` — the magnifier that reveals a plate reference, not text. Use `teksti/` for reading and quoting; `lingui/` only if you are rebuilding the page.
 
 **What it is and is not.** 672 segments of concrete vocabulary — a schoolroom, a house, trades, games — in whole sentences, which is what makes it usable for WRITING Ido and not only for reading it. It is one book and one register: no abstract vocabulary, and not a dictionary. For a word, the Dicionario; for a rule, the Gramatiko.
+
+### From a meaning to an Ido word — the glossary
+
+**THE ONLY PLACE THE SITE ANSWERS « what is the Ido for X ».** The two booklets set the same thing in bold — the vocabulary word the plate illustrates — so the n-th bold run of a segment answers the n-th of that segment in any language, and the pairs fall out BY POSITION. Nothing is translated here: every pair is two passages of a printed parallel text.
+
+- `https://ido.help/tabeli/glosaro/<code>.md` — **both directions, flat**, about 82 kB. The cheapest complete form, and the one to fetch.
+- `https://ido.help/tabeli/glosaro/<code>.json` — the same, about 136 kB, with the segment keys, so any pair can be carried back to the printing and checked.
+- [glosaro/index.md](https://ido.help/tabeli/glosaro/index.md) — the 56 languages, with what each holds
+
+```
+glosaro/en-GB.md    katedro — desk
+                    desk — katedro
+```
+
+**IT IS SMALL, AND IT IS ONE REGISTER.** 2,320 bold terms in the Ido give 1,897 pairs in `en-GB` and 2,129 in `pl`, which is the fullest of the 56. The vocabulary is concrete — a schoolroom, a house, trades, games — so an abstract word will not be there. When it is not, look through the Dicionario's definitions instead, as the section on quoting says.
+
+**What is missing is missing on purpose.** Where a segment's bold counts do not answer between the two languages, the whole segment is dropped rather than guessed at: five bold in Ido against four in the target says one is missing, and not which.
 
 ## Notes
 
