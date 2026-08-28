@@ -510,9 +510,10 @@ def write_llms():
           '%s articles. Ido defined in Ido — see above.' % count,
           '']
     if per_word():
-        L += ['- [vorti/WORD.md](%s/dicionario/vorti/%s.md) — ~600 bytes — '
-              'ONE FILE PER WORD; the address is the headword'
-              % (SITE, EXAMPLE)]
+        L += ['- [vorti/%s.md](%s/dicionario/vorti/%s.md) — ~600 bytes — '
+              'ONE FILE PER WORD, and the address is the headword: any '
+              'other one is reached the same way'
+              % (EXAMPLE, SITE, EXAMPLE)]
     L += listing('dicionario', ('vortlisto.md',),
                  ' — headword and first sense only')
     L += listing('dicionario', ('dicionario.md',), ' — the full articles')

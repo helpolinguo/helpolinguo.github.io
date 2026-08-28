@@ -109,7 +109,7 @@ To **look up a word**, fetch it on its own — `https://ido.help/dicionario/vort
 
 9,473 articles. Ido defined in Ido — see above.
 
-- [vorti/WORD.md](https://ido.help/dicionario/vorti/propoziciono.md) — ~600 bytes — ONE FILE PER WORD; the address is the headword
+- [vorti/propoziciono.md](https://ido.help/dicionario/vorti/propoziciono.md) — ~600 bytes — ONE FILE PER WORD, and the address is the headword: any other one is reached the same way
 - [vortlisto.md](https://ido.help/dicionario/vortlisto.md) — 923 kB — headword and first sense only
 - [dicionario.md](https://ido.help/dicionario/dicionario.md) — 1.6 MB — the full articles
 - [dicionario.tsv](https://ido.help/dicionario/dicionario.tsv) — 1.5 MB — one line per article, tab-separated
