@@ -214,5 +214,74 @@ def main():
           % ('embeddings', a, 100 * at1 / max(1, a), 100 * at1 / len(pairs)))
 
 
+# =====================================================================
+# THE OTHER DIRECTION. Ido -> English, scored against the printed English
+# of the same 672 segments -- a real parallel text, not a reconstruction.
+#
+# Scored as bag-of-content-words overlap against the reference, which is the
+# right measure for a COMPREHENSION aid: the question is whether a reader
+# gets the content, not whether the word order matches a translator's.
+# =====================================================================
+
+STOP = set('the a an of to and is are was were in on at for with by from as '
+           'it its this that these those there here he she they we you i him '
+           'her them his their our your my be been being not no or but if '
+           'which who what when where very more less all every some one two '
+           'will would has have had do does did'.split())
+
+
+def content(text):
+    import re as _re
+    return [w for w in _re.findall(r"[a-z']+", (text or '').lower())
+            if w not in STOP and len(w) > 2]
+
+
+def reading_direction():
+    """Ido -> English on held-out segments, three configurations."""
+    import io2en
+    train, test = split()
+    tab = corpus.tabeli()
+    ref = corpus.teksti('en-GB')
+    if not ref:
+        print('no en-GB text; skipping')
+        return
+    english = io2en._english()
+    keys = [k for k in sorted(test) if tab.get(k, {}).get('io') and ref.get(k)]
+    print('\nIDO -> ENGLISH, on %d held-out segments' % len(keys))
+    print('(the glossary is built from the TRAINING segments only, as above)')
+    print()
+    print('%-34s %8s %8s %8s %8s' % ('configuration', 'glossed', 'prec',
+                                     'recall', 'F1'))
+
+    configs = [('glossary only', False, False),
+               ('glossary + cognate', True, False),
+               ('glossary + cognate + definition', True, True)]
+    for name, cog, dfn in configs:
+        if cog and not english:
+            print('%-34s  needs IDO_GLOVE' % name)
+            continue
+        r = io2en.Reader(english=english if cog else None, keys=train,
+                         use_cognates=cog, use_definitions=dfn)
+        tp = fp = fn = 0
+        tok = glossed = 0
+        for k in keys:
+            rows = r.read(tab[k]['io'])
+            tok += len(rows)
+            glossed += sum(1 for x in rows if x['en'])
+            got = collections.Counter(
+                content(' '.join(x['en'] for x in rows if x['en'])))
+            want = collections.Counter(content(ref[k]))
+            hit = sum((got & want).values())
+            tp += hit
+            fp += sum(got.values()) - hit
+            fn += sum(want.values()) - hit
+        p = tp / max(1, tp + fp)
+        rc = tp / max(1, tp + fn)
+        f = 2 * p * rc / max(1e-9, p + rc)
+        print('%-34s %7.1f%% %7.1f%% %7.1f%% %7.1f%%'
+              % (name, 100 * glossed / max(1, tok), 100 * p, 100 * rc, 100 * f))
+
+
 if __name__ == '__main__':
     main()
+    reading_direction()

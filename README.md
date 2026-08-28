@@ -219,25 +219,44 @@ of this file covers **the code**, not the recording.
 translator. Nothing there is served and nothing there is a generator; it reads
 the books the way `machine_files.py` does and writes nothing back.
 
-**The grammar half works and the distributional half does not, and neither
-decides it.** The Gramatiko's endings and affixes, applied as rules, reach
-**96.3 %** of the Ido in the Tabeli; Word2Vec and Doc2Vec, given pretrained
-English vectors and every other advantage, answer **1.2 %** of a held-out
-translation set against the rules' **40.5 %**. What governs the whole idea is
-neither figure: the Tabeli's glossary is the site's only Ido–English lexicon,
-and it reaches **1,143 of the Dicionario's 9,272 roots — 12.3 %.** All 56
-languages together reach 13.5 %, because every glossary is built from the same
-bold runs of the same 672 segments, so **pivoting through another language
-cannot help.**
+**They do not, and the reason is the lexicon rather than the method.** Five
+routes were tried and measured. The figure that governs all of them: the
+Tabeli's glossary is the site's only Ido–English lexicon, and it reaches
+**1,143 of the Dicionario's 9,272 roots — 12.3 %**. All 56 languages together
+reach 13.5 %, because every glossary is built from the same bold runs of the
+same 672 segments, so **pivoting through another language cannot help**.
 
-One finding bears on `llms.txt` and not only on the experiment.
+| route | scored |
+|---|---|
+| the Gramatiko's rules, as morphology | **96.7 %** of running Ido analysed |
+| glossary + those rules, English → Ido | **40.5 %** P@1, on 10 % of held-out words |
+| Word2Vec + GloVe, Procrustes | **1.2 %** P@1 |
+| Doc2Vec over the articles | **32.6 %**, against plain tf-idf's 52.8 % |
+| cognates, Ido → English | **F1 17.9 %**, glossing 76.7 % of tokens |
+
+**The two directions are not symmetrical.** English → Ido must CHOOSE a word
+and has nothing to choose from — 89.7 % of the glossary's English terms appear
+in exactly one segment. Ido → English need only RECOGNISE one, and the
+Dicionario marks **7,165 roots as attested in English**, which is a bridge
+nothing else on the site provides. That direction produces a rough reading
+gloss for arbitrary Ido, marking every induced word as induced.
+
+Two findings bear on `llms.txt` and not only on the experiment.
+
 **`gramatiko/afixi/` is 65 files and it is not the whole derivational
 system.** Starting from those alone, the analyser missed `dil` 557 times,
 `ulu` 523, `igar` 345, `mea` 235 — all ordinary words, each needing a rule the
 Gramatiko states in a different chapter: the article's elisions, the
 possessives, the correlatives, the numeral suffixes, an affix standing alone,
-a preposition used as a prefix, two roots compounded. Adding them took the
-coverage from 92.3 % to 96.3 %.
+a preposition used as a prefix, two roots compounded, and the linking vowel of
+`doco-chambro`. Adding them took coverage from 92.3 % to 96.7 %.
+
+**The map's warning about cognates is right, and now has a number on it.**
+`llms.txt` says an answer built from a headword's English cognate is not the
+book's answer; measured against the Tabeli's gold pairs it agrees only 28.6 %
+of the time, and the disagreements are *correct cognates* — `kupo` recovers
+*cup* where the book prints *bowl*, `ursino` recovers *ursine* where it prints
+*bear*.
 
 `tools/translator/README.md` carries the measurements, the abandoned
 approaches, and how to run each piece.

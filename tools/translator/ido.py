@@ -249,6 +249,12 @@ class Analyser:
                 if not (w.endswith(end) and len(w) > len(end)):
                     continue
                 body = w[:-len(end)]
+                # THE PLAIN READING IS YIELDED FIRST, and the order matters:
+                # both readings cost the same, the sort is stable, so whichever
+                # comes first wins a tie. Yielded the other way round `aparato`
+                # was read as a participle of a root `apar-` rather than as the
+                # root `aparat-` it is, and it took the cognate `apart` with it.
+                yield body, pos, feat, acc
                 # A participle sits between the root and the ending.
                 for pmark, pfeat in PARTICIPLE:
                     if body.endswith(pmark) and len(body) > len(pmark):
@@ -256,7 +262,6 @@ class Analyser:
                         f.update(pfeat)
                         f['participle'] = True
                         yield body[:-len(pmark)], pos, f, acc
-                yield body, pos, feat, acc
 
     # -- the affixes, peeled off until a root is reached ---------------------
     def _compound(self, stem):
@@ -270,8 +275,16 @@ class Analyser:
         """
         for i in range(3, len(stem) - 2):
             head, tail = stem[:i], stem[i:]
-            if tail in self.roots and head in self.roots:
+            if tail not in self.roots:
+                continue
+            if head in self.roots:
                 yield head, tail
+            # IDO WELDS WITH A LINKING VOWEL, usually `-o-`: the book writes
+            # `doco-chambro` and `klok-tabelo`, and the vowel belongs to
+            # neither root. Without this `docochambro` -- the word the first
+            # chapter is about -- has no parse at all.
+            elif head[-1:] in ('o', 'a') and head[:-1] in self.roots:
+                yield head[:-1], tail
 
     def _peel(self, stem, pres, sufs, depth=0):
         """Yield (root, prefixes, suffixes) for every way `stem` decomposes.

@@ -1,13 +1,28 @@
 # A machine translator out of the three books — what was tried, and what holds
 
-**THE GRAMMAR HALF OF THE IDEA WORKS AND THE DISTRIBUTIONAL HALF DOES NOT, AND
-NEITHER IS THE THING THAT DECIDES IT.** The rules reach 96.3 % of running Ido;
-Word2Vec, given every advantage, answers 1.2 % of a held-out translation set
-against the rules' 40.5 %. But the number that governs the whole idea is
-neither of those: **the site's only Ido–English lexicon reaches 1,143 of the
-Dicionario's 9,272 roots — 12.3 % — and all 56 languages together reach
-13.5 %.** There is no translator here for want of words, not for want of
-method.
+**MACHINE TRANSLATION IN IDO CANNOT BE SOLVED OUT OF THESE THREE BOOKS, AND
+THE REASON IS THE LEXICON, NOT THE METHOD.** Five routes were tried and
+measured. The one number that governs all of them: **the site's only
+Ido–English lexicon reaches 1,143 of the Dicionario's 9,272 roots — 12.3 % —
+and all 56 languages together reach 13.5 %**, because every glossary is built
+from the same bold runs of the same 672 segments.
+
+| route | what it scored |
+|---|---|
+| the Gramatiko's rules, as morphology | **96.7 %** of running Ido analysed |
+| glossary lookup + those rules, EN → IO | **40.5 %** P@1, on 10 % of held-out words |
+| Word2Vec + GloVe, Procrustes, EN → IO | **1.2 %** P@1 |
+| Doc2Vec over the articles | **32.6 %**, against tf-idf's 52.8 % |
+| cognates + definitions, IO → EN | **F1 17.9 %**, glossing 76.7 % of tokens |
+
+**THE TWO DIRECTIONS ARE NOT SYMMETRICAL, AND THAT IS THE USEFUL FINDING.**
+Going English → Ido you must CHOOSE a word, and there is nothing to choose
+from: 89.7 % of the glossary's English terms appear in exactly one segment, so
+hold that segment out and the word is absent, not mistranslated. Going Ido →
+English you need only RECOGNISE one, and recognition has three sources where
+choice had one — the glossary, the cognate the Dicionario itself marks, and
+the article every root has. That direction produces a rough reading gloss for
+arbitrary Ido. It is not a translator, and it is not called one here.
 
 Nothing in this directory is served, and nothing outside it was touched.
 
@@ -15,8 +30,10 @@ Nothing in this directory is served, and nothing outside it was touched.
     ido.py                    Ido morphology: analysis and generation
     coverage.py               what the rules reach, over the site's own Ido
     experiment_embeddings.py  Doc2Vec and Word2Vec, tried and measured
+    cognates.py               the English cognate the Dicionario marks
     translate.py              English -> Ido: glossary, endings, valency
-    evaluate.py               the two methods, one held-out split
+    io2en.py                  Ido -> English: the direction that goes further
+    evaluate.py               every route, one held-out split
 
 Each runs on its own and reads the three book repositories beside this one,
 degrading the way `machine_files.py` does when they are absent.
@@ -91,10 +108,10 @@ own Ido:
 
 | | tokens | covered | types | covered |
 |---|---:|---:|---:|---:|
-| **Tabeli** (ordinary prose) | 18,227 | **96.3 %** | 5,043 | 92.1 % |
-| Dicionario | 156,657 | 97.5 % | 18,335 | 91.5 % |
-| Gramatiko | 76,583 | 92.9 % | 10,087 | 78.0 % |
-| all | 251,467 | 96.0 % | 26,109 | 85.4 % |
+| **Tabeli** (ordinary prose) | 18,227 | **96.7 %** | 5,043 | 93.0 % |
+| Dicionario | 156,657 | 97.7 % | 18,335 | 92.6 % |
+| Gramatiko | 76,583 | 93.1 % | 10,087 | 79.0 % |
+| all | 251,467 | 96.2 % | 26,109 | 86.6 % |
 
 The Tabeli is the row that counts: the other two books talk *about* the
 language and cite forms it does not otherwise use.
@@ -129,7 +146,7 @@ states in a *different* chapter:
 * a preposition used as a prefix — `de-prenar`, `ad-juntar`;
 * two roots compounded — `ter-globo`, `skrib-mashino`.
 
-Those took the Tabeli from 92.3 % to **96.3 %**. **`gramatiko/afixi/` is 65
+Those took the Tabeli from 92.3 % to **96.3 %**, and the linking vowel below took it to **96.7 %**. **`gramatiko/afixi/` is 65
 files and it is not the whole derivational system**; `llms.txt` sends a model
 there to build `kovrilo` and `dometo`, and it is right to, but a model that
 reads only those 65 files cannot parse `dil`.
@@ -137,6 +154,11 @@ reads only those 65 files cannot parse `dil`.
 Compounding is bounded to two roots of three letters or more. Unbounded, a
 9,272-root lexicon will cut any string into something and the parses stop
 meaning anything.
+
+**And Ido welds with a linking vowel**, usually `-o-`. Without allowing for it
+`docochambro` — the word the Tabeli's first chapter is *about* — had no parse
+at all, nor did `ludokorto` or `klokotabelo`. That one rule took the Tabeli's
+types from 92.1 % to 93.0 %.
 
 ## 4. English to Ido, and the wall both methods hit
 
@@ -178,7 +200,93 @@ The rules attempted only 37 of 369, and that is the whole story:
   same 672 segments. **Pivoting through another language cannot help**, and
   that was worth measuring before believing.
 
-## 5. What the Dicionario does give a writer, and it is not vectors
+## 5. The Dicionario marks which roots have an English cognate
+
+Every article prints the languages the root is ATTESTED in — the `DEFIRS` the
+book sets as `Germana, Angla, Franca, Italiana, Rusa, Hispana`. **7,165 of the
+9,473 roots are marked `Angla`, 75.6 %**: the root was admitted into Ido partly
+*because* English has a cognate of it. That is a bridge nothing else on the
+site provides, and it was worth testing.
+
+`cognates.py` folds an Ido spelling and an English one onto one alphabet and
+matches them. **The mark is a real signal and not a guess:** recovery scores
+**28.6 % precision on roots marked `Angla` against 7.0 % on roots not marked** —
+four times better, so the gate is kept.
+
+**BUT `llms.txt` IS RIGHT, AND THE MEASUREMENT SAYS SO.** The map warns that
+"an answer built from the English cognate of a headword is not this book's
+answer, and for most words it is not the same answer." Against the Tabeli's
+gold pairs the recovered cognate is the glossary's own word only 28.6 % of the
+time, and the failures are not noise — they are *correct cognates*:
+
+| Ido | cognate recovered | what the book prints |
+|---|---|---|
+| `kupo` | cup | bowl |
+| `pastoro` | pastor | herdsman |
+| `ursino` | ursine | bear |
+| `dorso` | doors | back |
+
+Three of those four are the right cognate and the wrong gloss. **So the
+cognate is never used as a translation here.** It is used for the one thing it
+is reliable at: making the Dicionario's own Ido definitions legible, which
+takes the share of definition tokens renderable in English **from 16.7 % to
+76.3 %**.
+
+Two things had to be got right, and both are recorded because both were wrong
+first:
+
+* **Ido's `c` is always /ts/**, where English's is /k/ or /s/. Folded with
+  English's rule, `substanco` and `edifico` failed to reach *substance* and
+  *edifice*. The two spellings need two foldings, and English is indexed under
+  both readings of every `c`.
+* **The vocabulary is capped at the commonest 40,000 English words.** Scanning
+  150,000 took precision from **39.9 % to 33.5 % and bought no recall**: the
+  extra matches were tokens like `nacion` and `urs` standing in front of
+  *national* and *ursine*.
+
+## 6. Ido to English, which is the direction that goes further
+
+Scored against the printed English of the same 672 segments — a real parallel
+text — as bag-of-content-words overlap, which is the right measure for a
+reading aid: the question is whether a reader gets the content, not whether
+the word order matches a translator's. Glossary built from the training
+segments only, scored on 135 held-out ones.
+
+| configuration | tokens glossed | precision | recall | F1 |
+|---|---:|---:|---:|---:|
+| glossary only | 57.2 % | 26.2 % | 11.0 % | 15.5 % |
+| **glossary + cognate** | **76.7 %** | 20.8 % | 15.8 % | **17.9 %** |
+| glossary + cognate + definition | 93.5 % | 4.9 % | 17.4 % | 7.6 % |
+
+**The cognate earns its place and the definition does not.** Reading an
+unknown word out of its own article glosses 93.5 % of tokens instead of
+76.7 % — and takes precision from 20.8 % to 4.9 %, halving F1. The extra
+seventeen points of coverage are noise wearing a sentence's clothes: `mezo`
+comes out `{part which dictate dee horsemen extreme}`. It is kept in the code,
+switched off, because a measured negative belongs in the record.
+
+That failure was predicted by a cleaner measurement and then confirmed in
+running text: asked to name the single English word for a held-out Ido one, a
+definition's centroid scores **0.0 % P@1**. A definition points at the region
+of its own words — *domesticated carnivorous mammal* — and not at `dog`.
+
+**What it actually produces**, on held-out segments (`~` marks a gloss induced
+from a cognate rather than attested, `[?]` a word with no gloss at all):
+
+    IO  La ludo-korto
+    ->  the games yard
+    EN  The playground.
+
+    IO  An la parieto esas fixigita vest-hoki (58) , de li pendas la kapvesti
+    ->  [An?] the wall is [fixigita?] coat hooks from they ~pending the clothings
+    EN  Coat hooks (58) are fixed to the partition; the pupils' hats and coats hang
+
+**F1 of 17.9 % is a rough gloss, not a translation, and it is not called one.**
+What it is good for is that it degrades honestly: every induced word is marked
+as induced and every unknown one is left in Ido, so a reader is never handed a
+confident sentence built out of guesses.
+
+## 7. What the Dicionario does give a writer, and it is not vectors
 
 `verbi.json` marks 2,020 verbs transitive or intransitive and gives the
 preposition 396 of them govern. `translate.py` carries it through, so
@@ -187,7 +295,7 @@ differently for different senses come out saying so rather than picking. In
 Ido that mark decides whether `-ig-` or `-es-` is the right derivation: a verb
 used without it is a guess, and this is gold data, not an estimate.
 
-## 6. What was tried and abandoned
+## 8. What was tried and abandoned
 
 * **Doc2Vec over the articles** — the proposal's first leg. 32.6 % against
   tf-idf's 52.8 % on the same words. The documents are the reason: 11,690
@@ -206,30 +314,44 @@ used without it is a guess, and this is gold data, not an estimate.
   subject-verb-object, so the order carries for a plain declarative and is
   wrong for everything else. Fixing it needs a parse of the English, and there
   is no English parser in these three books.
+* **Glossing an unknown word out of its own article.** 0.0 % P@1 asked for a
+  single word, and in running text it halves F1 while looking like prose. The
+  most confident-sounding output of anything here and the worst.
+* **A bigger English vocabulary for the cognate matcher.** 150,000 words
+  against 40,000: precision fell 6.4 points and recall did not move.
 * **Generating the accusative `-n`.** Stripped on analysis, never generated.
   `temi/akuzativo.md` is 47 blocks on when the ending is obligatory, and it
   turns on a word order this translator does not compute. Leaving it off is
   always grammatical in the plain order; guessing it is not.
 
-## 7. Where this would go next, if anywhere
+## 9. What would actually solve it
 
-Not to a bigger model. **To a bigger lexicon**, which is the only thing that
-moves the number:
+Not a bigger model, and this has now been measured five ways. **A lexicon.**
+Ranked by what each would buy:
 
-1. **The Dicionario's definitions are the untapped asset.** 9,473 roots
-   defined in Ido, and tf-idf over them already beat both embeddings at
-   grouping words by field. That gives Ido → *understanding* for the whole
-   dictionary, where the glossary gives 12.3 %. It does not give English, but
-   it is the only structure covering the whole vocabulary.
-2. **The 65 affixes plus 9,272 roots generate far more than either book
-   lists** — `kovrilo`, `dometo`, `hundino` are the point `llms.txt` makes.
-   Derivation is a multiplier on a lexicon; it is not one.
-3. **An Ido–English lexicon at dictionary scale would have to come from
-   outside this site**, and that should be said plainly rather than
-   engineered around. The three books are a monolingual dictionary, a
-   grammar, and one 672-segment parallel text. Two of those three are exactly
-   what a rule-based translator wants. The third is 1,897 pairs of one
-   register, and no method run over it makes it larger.
+1. **An Ido–English word list at dictionary scale is the whole problem, and it
+   has to come from outside these three books.** Nothing here generates one:
+   the glossary is 1,897 pairs of one register, the cognate route is 28.6 %
+   precise and confuses a cognate with a gloss, and the definitions score
+   0.0 %. Ido has published bilingual dictionaries — Dyer 1924 among them —
+   and one of those, transcribed the way these three were, would move the
+   12.3 % figure and nothing else on this site will. **That is the honest next
+   step, and it is a transcription project, not a modelling one.**
+2. **The morphology and the valency are already done and would carry over
+   unchanged.** They are exact, they cover 96.7 % of running Ido, and they are
+   the half of a translator that usually costs the most. Whatever lexicon
+   arrives, `ido.py` inflects it correctly and `verbi.json` frames its verbs.
+   Nothing built here would be thrown away.
+3. **The Ido → English gloss is usable now, for reading.** It marks what it
+   induced and leaves what it cannot gloss in Ido, so it fails visibly. For a
+   reader working through the Tabeli or the Gramatiko with the Dicionario
+   open, that is worth something; for anyone wanting fluent English out of
+   Ido, it is not, and it says so.
+
+**What should NOT be tried again**, because it has been: training embeddings
+on 251,467 tokens; scoring a method on its own convenient pool; treating the
+English cognate of a headword as its translation; and glossing an unknown word
+out of the definitions of its definitions.
 
 ## Running it
 
@@ -237,8 +359,10 @@ moves the number:
     python3 tools/translator/ido.py                    # analyse and generate
     python3 tools/translator/coverage.py               # what the rules reach
     python3 tools/translator/translate.py              # English -> Ido
+    python3 tools/translator/cognates.py               # the cognate lexicon
+    python3 tools/translator/io2en.py                  # Ido -> English
     python3 tools/translator/experiment_embeddings.py  # needs gensim
-    python3 tools/translator/evaluate.py               # the head-to-head
+    python3 tools/translator/evaluate.py               # every route
 
 `experiment_embeddings.py` and `evaluate.py` need `gensim`. `evaluate.py`
 additionally scores the embedding method only if English vectors are pointed
